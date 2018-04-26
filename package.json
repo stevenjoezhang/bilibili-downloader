@@ -1,7 +1,7 @@
 {
-  "name": "electron-quick-start",
+  "name": "MimiDanmaku",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Mimi Danmaku Client for Desktop Platform",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
@@ -17,6 +17,6 @@
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "~1.8.2"
+    "electron": "1.8.4"
   }
 }

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mimi Danmaku Panel</title>
+<link href="cdn/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<script src="cdn/jquery-3.2.1.min.js"></script>
+<script>if (typeof module === "object") {window.jQuery = window.$ = module.exports;};</script>
+<style>
+	td {
+		
+	}
+</style>
+</head>
+<body>
+<div class="container" style="margin: 0 20px 20px 20px;">
+<!-- All of the Node.js APIs are available in this renderer process. -->
+	<div class="row">
+		<h1>Mimi Danmaku</h1>
+		<p id="help">欢迎使用米米弹幕</p>
+	</div>
+
+	<div class="row">
+		<div class="form-group">
+		显示模式
+			<div class="btn-group" role="group" id="viewMode">
+				<button type="button" class="btn btn-default active">固定(全屏幕)</button>
+				<button type="button" class="btn btn-default">窗口(可移动)</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-group">
+		窗口叠放
+			<div class="btn-group" role="group" id="viewMode">
+				<button type="button" class="btn btn-default active">始终置顶</button>
+				<button type="button" class="btn btn-default">默认置顶</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" style="display: none;">
+		<div class="form-group">
+		背景图片
+			<div class="btn-group" role="group" id="viewMode">
+				<button type="button" class="btn btn-default active">透明背景</button>
+				<button type="button" class="btn btn-default">默认图片</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="form-group">
+		弹幕过滤
+			<div class="btn-group" role="group" id="viewMode">
+				<button type="button" class="btn btn-default active">关闭</button>
+				<button type="button" class="btn btn-default">自动</button>
+				<button type="button" class="btn btn-default">手动</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" style="display: none;">
+		<div class="form-group">
+		优先设置
+			<div class="btn-group" role="group" id="viewMode">
+				<button type="button" class="btn btn-default active">默认允许</button>
+				<button type="button" class="btn btn-default">默认屏蔽</button>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="form-group">
+		弹幕频道
+			<input type="text" class="form-control" placeholder="default" id="channel"/>
+		</div>
+	</div>
+
+	<div class="row">
+		<button class="btn btn-success" onclick="wsreload()">连接弹幕频道</button>
+		<button class="btn btn-primary" onclick="panelSubmit()" id="submit">开启弹幕窗口</button>
+		<button class="btn btn-default" onclick="about()">关于</button>
+	</div>
+	<div class="row">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>弹幕内容</th>
+					<th>审核</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>哈哈哈哈哈哈哈哈哈</td>
+					<td style="max-width: 80px;">
+						<div class="form-inline">
+							<button type="button" class="btn btn-success">通过</button>
+							<button type="button" class="btn btn-danger">禁止</button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<!--<button onclick="createWindow()">开启</button>
+<button onclick="closeWindow()">关闭</button>-->
+
+<script src="base.js"></script>
+<script src="settings.js"></script>
+<script src="mainwindow.js"></script>
+<script src="wsconnect.js"></script>
+<script src="harmony.js"></script>
+<script>
+// You can also require other files to run in this process
+//require("./main.js")
+window.addEventListener("beforeunload", e => {
+	// Hide but not exit
+	// We cannot call a function that in a unregistered window.
+	if (mainWindow) {
+		e.returnValue = false;
+		alert("弹幕窗口开启时无法退出控制面板");
+	}
+})
+
+</script>
+</body>
+</html>
