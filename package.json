@@ -1,22 +1,22 @@
 {
-  "name": "MimiDanmaku",
+  "name": "MimiDownloader",
   "version": "1.0.0",
-  "description": "Mimi Danmaku Client for Desktop Platform",
+  "description": "Mimi Downloader for Bilibili",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/stevenjoezhang/mimi-downloader",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Downloader",
+    "Bilibili"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Mimi",
+  "license": "GPL3.0",
   "devDependencies": {
     "electron": "1.8.4"
+  },
+  "dependencies": {
+    "async": "^2.6.0"
   }
 }

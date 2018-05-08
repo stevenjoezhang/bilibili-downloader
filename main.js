@@ -14,11 +14,11 @@ let panelWindow
 function createPanel() {
 
   panelWindow = new BrowserWindow({
-    width: 400,
+    width: 600,
     height: electron.screen.getPrimaryDisplay().workAreaSize.height,
     resizable: false,
     fullscreenable: false,
-    title: "Mimi Danmaku Panel"
+    title: "Mimi Downloader"
   })
 
   panelWindow.loadURL(url.format({
