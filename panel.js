@@ -1,20 +1,19 @@
-//const electron = require("electron").remote;
-//const ipcRenderer = require("electron").ipcRenderer;
-//const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const url = require("url");
-const https = require("https");
 const fs = require("fs");
 const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
 
-var referer, playUrl, count, links, cid, isDownloading = false;
+var videoUrl, playUrl, count, links, cid, isDownloading = false;
+var debug = false;
 
 function getVideoUrl() {
-	var videoUrl = $("#videoUrl").val();// || "https://www.bilibili.com/bangumi/play/ep90832";
+	var videoUrl = $("#videoUrl").val();
+	if (debug) videoUrl = "https://www.bilibili.com/bangumi/play/ep90832";
 	if (videoUrl.indexOf("https://") != 0) {
 		if (videoUrl.indexOf("http://") == 0) videoUrl = videoUrl.replace("http://", "https://");
+		else if (videoUrl.indexOf("bilibili") != -1) videoUrl = "https://" + videoUrl;
 		else {
 			alert("无效的视频地址！");
 			return null;
@@ -24,9 +23,11 @@ function getVideoUrl() {
 }
 
 function getPlayUrl() {
-	var playUrl = $("#playUrl").val();// || "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=84956560bc028eb7&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
+	var playUrl = $("#playUrl").val();
+	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=84956560bc028eb7&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
 	if (playUrl.indexOf("https://") != 0) {
 		if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
+		else if (playUrl.indexOf("bilibili") != -1) playUrl = "https://" + playUrl;
 		else {
 			alert("无效的PlayUrl！");
 			return null;
@@ -36,28 +37,30 @@ function getPlayUrl() {
 }
 
 function getData() {
-	referer = getVideoUrl();
+	videoUrl = getVideoUrl();
 	playUrl = getPlayUrl();
-	if (!referer || !playUrl) return;
-	var data, html = "";
+	if (!videoUrl || !playUrl) return;
 
-	https.get(playUrl, function(res) {
-
-		res.on("data", function(msg) {
-			html += msg;
-		});
-		res.on("end", function() {
-			data = JSON.parse(html);
+	$.ajax(playUrl, {
+		type: "get",
+		dataType: "text",
+		error: function(xhr, status, error) {
+			alert("获取playUrl出错！");
+		},
+		success: function(data, status, xhr) {
+			data = JSON.parse(data);
 			parseData(data);
-		});
-	}).on("error", function() {
-		alert("获取数据出错！");
+		}
 	});
 }
 
 function parseData(data) {
-	$(".info").slideDown();
-	$("tbody").html("");
+	var target = data.durl;
+	count = target.length;
+	if (!count) {
+		alert("获取下载链接出错！");
+		return;
+	}
 	cid = playUrl.split("?cid=")[1].split("&")[0]; //"11090110"
 	$("#cid").html(cid);
 	var qualityArray = {
@@ -65,18 +68,19 @@ function parseData(data) {
 		80: "高清 1080P",
 		74: "高清 720P60",
 		64: "高清 720P",
+		48: "高清 720P",
 		32: "清晰 480P",
+		16: "流畅 360P",
 		15: "流畅 360P"
-	}
+	} //需要修改，不是一一对应
 	var quality = qualityArray[data.quality] || "未知";
 	$("#quality").html(quality);
-	var target = data.durl;
-	count = target.length;
+	$("tbody").eq(0).html("");
 	links = new Array();
 	for (var i in target) {
 		var part = target[i];
 		links.push(part.url);
-		$("tbody").append("<tr>\
+		$("tbody").eq(0).append("<tr>\
 			<td>" + part.order + "</td>\
 			<td>" + part.length + "</td>\
 			<td>" + part.size + "</td>\
@@ -89,15 +93,60 @@ function parseData(data) {
 			</td>\
 		</tr>");
 	}
+	$("#nav").show();
+	$(".info").eq(0).fadeIn();
+
+	if (videoUrl.split("/av")[1]) {
+		aid = videoUrl.split("/av")[1].split("/")[0];
+		getInfo();
+	}
+	else {
+		$.ajax(videoUrl, {
+			type: "get",
+			dataType: "text",
+			error: function(xhr, status, error) {
+				alert("获取视频aid出错！");
+			},
+			success: function(data, status, xhr) {
+				aid = data.split("//www.bilibili.com/video/av")[1].split("/")[0];
+				getInfo();
+			}
+		});
+	}
+}
+
+function getInfo() {
+
+	$.ajax("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid, {
+		type: "get",
+		dataType: "text",
+		error: function(xhr, status, error) {
+			alert("获取视频信息出错！");
+		},
+		success: function(data, status, xhr) {
+			//console.log(data);
+			data = JSON.parse(data);
+			$("tbody").eq(1).html("");
+			for (var i in data) {
+				if (data[i] && data[i].toString().indexOf("https://") == 0) {
+					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
+				}
+				$("tbody").eq(1).append("<tr>\
+				<td>" + i + "</td>\
+				<td>" + data[i] + "</td>\
+				</tr>");
+			}
+		}
+	});
 }
 
 function download(data) {
 	if (isDownloading) return;
 	isDownloading = true;
 	var functionArray = new Array();
-	$(".download").show().html("");
+	$("#download").show().html("");
 	for (var i = 0; i < count; i++) {
-		$(".download").append('<div class="progress progress-striped">\
+		$("#download").append('<div class="progress progress-striped active">\
 		<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
 			<span class="progress-value">0%</span>\
 		</div>\
@@ -120,7 +169,7 @@ function downloadLink(i) {
 		headers: {
 			"Range": "bytes=0-",
 			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15",
-			"Referer": referer,
+			"Referer": videoUrl,
 		}
 	}
 	console.log(cid, file, options.url);

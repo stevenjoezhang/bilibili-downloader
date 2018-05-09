@@ -8,10 +8,17 @@
 	.checkbox {
 		margin: 0px auto !important;
 	}
-	.info, .download {
+	.info, #download, #nav {
 		display: none;
 		margin-top: 20px;
 	}
+	img {
+		max-width: 80%;
+	}/*
+	table {
+		word-break: break-all;
+		word-wrap: break-all;
+	}*/
 </style>
 </head>
 <body>
@@ -40,6 +47,11 @@
 		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
+	
+	<ul class="nav nav-tabs row" id="nav">
+		<li role="presentation" class="active" onclick="changeMenu(0)"><a>下载地址</a></li>
+		<li role="presentation" onclick="changeMenu(1)"><a>视频信息</a></li>
+	</ul>
 
 	<div class="info">
 		<div class="row">
@@ -83,15 +95,29 @@
 			<button class="btn btn-default" onclick="selectReverse()">反选</button>
 			<button class="btn btn-danger" onclick="selectNone()">全不选</button>
 		</div>
+
+		<div class="row" id="download">
+		</div>
 	</div>
 
-	<div class="download">
-		
+	<div class="info">
+		<div class="row">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Key</th>
+						<th>Value</th>	
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 
 <script src="cdn/jquery-3.2.1.min.js"></script>
-<script>if (typeof module === "object") {window.jQuery = window.$ = module.exports;};</script>
+<script>if (typeof module === "object") { window.jQuery = window.$ = module.exports; }</script>
 <script src="ass.js"></script>
 <script src="panel.js"></script>
 <script>
@@ -102,10 +128,16 @@ window.addEventListener("beforeunload", e => {
 	}
 });
 function help() {
-	alert("Hello, world!");
+	alert("请填写视频地址（视频播放界面的url）以及PlayUrl（使用html5播放器，查看浏览器的XHR请求中名称为playurl的项的地址），然后点击“获取下载链接”进行下一步。");
 }
 function about() {
-	alert("Mimi Downloader Ver 1.0.1\nWe are using Node.js" + process.versions.node + ", Chromium" + process.versions.chrome + ", and Electron" + process.versions.electron + ". Powered by Mimi.");
+	alert("Mimi Downloader Ver 1.0.1\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
+}
+function changeMenu(index) {
+	$(".info").eq(!index).hide();
+	$(".info").eq(index).fadeIn();
+	$("li").eq(index).addClass("active");
+	$("li").eq(!index).removeClass("active");
 }
 function selectAll() {
 	$('input[type="checkbox"]').prop("checked", true);
