@@ -61,7 +61,7 @@ function parseData(data) {
 		alert("获取下载链接出错！");
 		return;
 	}
-	cid = playUrl.split("?cid=")[1].split("&")[0]; //"11090110"
+	cid = playUrl.split("?cid=")[1].split("&")[0];
 	$("#cid").html(cid);
 	var qualityArray = {
 		112: "高清 1080P+",
@@ -94,7 +94,7 @@ function parseData(data) {
 		</tr>");
 	}
 	$("#nav").show();
-	$(".info").eq(0).fadeIn();
+	if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
 
 	if (videoUrl.split("/av")[1]) {
 		aid = videoUrl.split("/av")[1].split("/")[0];
@@ -128,7 +128,7 @@ function getInfo() {
 			data = JSON.parse(data);
 			$("tbody").eq(1).html("");
 			for (var i in data) {
-				if (data[i] && data[i].toString().indexOf("https://") == 0) {
+				if (data[i] && data[i].toString().indexOf(".jpg") != -1) {
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
 				$("tbody").eq(1).append("<tr>\
@@ -214,7 +214,6 @@ function ass() {
 
 function gotFile(name, content) {
 	var danmaku = parseFile(content);
-	//console.log(danmaku);
 	var ass = generateASS(setPosition(danmaku), {
 		"title": document.title,
 		"ori": name,

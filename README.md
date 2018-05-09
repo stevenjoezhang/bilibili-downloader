@@ -17,7 +17,9 @@ npm install
 # Run the app
 npm start
 ```
-If everythin's OK, you'll see a new window named "Mimi Downloader". Input the playurl and follow the guide to downloads files.
+If everythin's OK, you'll see a new window named "Mimi Downloader". Input the videourl and playurl, then follow the guide to download files.
+
+![demo-video](help.png)
 
 Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
 
