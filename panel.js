@@ -1,6 +1,6 @@
-const electron = require("electron").remote;
-const ipcRenderer = require("electron").ipcRenderer;
-const BrowserWindow = electron.BrowserWindow;
+//const electron = require("electron").remote;
+//const ipcRenderer = require("electron").ipcRenderer;
+//const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const url = require("url");
 const https = require("https");
@@ -9,7 +9,7 @@ const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
 
-var referer, playUrl, downloadPath, count, links, isDownloading = false;
+var referer, playUrl, downloadPath, count, links, cid, isDownloading = false;
 
 function getVideoUrl() {
 	var videoUrl = $("#videoUrl").val();// || "https://www.bilibili.com/bangumi/play/ep90832";
@@ -48,16 +48,26 @@ function getData() {
 		});
 		res.on("end", function() {
 			data = JSON.parse(html);
-			$(".info").slideDown();
-			show(data);
+			parseData(data);
 		});
 	}).on("error", function() {
 		alert("获取数据出错！");
 	});
 }
 
-function show(data) {
+function parseData(data) {
+	$(".info").slideDown();
 	$("tbody").html("");
+	cid = playUrl.split("?cid=")[1].split("&")[0]; //"11090110"
+	$("#cid").html(cid);
+	var qualityArray = {
+		112: '高清 1080P+',
+		80: '高清 1080P',
+		64: '高清 720P',
+		32: '清晰 480P',
+		15: '流畅 360P'
+	}
+	$("#quality").html(qualityArray[data.quality]);
 	var target = data.durl;
 	count = target.length;
 	links = new Array();
@@ -87,24 +97,23 @@ function download(data) {
 	$(".download").show().html("");
 	for (var i = 0; i < count; i++) {
 		$(".download").append('<div class="progress progress-striped">\
-	    <div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
-	        <span class="progress-value">0%</span>\
-	    </div>\
+		<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
+			<span class="progress-value">0%</span>\
+		</div>\
 	</div>');
 		if ($('input[type="checkbox"]').eq(i).prop("checked")) functionArray.push(function(num) {
 			downloadLink(num);
 		}(i));
 	}
 	async.parallel(functionArray, function (err, results) {
-        //do nothing
-    });
+		console.log(err);
+	});
 }
 
 function downloadLink(i) {
-	var cid = playUrl.split("?cid=")[1].split("&")[0]; //"11090110"
 	var file = path.join(downloadPath, cid + "-" + i + ".flv");
-	var options = {  
-		url: links[i],  
+	var options = {
+		url: links[i],
 		encoding: null, //当请求的是二进制文件时，一定要设置
 		headers: {
 			"Range": "bytes=0-",
@@ -114,21 +123,82 @@ function downloadLink(i) {
 	}
 	console.log(cid, file, options.url);
 	var downloads = fs.createWriteStream(file);
-	request.get(options).on("response", function (response) { //显示进度条  
-		//console.log(response);  
-		var proStream = progress({  
-			length: response.headers["content-length"],  
+	request.get(options).on("response", function (response) {
+		//https://blog.csdn.net/zhu_06/article/details/79772229
+		var proStream = progress({
+			length: response.headers["content-length"],
 			time: 500 // ms
-		});  
-		  
-		proStream.on("progress", function(progress) {  
-			var percentage = progress.percentage;
-			$(".progress-value").eq(i).html(Math.round(percentage) + "%");  
+		});
+		
+		proStream.on("progress", function(progress) {
+			var percentage = progress.percentage; //显示进度条
+			$(".progress-value").eq(i).html(Math.round(percentage) + "%");
 			$(".progress-bar").eq(i).css("width", percentage + "%");
 			if (percentage >= 99) $(".progress-bar").eq(i).removeClass("progress-bar-info").addClass("progress-bar-success");
-		});  
+		});
 		request.get(options).pipe(proStream).pipe(downloads).on("error", function(e) {
   			console.error(e);
-		}); //先pipe到proStream再pipe到文件的写入流中  
+		}); //先pipe到proStream再pipe到文件的写入流中
 	}) 
+}
+
+function xml() {
+	var url = "https://comment.bilibili.com/" + cid + ".xml";
+	var saveas = document.createElement("a");
+	saveas.href = url;
+	saveas.style.display = "none";
+	document.body.appendChild(saveas);
+	saveas.download = cid + ".xml";
+	saveas.click();
+	setTimeout(function() {
+		saveas.parentNode.removeChild(saveas);
+	}, 1000);
+}
+
+function ass() {
+	//使用ajax是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
+	$.ajax("https://comment.bilibili.com/" + cid + ".xml", {
+		type: "get",
+		dataType: "text", //避免ajax解析为xml造成问题
+		error: function(xhr, status, error) {
+			alert("弹幕下载失败！");
+		},
+		success: function(data, status, xhr) {
+			gotFile(cid, data);
+		}
+	});
+}
+
+function gotFile(name, content) {
+	var danmaku = parseFile(content);
+	console.log(danmaku);
+	var ass = generateASS(setPosition(danmaku), {
+		"title": document.title,
+		"ori": name,
+	});
+	blobDownload(ass, name.replace(/\.[^.]*$/, "") + ".ass"); //"\ufeff" + 
+}
+
+function parseFile(content) {
+    content = content.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
+    return parseXML(content);
+}
+
+function blobDownload(data, filename) {
+	var blob = new Blob([data], {
+		type: "application/octet-stream"
+	});
+	var url = window.URL.createObjectURL(blob);
+	var saveas = document.createElement("a");
+	saveas.href = url;
+	saveas.style.display = "none";
+	document.body.appendChild(saveas);
+	saveas.download = filename;
+	saveas.click();
+	setTimeout(function() {
+		saveas.parentNode.removeChild(saveas);
+	}, 1000);
+	document.addEventListener("unload", function() {
+		window.URL.revokeObjectURL(url);
+	});
 }

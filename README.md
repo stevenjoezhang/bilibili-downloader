@@ -3,6 +3,9 @@
 A Bilibili video downloader based on Node.js and Electron.  
 You may need to install some dependency packages using npm.
 
+## Features
+Download Video (.flv) and Danmaku files (.xml or .ass).
+
 ## To Use
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 ```bash
@@ -19,10 +22,8 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 ## Credits
 * [Mimi](http://zsq.im) Developer of this project.
+* 田生 [XML to ASS Library](https://github.com/tiansh/us-danmaku) and bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
 
 ## License
 Released under the GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
-
-## To do
-Download danmaku files (.xml or .ass).
