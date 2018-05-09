@@ -61,13 +61,15 @@ function parseData(data) {
 	cid = playUrl.split("?cid=")[1].split("&")[0]; //"11090110"
 	$("#cid").html(cid);
 	var qualityArray = {
-		112: '高清 1080P+',
-		80: '高清 1080P',
-		64: '高清 720P',
-		32: '清晰 480P',
-		15: '流畅 360P'
+		112: "高清 1080P+",
+		80: "高清 1080P",
+		74: "高清 720P60",
+		64: "高清 720P",
+		32: "清晰 480P",
+		15: "流畅 360P"
 	}
-	$("#quality").html(qualityArray[data.quality]);
+	var quality = qualityArray[data.quality] || "未知";
+	$("#quality").html(quality);
 	var target = data.durl;
 	count = target.length;
 	links = new Array();
@@ -172,8 +174,8 @@ function gotFile(name, content) {
 }
 
 function parseFile(content) {
-    content = content.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
-    return parseXML(content);
+	content = content.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
+	return parseXML(content);
 }
 
 function assDownload(data, filename) {
