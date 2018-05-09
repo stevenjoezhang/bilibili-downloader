@@ -124,7 +124,7 @@
 window.addEventListener("beforeunload", e => {
 	if (isDownloading) {
 		e.returnValue = false;
-		alert("下载时无法退出，请先结束任务");
+		alert("下载时无法退出，请先结束任务！");
 	}
 });
 function help() {

@@ -1,22 +1,14 @@
-// ==UserScript==
 // @name        bilibili ASS Danmaku Downloader
 // @namespace   https://github.com/tiansh
 // @description 以 ASS 格式下载 bilibili 的弹幕
-// @include     http://www.bilibili.com/video/av*
-// @include     http://bangumi.bilibili.com/movie/*
 // @updateURL   https://tiansh.github.io/us-danmaku/bilibili/bilibili_ASS_Danmaku_Downloader.meta.js
 // @downloadURL https://tiansh.github.io/us-danmaku/bilibili/bilibili_ASS_Danmaku_Downloader.user.js
 // @version     1.11
-// @grant       GM_addStyle
-// @grant       GM_xmlhttpRequest
-// @run-at      document-start
 // @author      田生
 // @copyright   2014+, 田生
 // @license     Mozilla Public License 2.0; http://www.mozilla.org/MPL/2.0/
 // @license     CC Attribution-ShareAlike 4.0 International; http://creativecommons.org/licenses/by-sa/4.0/
-// @connect-src comment.bilibili.com
-// @connect-src interface.bilibili.com
-// ==/UserScript==
+// 注意：此文件删去了部分内容，无法再作为浏览器插件。参见 https://github.com/stevenjoezhang/mimi-downloader
 
 /*
  * Common

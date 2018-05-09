@@ -6,7 +6,7 @@ const progress = require("progress-stream");
 const async = require("async");
 
 var videoUrl, playUrl, count, links, cid, isDownloading = false;
-var debug = false;
+var debug = !true;
 
 function getVideoUrl() {
 	var videoUrl = $("#videoUrl").val();
@@ -45,7 +45,7 @@ function getData() {
 		type: "get",
 		dataType: "text",
 		error: function(xhr, status, error) {
-			alert("获取playUrl出错！");
+			alert("获取PlayUrl出错！");
 		},
 		success: function(data, status, xhr) {
 			data = JSON.parse(data);

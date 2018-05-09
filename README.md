@@ -1,7 +1,6 @@
 # Mimi Downloader
 
-A Bilibili video downloader based on Node.js and Electron.  
-You may need to install some dependency packages using npm.
+A Bilibili video downloader based on Node.js and Electron.
 
 ## Features
 Download Video (.flv) and Danmaku files (.xml or .ass).
@@ -18,7 +17,7 @@ npm install
 # Run the app
 npm start
 ```
-Then input the playurl to downloads files.
+If everythin's OK, you'll see a new window named "Mimi Downloader". Input the playurl and follow the guide to downloads files.
 
 Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
 
@@ -31,4 +30,5 @@ Released under the GNU General Public License v3
 http://www.gnu.org/licenses/gpl-3.0.html
 
 ## To Do
-Start/pause Download.
+Start/pause Download.  
+Combine videos.
