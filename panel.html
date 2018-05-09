@@ -8,8 +8,11 @@
 	.checkbox {
 		margin: 0px auto !important;
 	}
-	.info, #download, #nav {
+	.info, #nav {
 		display: none;
+		margin-top: 20px;
+	}
+	#download {
 		margin-top: 20px;
 	}
 	img {
@@ -122,7 +125,7 @@
 <script src="panel.js"></script>
 <script>
 window.addEventListener("beforeunload", e => {
-	if (isDownloading) {
+	if (downloadArray.length) {
 		e.returnValue = false;
 		alert("下载时无法退出，请先结束任务！");
 	}

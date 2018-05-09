@@ -24,7 +24,7 @@ If everythin's OK, you'll see a new window named "Mimi Downloader". Input the vi
 You can combine flv video parts using ffmpeg:
 ```
 cid=11090110
-for f in $cid-*.flv; do echo "file '$f'" >> temp.txt; done
+for f in $cid-*.flv; do echo "file '$f'" > temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 ```
 Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.

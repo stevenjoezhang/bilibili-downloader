@@ -5,7 +5,7 @@ const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
 
-var videoUrl, playUrl, count, links, cid, isDownloading = false;
+var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0;
 var debug = !true;
 
 function getVideoUrl() {
@@ -116,7 +116,6 @@ function parseData(data) {
 }
 
 function getInfo() {
-
 	$.ajax("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid, {
 		type: "get",
 		dataType: "text",
@@ -141,56 +140,68 @@ function getInfo() {
 }
 
 function download(data) {
-	if (isDownloading) return;
-	isDownloading = true;
 	var functionArray = new Array();
-	$("#download").show().html("");
+	//$("#download").html("");
 	for (var i = 0; i < count; i++) {
-		$("#download").append('<div class="progress progress-striped active">\
-		<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
-			<span class="progress-value">0%</span>\
-		</div>\
-	</div>');
-		if ($('input[type="checkbox"]').eq(i).prop("checked")) functionArray.push(function(num) {
-			downloadLink(num);
-		}(i));
+		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
+			if (downloadArray.indexOf(links[i]) != -1) continue;
+			$("#download").append('<span>' + cid + "-" + i + '</span>\
+			<div class="progress progress-striped active">\
+				<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
+					<span class="progress-value">0%</span>\
+				</div>\
+		</div>');
+			let _i = i;
+			let _j = downloadIndex; //必须使用let或const
+			downloadIndex++;
+			downloadArray.push(links[i]);
+			functionArray.push(function(callback) {
+				downloadLink(_i, _j);
+				//callback(null, j + " Done");
+			});
+		} //由于js执行机制，此处不能直接传值
 	}
-	async.parallel(functionArray, function (err, results) {
-		console.log(err);
+	async.parallel(functionArray, function(err, results) {
+		if (err) console.log(err);
 	});
 }
 
-function downloadLink(i) {
+function downloadLink(i, j) { //避免提前结束
 	var downloadPath = $("#downloadPath").val() || "";
-	var file = path.join(downloadPath, cid + "-" + i + ".flv");
+	var filename;
+	if (count > 10 && i <= 9) filename = cid + "-0" + i + ".flv"
+	else filename = cid + "-" + i + ".flv";
+	var file = path.join(downloadPath, filename);
 	var options = {
 		url: links[i],
 		encoding: null, //当请求的是二进制文件时，一定要设置
 		headers: {
 			"Range": "bytes=0-",
 			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15",
-			"Referer": videoUrl,
+			"Referer": videoUrl
 		}
 	}
-	console.log(cid, file, options.url);
+	//console.log(cid, file, options.url);
 	var downloads = fs.createWriteStream(file);
-	request.get(options).on("response", function (response) {
+	request.get(options).on("response", function(response) {
 		//https://blog.csdn.net/zhu_06/article/details/79772229
 		var proStream = progress({
 			length: response.headers["content-length"],
-			time: 500 // ms
+			time: 500 //单位ms
 		});
-		
 		proStream.on("progress", function(progress) {
 			var percentage = progress.percentage; //显示进度条
-			$(".progress-value").eq(i).html(Math.round(percentage) + "%");
-			$(".progress-bar").eq(i).css("width", percentage + "%");
-			if (percentage >= 99) $(".progress-bar").eq(i).removeClass("progress-bar-info").addClass("progress-bar-success");
+			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
+			$(".progress-bar").eq(j).css("width", percentage + "%");
+			if (percentage == 100) {
+				$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
+				downloadArray.splice(downloadArray.indexOf(links[i]), 1);
+			}
 		});
 		request.get(options).pipe(proStream).pipe(downloads).on("error", function(e) {
   			console.error(e);
 		}); //先pipe到proStream再pipe到文件的写入流中
-	}) 
+	});
 }
 
 function xml() {
