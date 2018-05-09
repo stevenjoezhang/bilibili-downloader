@@ -37,6 +37,7 @@
 
 	<div class="row">
 		<button class="btn btn-success" onclick="getData()">获取下载链接</button>
+		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
 
@@ -99,9 +100,12 @@ window.addEventListener("beforeunload", e => {
 		e.returnValue = false;
 		alert("下载时无法退出，请先结束任务");
 	}
-})
+});
+function help() {
+	alert("Hello, world!");
+}
 function about() {
-	alert("Mimi Downloader")
+	alert("Mimi Downloader");
 }
 function selectAll() {
 	$('input[type="checkbox"]').prop("checked", true);
