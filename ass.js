@@ -24,24 +24,24 @@
 
 // 设置项
 var config = {
-	'playResX': 560,					 // 屏幕分辨率宽（像素）
-	'playResY': 420,					 // 屏幕分辨率高（像素）
-	'fontlist': [							// 字形（会自动选择最前面一个可用的）
+	'playResX': 560,          // 屏幕分辨率宽（像素）
+	'playResY': 420,          // 屏幕分辨率高（像素）
+	'fontlist': [             // 字形（会自动选择最前面一个可用的）
 		'Microsoft YaHei UI',
 		'Microsoft YaHei',
 		'文泉驿正黑',
 		'STHeitiSC',
 		'黑体',
 	],
-	'font_size': 1.0,					// 字号（比例）
-	'r2ltime': 8,							// 右到左弹幕持续时间（秒）
-	'fixtime': 4,							// 固定弹幕持续时间（秒）
-	'opacity': 0.6,						// 不透明度（比例）
-	'space': 0,								// 弹幕间隔的最小水平距离（像素）
-	'max_delay': 6,						// 最多允许延迟几秒出现弹幕
-	'bottom': 50,							// 底端给字幕保留的空间（像素）
-	'use_canvas': null,				// 是否使用canvas计算文本宽度（布尔值，Linux下的火狐默认否，其他默认是，Firefox bug #561361）
-	'debug': false,						// 打印调试信息
+	'font_size': 1.0,         // 字号（比例）
+	'r2ltime': 8,             // 右到左弹幕持续时间（秒）
+	'fixtime': 4,             // 固定弹幕持续时间（秒）
+	'opacity': 0.6,           // 不透明度（比例）
+	'space': 0,               // 弹幕间隔的最小水平距离（像素）
+	'max_delay': 6,           // 最多允许延迟几秒出现弹幕
+	'bottom': 50,             // 底端给字幕保留的空间（像素）
+	'use_canvas': null,       // 是否使用canvas计算文本宽度（布尔值，Linux下的火狐默认否，其他默认是，Firefox bug #561361）
+	'debug': false,           // 打印调试信息
 };
 
 var debug = config.debug ? console.log.bind(console) : function() { };
@@ -338,16 +338,16 @@ var normalDanmaku = (function(wc, hc, b, u, maxr) {
 				var tal = t0l;
 				// 这些块的左边缘总是这个区域里面最大的边缘
 				used.forEach(function(j) {
-					if (j.p >= m) return;
-					if (j.m <= p) return;
-					if (j.b && b) return;
-					tas = Math.max(tas, j.tf);
-					tal = Math.max(tal, j.td);
+if (j.p >= m) return;
+if (j.m <= p) return;
+if (j.b && b) return;
+tas = Math.max(tas, j.tf);
+tal = Math.max(tal, j.td);
 				});
 				// 最后作为一种备选留下来
 				suggestion.push({
-					'p': p,
-					'r': Math.max(tas - t0s, tal - t0l),
+'p': p,
+'r': Math.max(tas - t0s, tal - t0l),
 				});
 			});
 			// 根据高度排序
@@ -469,32 +469,32 @@ var setPosition = function(danmaku) {
 			var width = calcWidth(line.text, font_size);
 			switch (line.mode) {
 				case 'R2L': return (function() {
-					var pos = normal(line.time, width, font_size, line.bottom);
-					if (!pos) return null;
-					line.type = 'R2L';
-					line.stime = pos.time;
-					line.poss = {
-						'x': config.playResX + width / 2,
-						'y': pos.top + font_size,
-					};
-					line.posd = {
-						'x': -width / 2,
-						'y': pos.top + font_size,
-					};
-					line.dtime = config.r2ltime + line.stime;
-					return line;
+var pos = normal(line.time, width, font_size, line.bottom);
+if (!pos) return null;
+line.type = 'R2L';
+line.stime = pos.time;
+line.poss = {
+	'x': config.playResX + width / 2,
+	'y': pos.top + font_size,
+};
+line.posd = {
+	'x': -width / 2,
+	'y': pos.top + font_size,
+};
+line.dtime = config.r2ltime + line.stime;
+return line;
 				}());
 				case 'TOP': case 'BOTTOM': return (function(isTop) {
-					var pos = side(line.time, font_size, isTop, line.bottom);
-					if (!pos) return null;
-					line.type = 'Fix';
-					line.stime = pos.time;
-					line.posd = line.poss = {
-						'x': Math.round(config.playResX / 2),
-						'y': pos.top + font_size,
-					};
-					line.dtime = config.fixtime + line.stime;
-					return line;
+var pos = side(line.time, font_size, isTop, line.bottom);
+if (!pos) return null;
+line.type = 'Fix';
+line.stime = pos.time;
+line.posd = line.poss = {
+	'x': Math.round(config.playResX / 2),
+	'y': pos.top + font_size,
+};
+line.dtime = config.fixtime + line.stime;
+return line;
 				}(line.mode === 'TOP'));
 				default: return null;
 			};
@@ -624,8 +624,8 @@ var initButton = (function() {
 			fetchDanmaku(cid, function(danmaku) {
 				showButton(danmaku.length);
 				document.querySelector('#assdown').addEventListener('click', function(e) {
-					e.preventDefault();
-					mina(cid);
+e.preventDefault();
+mina(cid);
 				});
 			});
 		});
