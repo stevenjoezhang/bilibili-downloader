@@ -175,7 +175,6 @@ function parseData(data) {
 	}
 	$("#nav").show();
 	if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
-	$("#downloadPath").val(__dirname);
 }
 
 function openDialog() {

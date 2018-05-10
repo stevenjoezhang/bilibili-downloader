@@ -153,11 +153,15 @@ window.addEventListener("beforeunload", e => {
 		alert("[Error]下载时无法退出，请先结束任务！");
 	}
 });
+
 $("button").each(function() {
     $(this).get(0).addEventListener("click", function() {
     	this.blur();
     });
- });
+});
+
+$("#downloadPath").val(__dirname);
+
 function help() {
 	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
 }
