@@ -4,6 +4,8 @@ const fs = require("fs");
 const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
+const electron = require("electron");
+const { dialog } = electron.remote;
 
 var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0;
 var debug = !true;
@@ -137,6 +139,21 @@ function getInfo() {
 			}
 		}
 	});
+}
+
+function openDialog() {
+	var defaultpath = $("#downloadPath").val() || __dirname;
+    dialog.showOpenDialog({
+        defaultPath: defaultpath,
+        properties: [
+            "openDirectory", //打开路径
+        ],
+        filters: [
+            //{ name: 'zby', extensions: ['json'] },
+        ]
+    }, function(res) {
+        $("#downloadPath").val(res[0]);
+    });
 }
 
 function download(data) {
