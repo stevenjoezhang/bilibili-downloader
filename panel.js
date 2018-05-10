@@ -17,7 +17,7 @@ function getVideoUrl() {
 		if (videoUrl.indexOf("http://") == 0) videoUrl = videoUrl.replace("http://", "https://");
 		else if (videoUrl.indexOf("bilibili") != -1) videoUrl = "https://" + videoUrl;
 		else {
-			alert("无效的视频链接！");
+			alert("[Error]无效的视频链接！");
 			$("#videoUrl").parent().addClass("has-error has-feedback");
 			return null;
 		}
@@ -33,13 +33,13 @@ function getPlayUrl() {
 		if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
 		else if (playUrl.indexOf("bilibili") != -1) playUrl = "https://" + playUrl;
 		else {
-			alert("无效的PlayUrl！");
+			alert("[Error]无效的PlayUrl！");
 			$("#playUrl").parent().addClass("has-error has-feedback");
 			return null;
 		}
 	}
 	if (!playUrl.split("?cid=")[1]) {
-		alert("无效的PlayUrl！");
+		alert("[Error]无效的PlayUrl！");
 		$("#playUrl").parent().addClass("has-error has-feedback");
 		return null;
 	}
@@ -48,7 +48,7 @@ function getPlayUrl() {
 }
 
 function backupUrl() {
-	alert("获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
+	alert("[Error]获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
 	$("#backup-url").show();
 	$("#playUrl").parent().addClass("has-error has-feedback");
 	$("#nav, .info").hide();
@@ -69,7 +69,7 @@ function getAid() {
 			type: "get",
 			dataType: "text",
 			error: function(xhr, status, error) {
-				alert("获取视频aid出错！");
+				alert("[Error]获取视频aid出错！");
 			},
 			success: function(data, status, xhr) {
 				aid = data.split("//www.bilibili.com/video/av")[1].split("/")[0];
@@ -84,7 +84,7 @@ function getInfo() {
 		type: "get",
 		dataType: "text",
 		error: function(xhr, status, error) {
-			alert("获取视频信息出错！");
+			alert("[Error]获取视频信息出错！");
 		},
 		success: function(data, status, xhr) {
 			//console.log(data);
@@ -109,7 +109,7 @@ function getInfo() {
 				if (cid != playUrl.split("?cid=")[1].split("&")[0]) {
 					//backupUrl();
 					//return; //视频地址和PlayUrl不匹配时结束
-					alert("视频地址和PlayUrl不匹配，可能造成问题！");
+					alert("[Warning]视频地址和PlayUrl不匹配，可能造成问题！");
 					cid = playUrl.split("?cid=")[1].split("&")[0];
 				}
 				manual = false;
@@ -238,7 +238,7 @@ function downloadLink(i, j) {
 		url: links[i],
 		encoding: null, //当请求的是二进制文件时，一定要设置
 		headers: {
-			"Range": "bytes=0-",
+			"Range": "bytes=0-", //断点续传
 			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15",
 			"Referer": videoUrl
 		}

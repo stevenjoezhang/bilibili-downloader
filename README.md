@@ -17,8 +17,7 @@ npm install
 # Run the app
 npm start
 ```
-If everything's OK, you'll see a new window named "Mimi Downloader". Input the videourl, then follow the guide to download files.
-
+If everything's OK, you'll see a new window named "Mimi Downloader". Input the videourl, then follow the guide to download files.  
 If playurl is required, you can get it like this:
 
 ![demo-video](help.png)
@@ -40,5 +39,6 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 Released under the GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
 
-## To Do
-Start/Pause Download.
+## TODO List
+Start/Pause Download.  
+Resume broken downloads
