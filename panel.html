@@ -11,8 +11,11 @@
 	.mt20 {
 		margin-top: 20px;
 	}
-	.info, #nav, #backup-url {
+	.info, #nav, #backup-url, .glyphicon {
 		display: none;
+	}
+	.has-feedback .glyphicon {
+		display: block;
 	}
 	table img {
 		max-width: 80%;
@@ -23,7 +26,8 @@
 	}
 	.input-group-addon {
 		cursor: pointer;
-	}/*
+	}
+	/*
 	table {
 		word-break: break-all;
 		word-wrap: break-all;
@@ -36,18 +40,20 @@
 		<h1>Mimi Downloader</h1>
 		<p id="help">欢迎使用米米下载器，轻松下载视频、弹幕</p>
 	</div>
-	
+
 	<div class="row">
 		<div class="form-group">
-		视频链接
+			<label class="control-label">视频链接</label>
 			<input type="text" class="form-control" id="videoUrl"/>
+  			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
 	
 	<div class="row" id="backup-url">
 		<div class="form-group">
-		PlayUrl
+			<label class="control-label">PlayUrl</label>
 			<input type="text" class="form-control" id="playUrl"/>
+  			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
 
@@ -65,12 +71,13 @@
 	<div class="info mt20">
 		<div class="row">
 			<div class="form-group">
-			视频CID：
+				<label class="control-label">视频CID：</label>
 				<span id="cid"></span>
 			&nbsp;&nbsp;&nbsp;
-			清晰度：
+				<label class="control-label">清晰度：</label>
 				<span id="quality"></span>
-			&nbsp;&nbsp;&nbsp;下载弹幕：
+			&nbsp;&nbsp;&nbsp;
+				<label class="control-label">下载弹幕：</label>
 				<button class="btn btn-success" onclick="xml()">.xml</button>
 				<button class="btn btn-primary" onclick="ass()">.ass</button>
 			</div>
@@ -97,7 +104,7 @@
 	
 		<div class="row">
 			<div class="form-group mt20">
-			下载路径
+				<label class="control-label">下载路径</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="downloadPath"/>
 				  	<div class="input-group-addon" onclick="openDialog()">浏览</div>

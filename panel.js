@@ -17,12 +17,12 @@ function getVideoUrl() {
 		if (videoUrl.indexOf("http://") == 0) videoUrl = videoUrl.replace("http://", "https://");
 		else if (videoUrl.indexOf("bilibili") != -1) videoUrl = "https://" + videoUrl;
 		else {
-			alert("无效的视频地址！");
-			$("#videoUrl").parent().addClass("has-error");
+			alert("无效的视频链接！");
+			$("#videoUrl").parent().addClass("has-error has-feedback");
 			return null;
 		}
 	}
-	$("#videoUrl").parent().removeClass("has-error");
+	$("#videoUrl").parent().removeClass("has-error has-feedback");
 	return videoUrl;
 }
 
@@ -34,23 +34,23 @@ function getPlayUrl() {
 		else if (playUrl.indexOf("bilibili") != -1) playUrl = "https://" + playUrl;
 		else {
 			alert("无效的PlayUrl！");
-			$("#playUrl").parent().addClass("has-error");
+			$("#playUrl").parent().addClass("has-error has-feedback");
 			return null;
 		}
 	}
 	if (!playUrl.split("?cid=")[1]) {
 		alert("无效的PlayUrl！");
-		$("#playUrl").parent().addClass("has-error");
+		$("#playUrl").parent().addClass("has-error has-feedback");
 		return null;
 	}
-	$("#playUrl").parent().removeClass("has-error");
+	$("#playUrl").parent().removeClass("has-error has-feedback");
 	return playUrl;
 }
 
 function backupUrl() {
 	alert("获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
 	$("#backup-url").show();
-	$("#playUrl").parent().addClass("has-error");
+	$("#playUrl").parent().addClass("has-error has-feedback");
 	$("#nav, .info").hide();
 	manual = true;
 }
@@ -95,7 +95,7 @@ function getInfo() {
 					cid = data[i];
 					playUrl = "http://interface.bilibili.com/v2/playurl?appkey=84956560bc028eb7&otype=json&platform=bilihelper&type=flv&quality=80&qn=80&cid=" + cid;
 				}
-				if (data[i] && data[i].toString().indexOf("i2.hdslb.com") != -1) {
+				if (data[i] && data[i].toString().indexOf("hdslb.com") != -1) { //解析图片地址
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
 				$("tbody").eq(1).append("<tr>\
