@@ -93,7 +93,9 @@ function getInfo() {
 			for (var i in data) {
 				if (i == "cid") {
 					cid = data[i];
-					playUrl = "http://interface.bilibili.com/v2/playurl?appkey=84956560bc028eb7&otype=json&platform=bilihelper&type=flv&quality=80&qn=80&cid=" + cid;
+					var params = "appkey=84956560bc028eb7&cid=" + cid + "&otype=json&qn=112&quality=112&type=";
+					var sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
+					playurl = "http://interface.bilibili.com/v2/playurl?" + params + "&sign=" + sign;
 				}
 				if (data[i] && data[i].toString().indexOf("hdslb.com") != -1) { //解析图片地址
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
