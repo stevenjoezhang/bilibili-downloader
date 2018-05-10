@@ -27,6 +27,9 @@
 	.input-group-addon {
 		cursor: pointer;
 	}
+	.capitalize {
+		text-transform: capitalize; /*首字母大写*/
+	}
 	/*
 	table {
 		word-break: break-all;
@@ -147,11 +150,16 @@
 window.addEventListener("beforeunload", e => {
 	if (downloadArray.length) {
 		e.returnValue = false;
-		alert("下载时无法退出，请先结束任务！");
+		alert("[Error]下载时无法退出，请先结束任务！");
 	}
 });
+$("button").each(function() {
+    $(this).get(0).addEventListener("click", function() {
+    	this.blur();
+    });
+ });
 function help() {
-	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请使用html5播放器打开视频链接，查看浏览器的XHR请求中名称为playurl的项的地址，并填入输入框内。");
+	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
 }
 function about() {
 	alert("Mimi Downloader Ver 1.1.0\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");

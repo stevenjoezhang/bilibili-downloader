@@ -99,7 +99,7 @@ function getInfo() {
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
 				$("tbody").eq(1).append("<tr>\
-				<td>" + i + "</td>\
+				<td class=\"capitalize\">" + i + "</td>\
 				<td>" + data[i] + "</td>\
 				</tr>");
 			}
