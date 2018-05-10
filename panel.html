@@ -11,7 +11,7 @@
 	.mt20 {
 		margin-top: 20px;
 	}
-	.info, #nav {
+	.info, #nav, #backup-url {
 		display: none;
 	}
 	table img {
@@ -39,12 +39,12 @@
 	
 	<div class="row">
 		<div class="form-group">
-		视频地址
+		视频链接
 			<input type="text" class="form-control" id="videoUrl"/>
 		</div>
 	</div>
 	
-	<div class="row">
+	<div class="row" id="backup-url">
 		<div class="form-group">
 		PlayUrl
 			<input type="text" class="form-control" id="playUrl"/>
@@ -52,7 +52,7 @@
 	</div>
 
 	<div class="row">
-		<button class="btn btn-success" onclick="getData()">获取下载链接</button>
+		<button class="btn btn-success" onclick="getAid()">获取下载链接</button>
 		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
@@ -144,10 +144,10 @@ window.addEventListener("beforeunload", e => {
 	}
 });
 function help() {
-	alert("请填写视频地址（视频播放界面的url）以及PlayUrl（使用html5播放器，查看浏览器的XHR请求中名称为playurl的项的地址），然后点击“获取下载链接”进行下一步。");
+	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请使用html5播放器打开视频链接，查看浏览器的XHR请求中名称为playurl的项的地址，并填入输入框内。");
 }
 function about() {
-	alert("Mimi Downloader Ver 1.0.1\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
+	alert("Mimi Downloader Ver 1.1.0\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
 }
 function changeMenu(index) {
 	$(".info").eq(!index).hide();

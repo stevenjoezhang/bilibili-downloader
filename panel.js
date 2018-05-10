@@ -7,7 +7,7 @@ const async = require("async");
 const electron = require("electron");
 const { dialog, shell } = electron.remote;
 
-var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0;
+var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0, manual = false;
 var debug = !true;
 
 function getVideoUrl() {
@@ -38,22 +38,96 @@ function getPlayUrl() {
 			return null;
 		}
 	}
+	if (!playUrl.split("?cid=")[1]) {
+		alert("无效的PlayUrl！");
+		$("#playUrl").parent().addClass("has-error");
+		return null;
+	}
 	$("#playUrl").parent().removeClass("has-error");
 	return playUrl;
 }
 
-function getData() {
-	videoUrl = getVideoUrl();
-	playUrl = getPlayUrl();
-	if (!videoUrl || !playUrl) return;
+function backupUrl() {
+	alert("获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
+	$("#backup-url").show();
+	$("#playUrl").parent().addClass("has-error");
+	$("#nav, .info").hide();
+	manual = true;
+}
 
-	$.ajax(playUrl, {
+function getAid() {
+	videoUrl = getVideoUrl();
+	if (manual) playUrl = getPlayUrl();
+	if (!videoUrl || (manual && !playUrl)) return; // || !playUrl
+
+	if (videoUrl.split("/av")[1]) {
+		aid = videoUrl.split("/av")[1].split("/")[0];
+		getInfo();
+	}
+	else {
+		$.ajax(videoUrl, {
+			type: "get",
+			dataType: "text",
+			error: function(xhr, status, error) {
+				alert("获取视频aid出错！");
+			},
+			success: function(data, status, xhr) {
+				aid = data.split("//www.bilibili.com/video/av")[1].split("/")[0];
+				getInfo();
+			}
+		});
+	}
+}
+
+function getInfo() {
+	$.ajax("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid, {
 		type: "get",
 		dataType: "text",
 		error: function(xhr, status, error) {
-			alert("获取PlayUrl出错！");
+			alert("获取视频信息出错！");
 		},
 		success: function(data, status, xhr) {
+			//console.log(data);
+			data = JSON.parse(data);
+			$("tbody").eq(1).html("");
+			for (var i in data) {
+				if (i == "cid") {
+					cid = data[i];
+					playUrl = "http://interface.bilibili.com/v2/playurl?appkey=84956560bc028eb7&otype=json&platform=bilihelper&type=flv&quality=80&qn=80&cid=" + cid;
+				}
+				if (data[i] && data[i].toString().indexOf("i2.hdslb.com") != -1) {
+					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
+				}
+				$("tbody").eq(1).append("<tr>\
+				<td>" + i + "</td>\
+				<td>" + data[i] + "</td>\
+				</tr>");
+			}
+
+			if (manual) {
+				playUrl = getPlayUrl();
+				if (cid != playUrl.split("?cid=")[1].split("&")[0]) {
+					//backupUrl();
+					//return; //视频地址和PlayUrl不匹配时结束
+					alert("视频地址和PlayUrl不匹配，可能造成问题！");
+					cid = playUrl.split("?cid=")[1].split("&")[0];
+				}
+				manual = false;
+			}
+			getData(playUrl);
+		}
+	});
+}
+
+function getData(url) {
+	$.ajax(url, {
+		type: "get",
+		dataType: "text",
+		error: function(xhr, status, error) {
+			backupUrl();
+		},
+		success: function(data, status, xhr) {
+			//console.log(url, data);
 			data = JSON.parse(data);
 			parseData(data);
 		}
@@ -62,13 +136,13 @@ function getData() {
 
 function parseData(data) {
 	var target = data.durl;
-	count = target.length;
-	if (!count) {
-		alert("获取下载链接出错！");
+	if (!target) {
+		backupUrl();
 		return;
 	}
-	cid = playUrl.split("?cid=")[1].split("&")[0];
+	$("#backup-url").hide();
 	$("#cid").html(cid);
+	count = target.length;
 	var qualityArray = {
 		112: "高清 1080P+",
 		80: "高清 1080P",
@@ -102,48 +176,6 @@ function parseData(data) {
 	$("#nav").show();
 	if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
 	$("#downloadPath").val(__dirname);
-
-	if (videoUrl.split("/av")[1]) {
-		aid = videoUrl.split("/av")[1].split("/")[0];
-		getInfo();
-	}
-	else {
-		$.ajax(videoUrl, {
-			type: "get",
-			dataType: "text",
-			error: function(xhr, status, error) {
-				alert("获取视频aid出错！");
-			},
-			success: function(data, status, xhr) {
-				aid = data.split("//www.bilibili.com/video/av")[1].split("/")[0];
-				getInfo();
-			}
-		});
-	}
-}
-
-function getInfo() {
-	$.ajax("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid, {
-		type: "get",
-		dataType: "text",
-		error: function(xhr, status, error) {
-			alert("获取视频信息出错！");
-		},
-		success: function(data, status, xhr) {
-			//console.log(data);
-			data = JSON.parse(data);
-			$("tbody").eq(1).html("");
-			for (var i in data) {
-				if (data[i] && data[i].toString().indexOf(".jpg") != -1) {
-					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
-				}
-				$("tbody").eq(1).append("<tr>\
-				<td>" + i + "</td>\
-				<td>" + data[i] + "</td>\
-				</tr>");
-			}
-		}
-	});
 }
 
 function openDialog() {
