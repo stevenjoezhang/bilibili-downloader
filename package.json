@@ -14,9 +14,10 @@
   "author": "Mimi",
   "license": "GPL3.0",
   "devDependencies": {
-    "electron": "1.8.4"
+    "electron": "1.8.4",
+    "async": "^2.6.0",
+    "request": "",
+    "progress": ""
   },
-  "dependencies": {
-    "async": "^2.6.0"
-  }
+  "dependencies": {}
 }
