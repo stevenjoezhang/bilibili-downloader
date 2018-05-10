@@ -5,7 +5,7 @@ const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
 const electron = require("electron");
-const { dialog } = electron.remote;
+const { dialog, shell } = electron.remote;
 
 var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0;
 var debug = !true;
@@ -18,9 +18,11 @@ function getVideoUrl() {
 		else if (videoUrl.indexOf("bilibili") != -1) videoUrl = "https://" + videoUrl;
 		else {
 			alert("无效的视频地址！");
+			$("#videoUrl").parent().addClass("has-error");
 			return null;
 		}
 	}
+	$("#videoUrl").parent().removeClass("has-error");
 	return videoUrl;
 }
 
@@ -32,9 +34,11 @@ function getPlayUrl() {
 		else if (playUrl.indexOf("bilibili") != -1) playUrl = "https://" + playUrl;
 		else {
 			alert("无效的PlayUrl！");
+			$("#playUrl").parent().addClass("has-error");
 			return null;
 		}
 	}
+	$("#playUrl").parent().removeClass("has-error");
 	return playUrl;
 }
 
@@ -97,6 +101,7 @@ function parseData(data) {
 	}
 	$("#nav").show();
 	if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
+	$("#downloadPath").val(__dirname);
 
 	if (videoUrl.split("/av")[1]) {
 		aid = videoUrl.split("/av")[1].split("/")[0];
@@ -152,7 +157,7 @@ function openDialog() {
             //{ name: 'zby', extensions: ['json'] },
         ]
     }, function(res) {
-        $("#downloadPath").val(res[0]);
+        if (res[0]) $("#downloadPath").val(res[0]);
     });
 }
 
@@ -185,6 +190,10 @@ function download(data) {
 	async.parallel(functionArray, function(err, results) {
 		if (err) console.log(err);
 	});
+}
+
+function openPath() {
+	shell.openItem($("#downloadPath").val());
 }
 
 function downloadLink(i, j) {
