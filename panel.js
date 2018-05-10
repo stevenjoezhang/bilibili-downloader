@@ -280,7 +280,7 @@ function ass() {
 		type: "get",
 		dataType: "text", //避免ajax解析为xml造成问题
 		error: function(xhr, status, error) {
-			alert("弹幕下载失败！");
+			alert("[Error]弹幕下载失败！");
 		},
 		success: function(data, status, xhr) {
 			gotFile(cid, data);
@@ -294,7 +294,7 @@ function gotFile(name, content) {
 		"title": document.title,
 		"ori": name,
 	});
-	assDownload(ass, name.replace(/\.[^.]*$/, "") + ".ass"); //"\ufeff" + 
+	assDownload(ass, name + ".ass"); //"\ufeff" + 
 }
 
 function parseFile(content) {
