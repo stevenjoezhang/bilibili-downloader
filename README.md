@@ -17,13 +17,14 @@ npm install
 # Run the app
 npm start
 ```
-If everythin's OK, you'll see a new window named "Mimi Downloader". Input the videourl and playurl, then follow the guide to download files.
+If everything's OK, you'll see a new window named "Mimi Downloader". Input the videourl and playurl, then follow the guide to download files.
 
 ![demo-video](help.png)
 
 You can combine flv video parts using ffmpeg:
-```
+```bash
 cid=11090110
+# Replace 11090110 with your video's cid
 for f in $cid-*.flv; do echo "file '$f'" > temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 ```
@@ -38,4 +39,4 @@ Released under the GNU General Public License v3
 http://www.gnu.org/licenses/gpl-3.0.html
 
 ## To Do
-Start/pause Download.
+Start/Pause Download.
