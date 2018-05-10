@@ -58,7 +58,7 @@ function backupUrl() {
 function getAid() {
 	videoUrl = getVideoUrl();
 	if (manual) playUrl = getPlayUrl();
-	if (!videoUrl || (manual && !playUrl)) return; // || !playUrl
+	if (!videoUrl || (manual && !playUrl)) return;
 
 	if (videoUrl.split("/av")[1]) {
 		aid = videoUrl.split("/av")[1].split("/")[0];
@@ -284,18 +284,14 @@ function ass() {
 			alert("[Error]弹幕下载失败！");
 		},
 		success: function(data, status, xhr) {
-			gotFile(cid, data);
+			var danmaku = parseFile(data);
+			var ass = generateASS(setPosition(danmaku), {
+				"title": document.title,
+				"ori": cid,
+			});
+			assDownload(ass, cid + ".ass"); //"\ufeff" + 
 		}
 	});
-}
-
-function gotFile(name, content) {
-	var danmaku = parseFile(content);
-	var ass = generateASS(setPosition(danmaku), {
-		"title": document.title,
-		"ori": name,
-	});
-	assDownload(ass, name + ".ass"); //"\ufeff" + 
 }
 
 function parseFile(content) {
