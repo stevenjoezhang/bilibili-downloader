@@ -146,6 +146,10 @@ function download(data) {
 		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
 			if (downloadArray.indexOf(links[i]) != -1) continue;
 			$("#download").append('<span>' + cid + "-" + i + '</span>\
+			&nbsp;&nbsp;&nbsp;\
+			<span class="speed"></span>\
+			&nbsp;&nbsp;&nbsp;\
+			<span class="eta"></span>\
 			<div class="progress progress-striped active">\
 				<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
 					<span class="progress-value">0%</span>\
@@ -166,7 +170,7 @@ function download(data) {
 	});
 }
 
-function downloadLink(i, j) { //避免提前结束
+function downloadLink(i, j) {
 	var downloadPath = $("#downloadPath").val() || "";
 	var filename;
 	if (count > 10 && i <= 9) filename = cid + "-0" + i + ".flv"
@@ -190,6 +194,9 @@ function downloadLink(i, j) { //避免提前结束
 			time: 500 //单位ms
 		});
 		proStream.on("progress", function(progress) {
+			//console.log(progress);
+			$(".speed").eq(j).html(Math.round(progress.speed / 1000) + "kb/s");
+			$(".eta").eq(j).html("eta:" + progress.eta + "s");
 			var percentage = progress.percentage; //显示进度条
 			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
 			$(".progress-bar").eq(j).css("width", percentage + "%");
