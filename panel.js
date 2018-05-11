@@ -196,6 +196,7 @@ function openDialog() {
 
 function download(data) {
 	var functionArray = new Array();
+	var flag = true;
 	//$("#download").html("");
 	for (var i = 0; i < count; i++) {
 		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
@@ -218,8 +219,10 @@ function download(data) {
 				downloadLink(_i, _j);
 				//callback(null, j + " Done");
 			});
+			flag = false;
 		} //由于js执行机制，此处不能直接传值
 	}
+	if (flag) alert("[Warning]没有新的视频被下载！")
 	async.parallel(functionArray, function(err, results) {
 		if (err) console.log(err);
 	});
