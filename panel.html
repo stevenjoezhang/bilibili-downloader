@@ -104,6 +104,21 @@
 			<button class="btn btn-default" onclick="selectReverse()">反选</button>
 			<button class="btn btn-danger" onclick="selectNone()">全不选</button>
 		</div>
+	
+		<div class="row">
+			<div class="form-group mt20">
+				<label class="control-label">下载路径</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="downloadPath"/>
+				  	<div class="input-group-addon" onclick="openDialog()">浏览</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<button class="btn btn-success" onclick="download()">下载选中片段</button>
+			<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+		</div>
 	</div>
 
 	<div class="info mt20">
@@ -119,21 +134,6 @@
 				</tbody>
 			</table>
 		</div>
-	</div>
-	
-	<div class="row">
-		<div class="form-group mt20">
-			<label class="control-label">下载路径</label>
-			<div class="input-group">
-				<input type="text" class="form-control" id="downloadPath"/>
-			  	<div class="input-group-addon" onclick="openDialog()">浏览</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row">
-		<button class="btn btn-success" onclick="download()">下载选中片段</button>
-		<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
 	</div>
 
 	<div class="row mt20" id="download">

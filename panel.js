@@ -1,9 +1,9 @@
 const path = require("path");
-const url = require("url");
 const fs = require("fs");
 const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
+const mime = require("mime");
 const electron = require("electron");
 const { dialog, shell } = electron.remote;
 
@@ -97,7 +97,7 @@ function getInfo() {
 					var sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
 					playUrl = "http://interface.bilibili.com/v2/playurl?" + params + "&sign=" + sign;
 				}
-				if (data[i] && data[i].toString().indexOf("hdslb.com") != -1) { //解析图片地址
+				if (mime.getType(data[i]) && mime.getType(data[i]).indexOf("image") != -1) { //解析图片地址
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
 				$("tbody").eq(1).append("<tr>\
