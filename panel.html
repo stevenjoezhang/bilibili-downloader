@@ -30,6 +30,9 @@
 	.capitalize {
 		text-transform: capitalize; /*首字母大写*/
 	}
+	#download {
+		user-select: none;
+	}
 	/*
 	table {
 		word-break: break-all;
@@ -91,8 +94,8 @@
 				<thead>
 					<tr>
 						<th>编号</th>
-						<th>时长(ms)</th>
-						<th>大小(bit)</th>
+						<th>时长(s)</th>
+						<th>大小(MB)</th>
 						<th>选定</th>	
 					</tr>
 				</thead>
@@ -148,13 +151,6 @@
 <script src="ass.js"></script>
 <script src="panel.js"></script>
 <script>
-window.addEventListener("beforeunload", e => {
-	if (downloadArray.length) {
-		e.returnValue = false;
-		alert("[Error]下载时无法退出，请先结束任务！");
-	}
-});
-
 $("button").each(function() {
     $(this).get(0).addEventListener("click", function() {
     	this.blur();
