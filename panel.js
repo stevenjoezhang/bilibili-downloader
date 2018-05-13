@@ -58,15 +58,19 @@ function getPlayUrl() {
 
 function backupUrl() {
 	showError("获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
-	$("#backup-url").show();
+	$("#backup-url, #error").show();
 	$("#playUrl").parent().addClass("has-error has-feedback");
-	$("#nav, .info").hide();
+	$("#success").hide();
+	$("#playUrl").val("");
 	manual = true;
 }
 
 function getAid() {
+	if (manual) {
+		if (videoUrl != getVideoUrl()) manual = false; //用户在请求playUrl时改变了videoUrl
+		else playUrl = getPlayUrl();
+	}
 	videoUrl = getVideoUrl();
-	if (manual) playUrl = getPlayUrl();
 	if (!videoUrl || (manual && !playUrl)) return;
 
 	if (videoUrl.split("/av")[1]) {
@@ -124,7 +128,15 @@ function getInfo() {
 				}
 				manual = false;
 			}
+
+			if (!cid) {
+				showError("获取视频cid出错！");
+				return;
+			}
 			getData(playUrl);
+			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
+			$("#nav").show();
+			if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
 		}
 	});
 }
@@ -150,7 +162,8 @@ function parseData(data) {
 		backupUrl();
 		return;
 	}
-	$("#backup-url").hide();
+	$("#backup-url, #error").hide();
+	$("#success").show();
 	$("#cid").html(cid);
 	count = target.length;
 	var qualityArray = {
@@ -183,8 +196,6 @@ function parseData(data) {
 			</td>\
 		</tr>");
 	}
-	$("#nav").show();
-	if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
 }
 
 function openDialog() {
@@ -312,56 +323,4 @@ function generalDownload(i, j, options, downloads) {
   			console.error(e);
 		}); //先pipe到proStream再pipe到文件的写入流中
 	});
-}
-
-function xml() {
-	var url = "https://comment.bilibili.com/" + cid + ".xml";
-	blobDownload(url, cid + ".xml");
-}
-
-function ass() {
-	//使用ajax是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
-	$.ajax("https://comment.bilibili.com/" + cid + ".xml", {
-		type: "get",
-		dataType: "text", //避免ajax解析为xml造成问题
-		error: function(xhr, status, error) {
-			showError("弹幕下载失败！");
-		},
-		success: function(data, status, xhr) {
-			var danmaku = parseFile(data);
-			var ass = generateASS(setPosition(danmaku), {
-				"title": document.title,
-				"ori": cid,
-			});
-			assDownload(ass, cid + ".ass"); //"\ufeff" + 
-		}
-	});
-}
-
-function parseFile(content) {
-	content = content.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
-	return parseXML(content);
-}
-
-function assDownload(data, filename) {
-	var blob = new Blob([data], {
-		type: "application/octet-stream"
-	});
-	var url = window.URL.createObjectURL(blob);
-	blobDownload(url, filename);
-	document.addEventListener("unload", function() {
-		window.URL.revokeObjectURL(url);
-	});
-}
-
-function blobDownload(url, filename) {
-	var saveas = document.createElement("a");
-	saveas.href = url;
-	saveas.style.display = "none";
-	document.body.appendChild(saveas);
-	saveas.download = filename;
-	saveas.click();
-	setTimeout(function() {
-		saveas.parentNode.removeChild(saveas);
-	}, 1000);
 }

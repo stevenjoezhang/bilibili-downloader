@@ -72,55 +72,66 @@
 	<ul class="nav nav-tabs row mt20" id="nav">
 		<li role="presentation" class="active" onclick="changeMenu(0)"><a>下载地址</a></li>
 		<li role="presentation" onclick="changeMenu(1)"><a>视频信息</a></li>
+		<li role="presentation" onclick="changeMenu(2)"><a>弹幕查询</a></li>
 	</ul>
 
 	<div class="info mt20">
-		<div class="row">
-			<div class="form-group">
-				<label class="control-label">视频CID：</label>
-				<span id="cid"></span>
-				&nbsp;&nbsp;&nbsp;
-				<label class="control-label">清晰度：</label>
-				<span id="quality"></span>
-				&nbsp;&nbsp;&nbsp;
-				<label class="control-label">下载弹幕：</label>
-				<button class="btn btn-success" onclick="xml()">.xml</button>
-				<button class="btn btn-primary" onclick="ass()">.ass</button>
-			</div>
-		</div>
-
-		<div class="row">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>编号</th>
-						<th>时长(s)</th>
-						<th>大小(MB)</th>
-						<th>选定</th>	
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-
-			<button class="btn btn-primary" onclick="selectAll()">全选</button>
-			<button class="btn btn-default" onclick="selectReverse()">反选</button>
-			<button class="btn btn-danger" onclick="selectNone()">全不选</button>
-		</div>
-	
-		<div class="row">
-			<div class="form-group mt20">
-				<label class="control-label">下载路径</label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="downloadPath"/>
-				  	<div class="input-group-addon" onclick="openDialog()">浏览</div>
+		<div id="success">
+			<div class="row">
+				<div class="form-group">
+					<label class="control-label">视频CID：</label>
+					<span id="cid"></span>
+					&nbsp;&nbsp;&nbsp;
+					<label class="control-label">清晰度：</label>
+					<span id="quality"></span>
+					&nbsp;&nbsp;&nbsp;
+					<label class="control-label">下载弹幕：</label>
+					<button class="btn btn-success" onclick="xml()">.xml</button>
+					<button class="btn btn-primary" onclick="ass()">.ass</button>
 				</div>
 			</div>
+
+			<div class="row">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>时长(s)</th>
+							<th>大小(MB)</th>
+							<th>选定</th>	
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+
+				<button class="btn btn-primary" onclick="selectAll()">全选</button>
+				<button class="btn btn-default" onclick="selectReverse()">反选</button>
+				<button class="btn btn-danger" onclick="selectNone()">全不选</button>
+			</div>
+		
+			<div class="row">
+				<div class="form-group mt20">
+					<label class="control-label">下载路径</label>
+					<div class="input-group">
+						<input type="text" class="form-control" id="downloadPath"/>
+					  	<div class="input-group-addon" onclick="openDialog()">浏览</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<button class="btn btn-success" onclick="download()">下载选中片段</button>
+				<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+			</div>
 		</div>
 
-		<div class="row">
-			<button class="btn btn-success" onclick="download()">下载选中片段</button>
-			<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+		<div id="error">
+			<div class="row">
+				<div class="form-group">
+					<label class="control-label">获取PlayUrl或下载链接出错，请手动输入PlayUrl！</label>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -139,6 +150,19 @@
 		</div>
 	</div>
 
+	<div class="info mt20">
+	
+		<div class="row">
+			<div class="form-group">
+				<label class="control-label">关键词</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="searchDanmaku"/>
+				  	<div class="input-group-addon" onclick="searchDanmaku()">搜索</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="row mt20" id="download">
 	</div>
 
@@ -148,8 +172,10 @@
 <script src="cdn/jquery-3.2.1.min.js"></script>
 <script>if (typeof module === "object") { window.jQuery = window.$ = module.exports; }</script>
 <script src="md5.js"></script>
+<script src="crc32.js"></script>
 <script src="ass.js"></script>
 <script src="panel.js"></script>
+<script src="danmaku.js"></script>
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
 const remote = require("electron").remote;
@@ -198,10 +224,8 @@ function about() {
 	alert("Mimi Downloader Ver 1.1.0\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
 }
 function changeMenu(index) {
-	$(".info").eq(!index).hide();
-	$(".info").eq(index).fadeIn();
-	$("li").eq(index).addClass("active");
-	$("li").eq(!index).removeClass("active");
+	$(".info").hide().eq(index).fadeIn();
+	$("#nav").children().removeClass("active").eq(index).addClass("active");
 }
 function selectAll() {
 	$('input[type="checkbox"]').prop("checked", true);
