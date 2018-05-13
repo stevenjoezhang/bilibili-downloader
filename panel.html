@@ -179,14 +179,14 @@ $('input[type="text"]').each(function() {
 	$(this).on("contextmenu", function(e) {
 		e.preventDefault();
 		this.focus();
-	    menu.popup(remote.getCurrentWindow());
+		menu.popup(remote.getCurrentWindow());
 	});
 }, false);
 
 $("button").each(function() {
-    $(this).on("click contextmenu", function() {
-    	this.blur();
-    });
+	$(this).on("click contextmenu", function() {
+		this.blur();
+	});
 });
 
 $("#downloadPath").val(__dirname);

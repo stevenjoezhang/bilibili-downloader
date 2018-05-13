@@ -118,7 +118,6 @@ function getInfo() {
 			if (manual) {
 				playUrl = getPlayUrl();
 				if (cid != playUrl.split("?cid=")[1].split("&")[0]) {
-					//backupUrl();
 					//return; //视频地址和PlayUrl不匹配时结束
 					showWarning("视频地址和PlayUrl不匹配，可能造成问题！");
 					cid = playUrl.split("?cid=")[1].split("&")[0];
@@ -190,17 +189,17 @@ function parseData(data) {
 
 function openDialog() {
 	var defaultpath = $("#downloadPath").val() || __dirname;
-    dialog.showOpenDialog({
-        defaultPath: defaultpath,
-        properties: [
-            "openDirectory", //打开路径
-        ],
-        filters: [
-            //{ name: "zby", extensions: ["json"] },
-        ]
-    }, function(res) {
-        if (res[0]) $("#downloadPath").val(res[0]);
-    });
+	dialog.showOpenDialog({
+		defaultPath: defaultpath,
+		properties: [
+			"openDirectory", //打开路径
+		],
+		filters: [
+			//{ name: "zby", extensions: ["json"] },
+		]
+	}, function(res) {
+		if (res[0]) $("#downloadPath").val(res[0]);
+	});
 }
 
 function download(data) {
@@ -221,7 +220,7 @@ function download(data) {
 				<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
 					<span class="progress-value">0%</span>\
 				</div>\
-		</div>');
+			</div>');
 			let _i = i;
 			let _j = downloadIndex; //必须使用let或const
 			downloadIndex++;
