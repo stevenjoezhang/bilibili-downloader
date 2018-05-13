@@ -48,8 +48,14 @@ GNU General Public License v3
 http://www.gnu.org/licenses/gpl-3.0.html
 
 ## 待实现
-开始/暂停下载
-
+开始/暂停下载  
+阻止拖入
+```javascript
+document.addEventListener("drop", function(event) {
+    event.preventDefault();
+    return false;
+});
+```
 ## 不同分支的内容
 - master 主分支，采用了来自you-get的api，bangumi和movie需要手动输入PlayUrl
 - backup 均需要手动输入PlayUrl

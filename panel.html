@@ -176,7 +176,7 @@ menu.append(new MenuItem({
  	}
 }));
 $('input[type="text"]').each(function() {
-	this.addEventListener("contextmenu", function(e) {
+	$(this).on("contextmenu", function(e) {
 		e.preventDefault();
 		this.focus();
 	    menu.popup(remote.getCurrentWindow());
@@ -184,10 +184,7 @@ $('input[type="text"]').each(function() {
 }, false);
 
 $("button").each(function() {
-    this.addEventListener("click", function() {
-    	this.blur();
-    });
-    this.addEventListener("contextmenu", function() {
+    $(this).on("click contextmenu", function() {
     	this.blur();
     });
 });
@@ -213,7 +210,7 @@ function selectNone() {
 	$('input[type="checkbox"]').prop("checked", false);
 }
 function selectReverse() {
-	$('input[type="checkbox"]').each(function () {
+	$('input[type="checkbox"]').each(function() {
 		$(this).prop("checked", !$(this).prop("checked"));
 	});
 }
