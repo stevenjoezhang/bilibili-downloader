@@ -151,8 +151,43 @@
 <script src="ass.js"></script>
 <script src="panel.js"></script>
 <script>
+//https://www.zhihu.com/question/51598623/answer/279834636
+const remote = require("electron").remote;
+const clipboard = require("electron").clipboard;
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
+let menu = new Menu(); //new一个菜单
+//添加菜单功能
+menu.append(new MenuItem({
+	label: "复制",
+	click: function() {
+		clipboard.writeText($(document.activeElement).val());
+ 	}
+}));
+//添加菜单分割线
+menu.append(new MenuItem({
+	type: "separator"
+}));
+//添加菜单功能
+menu.append(new MenuItem({
+	label: "粘贴",
+	click: function() {
+		$(document.activeElement).val(clipboard.readText());
+ 	}
+}));
+$('input[type="text"]').each(function() {
+	this.addEventListener("contextmenu", function(e) {
+		e.preventDefault();
+		this.focus();
+	    menu.popup(remote.getCurrentWindow());
+	});
+}, false);
+
 $("button").each(function() {
-    $(this).get(0).addEventListener("click", function() {
+    this.addEventListener("click", function() {
+    	this.blur();
+    });
+    this.addEventListener("contextmenu", function() {
     	this.blur();
     });
 });

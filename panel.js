@@ -42,13 +42,13 @@ function getPlayUrl() {
 		if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
 		else if (playUrl.indexOf("bilibili") != -1) playUrl = "https://" + playUrl;
 		else {
-			showError("[Error]", "无效的PlayUrl！");
+			showError("无效的PlayUrl！");
 			$("#playUrl").parent().addClass("has-error has-feedback");
 			return null;
 		}
 	}
 	if (!playUrl.split("?cid=")[1]) {
-		showError("[Error]", "无效的PlayUrl！");
+		showError("无效的PlayUrl！");
 		$("#playUrl").parent().addClass("has-error has-feedback");
 		return null;
 	}
@@ -57,7 +57,7 @@ function getPlayUrl() {
 }
 
 function backupUrl() {
-	showError("[Error]", "获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
+	showError("获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
 	$("#backup-url").show();
 	$("#playUrl").parent().addClass("has-error has-feedback");
 	$("#nav, .info").hide();
@@ -234,7 +234,7 @@ function download(data) {
 			flag = false;
 		} //由于js执行机制，此处不能直接传值
 	}
-	if (flag) showWarning("没有新的视频被下载！")
+	if (flag) showWarning("没有新的视频被下载！");
 	async.parallel(functionArray, function(err, results) {
 		if (err) console.log(err);
 	});
