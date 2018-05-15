@@ -136,7 +136,10 @@ function getInfo() {
 			getData(playUrl);
 			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 			$("#nav").show();
-			if ($(".info").eq(1).is(":hidden")) $(".info").eq(0).fadeIn();
+			if ($(".info").eq(1).is(":hidden")) {
+				changeMenu(0);
+				//$(".info").eq(0).fadeIn();
+			}
 		}
 	});
 }
@@ -190,9 +193,9 @@ function parseData(data) {
 			<td>\
 				<div class=\"checkbox\">\
 					<label>\
-				  		<input type=\"checkbox\" checked=\"true\">\
+						<input type=\"checkbox\" checked=\"true\">\
 					</label>\
-			  	</div>\
+				</div>\
 			</td>\
 		</tr>");
 	}
@@ -320,7 +323,7 @@ function generalDownload(i, j, options, downloads) {
 			}
 		});
 		request.get(options).pipe(proStream).pipe(downloads).on("error", function(e) {
-  			console.error(e);
+			console.error(e);
 		}); //先pipe到proStream再pipe到文件的写入流中
 	});
 }

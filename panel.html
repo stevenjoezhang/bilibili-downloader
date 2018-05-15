@@ -33,11 +33,19 @@
 	#download {
 		user-select: none;
 	}
-	/*
-	table {
+	#danmaku {
+		table-layout: fixed;
+		max-width: 100%;
+		width: 100%;
+	}
+	.wrap {
 		word-break: break-all;
 		word-wrap: break-all;
-	}*/
+		text-align: justify;
+	}
+	tr {
+		overflow: scroll;
+	}
 </style>
 </head>
 <body>
@@ -51,7 +59,7 @@
 		<div class="form-group">
 			<label class="control-label">视频链接</label>
 			<input type="text" class="form-control" id="videoUrl"/>
-  			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
 	
@@ -59,7 +67,7 @@
 		<div class="form-group">
 			<label class="control-label">PlayUrl</label>
 			<input type="text" class="form-control" id="playUrl"/>
-  			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
 
@@ -161,6 +169,20 @@
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<table class="table table-striped" id="danmaku">
+				<thead>
+					<tr>
+						<th style="width: 80px;">弹幕时间</th>
+						<th style="width: 100px;">发送时间</th>	
+						<th>弹幕内容</th>
+						<th style="width: 100px;">发送者</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
 	</div>
 
 	<div class="row mt20" id="download">
@@ -237,6 +259,9 @@ function selectReverse() {
 	$('input[type="checkbox"]').each(function() {
 		$(this).prop("checked", !$(this).prop("checked"));
 	});
+}
+function searchDanmaku() {
+	danmakuFilter();
 }
 </script>
 </body>
