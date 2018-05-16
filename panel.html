@@ -123,7 +123,7 @@
 					<label class="control-label">下载路径</label>
 					<div class="input-group">
 						<input type="text" class="form-control" id="downloadPath"/>
-					  	<div class="input-group-addon" onclick="openDialog()">浏览</div>
+						<div class="input-group-addon" onclick="openDialog()">浏览</div>
 					</div>
 				</div>
 			</div>
@@ -165,16 +165,57 @@
 				<label class="control-label">关键词</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="searchDanmaku"/>
-				  	<div class="input-group-addon" onclick="searchDanmaku()">搜索</div>
+					<div class="input-group-addon" onclick="searchDanmaku()">搜索</div>
 				</div>
 			</div>
 		</div>
 		<div class="row">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" checked="true" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
+				</label>
+			</div>
+		</div>
+		<div id="filter" class="row mt20" style="margin-bottom: -20px;">
+			<label class="control-label">弹幕时间</label>
+			<div class="row">
+				<div class="form-group col-xs-5">
+					<input type="text" class="form-control" id=""/>
+				</div>
+				<div class="form-group col-xs-2">
+					<span style="text-align: center;">至</span>
+				</div>
+				<div class="form-group col-xs-5">
+					<input type="text" class="form-control" id=""/>
+				</div>
+			</div>
+			<label class="control-label">发送时间</label>
+			<div class="row">
+				<div class="form-group col-xs-5">
+					<input type="text" class="form-control" id=""/>
+				</div>
+				<div class="form-group col-xs-2">
+					<span style="text-align: center;">至</span>
+				</div>
+				<div class="form-group col-xs-5">
+					<input type="text" class="form-control" id=""/>
+				</div>
+			</div>
+			<div class="row">
+				<div class="form-group col-xs-12">
+					<label class="control-label">发送者</label>
+					<div class="input-group">
+						<input type="text" class="form-control" id="downloadPath"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mt20">
 			<table class="table table-striped" id="danmaku">
 				<thead>
 					<tr>
 						<th style="width: 80px;">弹幕时间</th>
-						<th style="width: 100px;">发送时间</th>	
+						<th style="width: 120px;">发送时间</th>	
 						<th>弹幕内容</th>
 						<th style="width: 100px;">发送者</th>
 					</tr>
@@ -246,6 +287,7 @@ function about() {
 	alert("Mimi Downloader Ver 1.1.0\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
 }
 function changeMenu(index) {
+	if (!$(".info").eq(index).is(":hidden")) return;
 	$(".info").hide().eq(index).fadeIn();
 	$("#nav").children().removeClass("active").eq(index).addClass("active");
 }
@@ -261,7 +303,11 @@ function selectReverse() {
 	});
 }
 function searchDanmaku() {
+	var text = $("#searchDanmaku").val();
 	danmakuFilter();
+}
+function filterSwitch() {
+	$("#filter").is(":hidden") ? $("#filter").fadeIn() : $("#filter").fadeOut();
 }
 </script>
 </body>

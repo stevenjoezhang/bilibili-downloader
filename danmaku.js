@@ -44,15 +44,34 @@ function danmakuFilter(T1, T2, ST1, ST2, user, text) {
 		if (ST2 != null && target.sendTime >= ST2) continue;
 		if (user != null && target.user != user) continue;
 		if (text != null && target.text.indexOf(text) == -1) continue;
+		var newDate = new Date();
+		newDate.setTime(target.sendTime * 1000);
+		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");
 		$("tbody").eq(2).append("<tr>\
-			<td>" + target.time + "</td>\
-			<td>" + target.sendTime + "</td>\
+			<td>" + formatSeconds(target.time) + "</td>\
+			<td>" + sendTime + "</td>\
 			<td class='wrap'>" + target.text + "</td>\
 			<td>\
 				<a href='#' onclick=\"xml()\">" + target.user + "</button>\
 			</td>\
 		</tr>");
 	}
+}
+
+function formatSeconds(value) {
+	function addZero(int) {
+		string = int.toString();
+		while (string.length < 2) string = "0" + string;
+		return string;
+	}
+	var ms = value - parseInt(value);
+	var secondTime = parseInt(value) || 0;
+	var minuteTime = 0;
+	if (secondTime > 60) {
+		minuteTime = parseInt(secondTime / 60);
+		secondTime = parseInt(secondTime % 60);
+	}
+	return addZero(minuteTime) + ":" + addZero(secondTime) + "." + ms.toFixed(3).split(".")[1];
 }
 
 function xml() {
