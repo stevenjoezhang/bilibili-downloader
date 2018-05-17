@@ -22,7 +22,7 @@ function showWarning(text) {
 function getVideoUrl() {
 	var videoUrl = $("#videoUrl").val();
 	//if (debug) videoUrl = "https://www.bilibili.com/bangumi/play/ep90832";
-	if (debug) videoUrl = "https://www.bilibili.com/video/av23508307";
+	if (debug) videoUrl = "https://www.bilibili.com/video/av23498892";
 	if (videoUrl.indexOf("https://") != 0) {
 		if (videoUrl.indexOf("http://") == 0) videoUrl = videoUrl.replace("http://", "https://");
 		else if (videoUrl.indexOf("bilibili") != -1) videoUrl = "https://" + videoUrl;

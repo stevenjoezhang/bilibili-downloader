@@ -180,33 +180,31 @@
 			<label class="control-label">弹幕时间</label>
 			<div class="row">
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id=""/>
+					<input type="text" class="form-control" id="T1"/>
 				</div>
 				<div class="form-group col-xs-2">
 					<span style="text-align: center;">至</span>
 				</div>
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id=""/>
+					<input type="text" class="form-control" id="T2"/>
 				</div>
 			</div>
 			<label class="control-label">发送时间</label>
 			<div class="row">
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id=""/>
+					<input type="text" class="form-control" id="ST1"/>
 				</div>
 				<div class="form-group col-xs-2">
 					<span style="text-align: center;">至</span>
 				</div>
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id=""/>
+					<input type="text" class="form-control" id="ST2"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="form-group col-xs-12">
 					<label class="control-label">发送者</label>
-					<div class="input-group">
-						<input type="text" class="form-control" id="downloadPath"/>
-					</div>
+					<input type="text" class="form-control" id="user"/>
 				</div>
 			</div>
 		</div>
@@ -303,8 +301,17 @@ function selectReverse() {
 	});
 }
 function searchDanmaku() {
-	var text = $("#searchDanmaku").val();
-	danmakuFilter();
+	if (!$("#filterSwitch").is(":checked")) {
+		danmakuFilter();
+		return;
+	}
+	var T1 = parseFloat($("#T1").val()),
+		T2 = parseFloat($("#T2").val()),
+		ST1 = parseFloat($("#T1").val()),
+		ST2 = parseFloat($("#ST2").val()),
+		user = $("#user").val(),
+		text = $("#searchDanmaku").val();
+	danmakuFilter(T1, T2, ST1, ST2, user, text);
 }
 function filterSwitch() {
 	$("#filter").is(":hidden") ? $("#filter").fadeIn() : $("#filter").fadeOut();
