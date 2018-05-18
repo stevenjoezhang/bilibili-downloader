@@ -1,0 +1,41 @@
+.checkbox {
+	margin: 0px auto !important;
+}
+.mt20 {
+	margin-top: 20px;
+}
+.info, #nav, #backup-url, .glyphicon {
+	display: none;
+}
+.has-feedback .glyphicon {
+	display: block;
+}
+table img {
+	max-width: 80%;
+}
+#bg {
+	width: 100%;
+	z-index: -1;
+}
+.input-group-addon {
+	cursor: pointer;
+}
+.capitalize {
+	text-transform: capitalize; /*首字母大写*/
+}
+#download {
+	user-select: none;
+}
+#danmaku {
+	table-layout: fixed;
+	max-width: 100%;
+	width: 100%;
+}
+.wrap {
+	word-break: break-all;
+	word-wrap: break-all;
+	text-align: justify;
+}
+tr {
+	overflow: scroll;
+}

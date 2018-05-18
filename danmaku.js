@@ -16,16 +16,6 @@ function getDanmaku() {
 					time: info[0],
 					sendTime: info[4],
 					user: info[6],
-					url: (function(user) {
-						var uid;
-						if (0 === user.indexOf("D")) uid = "";
-						else if (/^b(\d+)$/.exec(user)) uid = /^b(\d+)$/.exec(user)[1];
-						else {
-							//var crcEngine = new Crc32Engine();
-							//uid = crcEngine.crack(user)[0]; //计算量较大！完整弹幕过滤系统 是否存储在新文件夹中 下载进度单独菜单 回车开始查询
-						}
-						return "https://space.bilibili.com/" + uid;
-					}(info[6])),
 					text: $(o).html()
 				}
 				danmakuArray.push(danmaku);
@@ -54,7 +44,7 @@ function danmakuFilter(T1, T2, ST1, ST2, user, text) {
 			<td>" + sendTime + "</td>\
 			<td class='wrap'>" + target.text + "</td>\
 			<td>\
-				<a href='#' onclick=\"xml()\">" + target.user + "</button>\
+				<a href='#' onclick='searchUser(event)'>" + target.user + "</button>\
 			</td>\
 		</tr>");
 	}
@@ -74,6 +64,19 @@ function formatSeconds(value) {
 		secondTime = parseInt(secondTime % 60);
 	}
 	return addZero(minuteTime) + ":" + addZero(secondTime) + "." + ms.toFixed(3).split(".")[1];
+}
+
+function searchUser(event) {
+	event.preventDefault();
+	var user = $(event.target).html();
+	var uid;
+	if (0 === user.indexOf("D")) uid = "";
+	else if (/^b(\d+)$/.exec(user)) uid = /^b(\d+)$/.exec(user)[1];
+	else {
+		var crcEngine = new Crc32Engine();
+		uid = crcEngine.crack(user)[0]; //计算量较大！手动点击开始查询用户
+	}
+	alert("https://space.bilibili.com/" + uid);
 }
 
 function xml() {

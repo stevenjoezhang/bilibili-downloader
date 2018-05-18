@@ -9,7 +9,7 @@ const { dialog, shell } = electron.remote;
 const ipcRender = electron.ipcRenderer;
 
 var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0, manual = false;
-var debug = true;
+var debug = !true;
 
 function showError(text) {
 	dialog.showMessageBox({type:"error", title: "[Error]", message: text});

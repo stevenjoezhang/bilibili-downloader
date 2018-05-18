@@ -56,6 +56,10 @@ document.addEventListener("drop", function(event) {
     return false;
 });
 ```
+是否把视频存储在新文件夹中  
+下载进度单独菜单  
+显示用户信息
+
 ## 不同分支的内容
 - master 主分支，采用了来自you-get的api，bangumi和movie需要手动输入PlayUrl
 - backup 均需要手动输入PlayUrl

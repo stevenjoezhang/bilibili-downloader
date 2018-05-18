@@ -4,49 +4,7 @@
 <meta charset="UTF-8">
 <title>Mimi Downloader</title>
 <link href="cdn/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<style>
-	.checkbox {
-		margin: 0px auto !important;
-	}
-	.mt20 {
-		margin-top: 20px;
-	}
-	.info, #nav, #backup-url, .glyphicon {
-		display: none;
-	}
-	.has-feedback .glyphicon {
-		display: block;
-	}
-	table img {
-		max-width: 80%;
-	}
-	#bg {
-		width: 100%;
-		z-index: -1;
-	}
-	.input-group-addon {
-		cursor: pointer;
-	}
-	.capitalize {
-		text-transform: capitalize; /*首字母大写*/
-	}
-	#download {
-		user-select: none;
-	}
-	#danmaku {
-		table-layout: fixed;
-		max-width: 100%;
-		width: 100%;
-	}
-	.wrap {
-		word-break: break-all;
-		word-wrap: break-all;
-		text-align: justify;
-	}
-	tr {
-		overflow: scroll;
-	}
-</style>
+<link href="style.css" rel="stylesheet">
 </head>
 <body>
 <div class="container" style="margin: 0 20px 20px 20px;">
@@ -54,7 +12,6 @@
 		<h1>Mimi Downloader</h1>
 		<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
 	</div>
-
 	<div class="row">
 		<div class="form-group">
 			<label class="control-label">视频链接</label>
@@ -62,7 +19,6 @@
 			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
-	
 	<div class="row" id="backup-url">
 		<div class="form-group">
 			<label class="control-label">PlayUrl</label>
@@ -70,19 +26,16 @@
 			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
-
 	<div class="row">
 		<button class="btn btn-success" onclick="getAid()">获取下载链接</button>
 		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
-	
 	<ul class="nav nav-tabs row mt20" id="nav">
 		<li role="presentation" class="active" onclick="changeMenu(0)"><a>下载地址</a></li>
 		<li role="presentation" onclick="changeMenu(1)"><a>视频信息</a></li>
 		<li role="presentation" onclick="changeMenu(2)"><a>弹幕查询</a></li>
 	</ul>
-
 	<div class="info mt20">
 		<div id="success">
 			<div class="row">
@@ -98,7 +51,6 @@
 					<button class="btn btn-primary" onclick="ass()">.ass</button>
 				</div>
 			</div>
-
 			<div class="row">
 				<table class="table table-striped">
 					<thead>
@@ -112,12 +64,10 @@
 					<tbody>
 					</tbody>
 				</table>
-
 				<button class="btn btn-primary" onclick="selectAll()">全选</button>
 				<button class="btn btn-default" onclick="selectReverse()">反选</button>
 				<button class="btn btn-danger" onclick="selectNone()">全不选</button>
 			</div>
-		
 			<div class="row">
 				<div class="form-group mt20">
 					<label class="control-label">下载路径</label>
@@ -127,13 +77,11 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="row">
 				<button class="btn btn-success" onclick="download()">下载选中片段</button>
 				<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
 			</div>
 		</div>
-
 		<div id="error">
 			<div class="row">
 				<div class="form-group">
@@ -142,7 +90,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="info mt20">
 		<div class="row">
 			<table class="table table-striped">
@@ -157,9 +104,7 @@
 			</table>
 		</div>
 	</div>
-
 	<div class="info mt20">
-	
 		<div class="row">
 			<div class="form-group">
 				<label class="control-label">关键词</label>
@@ -223,13 +168,10 @@
 			</table>
 		</div>
 	</div>
-
 	<div class="row mt20" id="download">
 	</div>
-
 	<img src="bg.png" id="bg" class="mt20">
 </div>
-
 <script src="cdn/jquery-3.2.1.min.js"></script>
 <script>if (typeof module === "object") { window.jQuery = window.$ = module.exports; }</script>
 <script src="md5.js"></script>
