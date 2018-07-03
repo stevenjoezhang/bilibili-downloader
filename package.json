@@ -14,11 +14,11 @@
   "author": "Mimi",
   "license": "GPL3.0",
   "devDependencies": {
-    "async": "^2.6.0",
-    "electron": "^1.8.6",
+    "async": "^2.6.1",
+    "electron": "^2.0.3",
     "mime": "^2.3.1",
     "progress": "^2.0.0",
-    "request": "^2.85.0"
+    "request": "^2.87.0"
   },
   "dependencies": {}
 }

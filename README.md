@@ -47,6 +47,11 @@ ffmpeg -f concat -i temp.txt -c copy $cid.flv
 GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
 
+## 不同分支的内容
+- master 主分支，采用了来自you-get的api，bangumi和movie需要手动输入PlayUrl
+- backup 均需要手动输入PlayUrl
+- you-get 只需输入视频地址即可下载，但bangumi和movie没有高清源
+
 ## 待实现
 开始/暂停下载  
 阻止拖入
@@ -59,8 +64,3 @@ document.addEventListener("drop", function(event) {
 是否把视频存储在新文件夹中  
 下载进度单独菜单  
 显示用户信息
-
-## 不同分支的内容
-- master 主分支，采用了来自you-get的api，bangumi和movie需要手动输入PlayUrl
-- backup 均需要手动输入PlayUrl
-- you-get 只需输入视频地址即可下载，但bangumi和movie没有高清源
