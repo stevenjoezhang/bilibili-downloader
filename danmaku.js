@@ -11,8 +11,8 @@ function getDanmaku() {
 		success: function(data, status, xhr) {
 			danmakuArray = new Array();
 			$(data).find("d").each(function(i, o) {
-				var info = $(o).attr("p").split(",");
-				var danmaku = {
+				var info = $(o).attr("p").split(","),
+					danmaku = {
 					time: info[0],
 					sendTime: info[4],
 					user: info[6],
@@ -56,9 +56,9 @@ function formatSeconds(value) {
 		while (string.length < 2) string = "0" + string;
 		return string;
 	}
-	var ms = value - parseInt(value);
-	var secondTime = parseInt(value) || 0;
-	var minuteTime = 0;
+	var ms = value - parseInt(value),
+		secondTime = parseInt(value) || 0,
+		minuteTime = 0;
 	if (secondTime > 60) {
 		minuteTime = parseInt(secondTime / 60);
 		secondTime = parseInt(secondTime % 60);
@@ -68,15 +68,17 @@ function formatSeconds(value) {
 
 function searchUser(event) {
 	event.preventDefault();
-	var user = $(event.target).html();
-	var uid;
+	var user = $(event.target).html(),
+		uid;
 	if (0 === user.indexOf("D")) uid = "";
 	else if (/^b(\d+)$/.exec(user)) uid = /^b(\d+)$/.exec(user)[1];
 	else {
 		var crcEngine = new Crc32Engine();
 		uid = crcEngine.crack(user)[0]; //计算量较大！手动点击开始查询用户
 	}
-	alert("https://space.bilibili.com/" + uid);
+	var url = "https://space.bilibili.com/" + uid;
+	//alert(url);
+	shell.openExternal(url);
 }
 
 function xml() {
@@ -93,8 +95,8 @@ function ass() {
 			showError("弹幕下载失败！");
 		},
 		success: function(data, status, xhr) {
-			var danmaku = parseFile(data);
-			var ass = generateASS(setPosition(danmaku), {
+			var danmaku = parseFile(data),
+				ass = generateASS(setPosition(danmaku), {
 				"title": document.title,
 				"ori": cid,
 			});
@@ -111,8 +113,8 @@ function parseFile(content) {
 function assDownload(data, filename) {
 	var blob = new Blob([data], {
 		type: "application/octet-stream"
-	});
-	var url = window.URL.createObjectURL(blob);
+	}),
+		url = window.URL.createObjectURL(blob);
 	blobDownload(url, filename);
 	document.addEventListener("unload", function() {
 		window.URL.revokeObjectURL(url);
