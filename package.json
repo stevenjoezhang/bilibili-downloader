@@ -1,24 +1,24 @@
 {
-  "name": "MimiDownloader",
-  "version": "1.2.0",
-  "description": "Mimi Downloader for Bilibili",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "repository": "https://github.com/stevenjoezhang/mimi-downloader",
-  "keywords": [
-    "Downloader",
-    "Bilibili"
-  ],
-  "author": "Mimi",
-  "license": "GPL3.0",
-  "devDependencies": {
-    "async": "^2.6.1",
-    "electron": "^3.0.9",
-    "mime": "^2.3.1",
-    "progress": "^2.0.1",
-    "request": "^2.88.0"
-  },
-  "dependencies": {}
+	"name": "MimiDownloader",
+	"version": "1.2.1",
+	"description": "Yet another video downloader for Bilibili",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron ."
+	},
+	"repository": "https://github.com/stevenjoezhang/bilibili-downloader",
+	"keywords": [
+		"Downloader",
+		"Bilibili"
+	],
+	"author": "Mimi",
+	"license": "GPL3.0",
+	"devDependencies": {
+		"async": "^2.6.1",
+		"electron": "^3.0.10",
+		"mime": "^2.4.0",
+		"progress": "^2.0.3",
+		"request": "^2.88.0"
+	},
+	"dependencies": {}
 }

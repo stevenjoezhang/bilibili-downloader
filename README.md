@@ -1,6 +1,6 @@
 # Mimi Downloader
 
-基于 Node.js 和 Electron 编写的Bilibili视频、弹幕下载器。
+基于Node.js和Electron编写的Bilibili视频、弹幕下载器。
 
 [英文/English](README.EN.md)
 
@@ -9,19 +9,19 @@
 
 - 根据视频地址查询aid和cid以及视频详细信息
 - 根据视频cid获取视频和弹幕文件的下载地址
-- 下载视频 (.flv) 和弹幕文件 (.xml 或 .ass)，支持断点续传
+- 下载视频（`.flv`或`.mp4`）和弹幕文件（`.xml`或`.ass`），支持断点续传
 - 某些情况下可能需要用户手动输入PlayUrl
 
 ## 使用方法
-你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download/)(以及 [npm](http://npmjs.com))来运行本项目。 在命令行/终端输入：
+你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download/)(以及[npm](http://npmjs.com))来运行本项目。 在命令行/终端输入：
 ```bash
-# Clone this repository
+# 克隆这个仓库
 git clone https://github.com/stevenjoezhang/mimi-downloader.git
-# Go into the repository
+# 进入目录
 cd mimi-downloader
-# Install dependencies
+# 安装依赖
 npm install
-# Run the app
+# 启动！
 npm start
 ```
 如果一切正常，会打开一个名为"Mimi Downloader"的新窗口。输入视频链接，按照提示即可下载视频。  
@@ -32,7 +32,7 @@ npm start
 下载完成后，可以使用ffmpeg将flv片段合成为一个文件：
 ```bash
 cid=11090110
-# Replace 11090110 with your video's cid
+# 将 11090110 替换为你下载的视频的 cid
 for f in $cid-*.flv; do echo "file '$f'" > temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 rm temp.txt

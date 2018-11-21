@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"/>
 <title>Mimi Downloader</title>
-<link href="cdn/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet">
+<link href="cdn/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
 </head>
 <body>
 <div class="container" style="margin: 0 20px 20px 20px;">
@@ -107,9 +107,12 @@
 	<div class="info mt20">
 		<div class="row">
 			<div class="form-group">
+				<span>如果不需要过滤弹幕，以下内容留空即可</span>
+			</div>
+			<div class="form-group">
 				<label class="control-label">关键词</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="searchDanmaku"/>
+					<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式"/>
 					<div class="input-group-addon" onclick="searchDanmaku()">搜索</div>
 				</div>
 			</div>
@@ -117,39 +120,39 @@
 		<div class="row">
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" checked="true" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
+					<input type="checkbox" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
 				</label>
 			</div>
 		</div>
-		<div id="filter" class="row mt20" style="margin-bottom: -20px;">
+		<div id="filter" class="row mt20" style="margin-bottom: -20px; display: none;">
 			<label class="control-label">弹幕时间</label>
 			<div class="row">
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="T1"/>
+					<input type="text" class="form-control" id="T1" placeholder="单位：s"/>
 				</div>
 				<div class="form-group col-xs-2">
 					<span style="text-align: center;">至</span>
 				</div>
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="T2"/>
+					<input type="text" class="form-control" id="T2" placeholder="单位：s"/>
 				</div>
 			</div>
 			<label class="control-label">发送时间</label>
 			<div class="row">
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="ST1"/>
+					<input type="text" class="form-control" id="ST1" placeholder="时间戳：s"/>
 				</div>
 				<div class="form-group col-xs-2">
 					<span style="text-align: center;">至</span>
 				</div>
 				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="ST2"/>
+					<input type="text" class="form-control" id="ST2" placeholder="时间戳：s"/>
 				</div>
 			</div>
 			<div class="row">
 				<div class="form-group col-xs-12">
 					<label class="control-label">发送者</label>
-					<input type="text" class="form-control" id="user"/>
+					<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名"/>
 				</div>
 			</div>
 		</div>
@@ -224,7 +227,7 @@ function help() {
 	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
 }
 function about() {
-	alert("Mimi Downloader Ver 1.1.0\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
+	alert("Mimi Downloader Ver 1.2.1\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
 }
 function changeMenu(index) {
 	if (!$(".info").eq(index).is(":hidden")) return;
@@ -256,7 +259,7 @@ function searchDanmaku() {
 	danmakuFilter(T1, T2, ST1, ST2, user, text);
 }
 function filterSwitch() {
-	$("#filter").is(":hidden") ? $("#filter").fadeIn() : $("#filter").fadeOut();
+	$("#filter").is(":hidden") ? $("#filter").slideDown() : $("#filter").slideUp();
 }
 </script>
 </body>
