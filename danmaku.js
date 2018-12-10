@@ -2,7 +2,7 @@ var danmakuArray;
 
 function getDanmaku() {
 	//alert(cid);
-	$.ajax("https://comment.bilibili.com/" + cid + ".xml", {
+	$.ajax(`https://comment.bilibili.com/${cid}.xml`, {
 		type: "get",
 		dataType: "text", //避免ajax解析为xml造成问题
 		error: function(xhr, status, error) {
@@ -63,7 +63,7 @@ function formatSeconds(value) {
 		minuteTime = parseInt(secondTime / 60);
 		secondTime = parseInt(secondTime % 60);
 	}
-	return addZero(minuteTime) + ":" + addZero(secondTime) + "." + ms.toFixed(3).split(".")[1];
+	return `${addZero(minuteTime)}:${addZero(secondTime)}.${ms.toFixed(3).split(".")[1]}`;
 }
 
 function searchUser(event) {
@@ -82,13 +82,13 @@ function searchUser(event) {
 }
 
 function xml() {
-	var url = "https://comment.bilibili.com/" + cid + ".xml";
+	var url = `https://comment.bilibili.com/${cid}.xml`;
 	blobDownload(url, cid + ".xml");
 }
 
 function ass() {
 	//使用ajax是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
-	$.ajax("https://comment.bilibili.com/" + cid + ".xml", {
+	$.ajax(`https://comment.bilibili.com/${cid}.xml`, {
 		type: "get",
 		dataType: "text",
 		error: function(xhr, status, error) {

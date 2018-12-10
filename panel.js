@@ -8,7 +8,7 @@ const electron = require("electron");
 const { dialog, shell } = electron.remote;
 const ipcRender = electron.ipcRenderer;
 
-var videoUrl, playUrl, count, links, cid, downloadArray = new Array(), downloadIndex = 0, manual = false;
+var videoUrl, playUrl, aid, p, cid, count, links, downloadArray = new Array(), downloadIndex = 0, manual = false;
 var debug = !true;
 
 function showError(text) {
@@ -74,8 +74,9 @@ function getAid() {
 	videoUrl = getVideoUrl();
 	if (!videoUrl || (manual && !playUrl)) return;
 
-	if (videoUrl.split("/av")[1]) {
-		aid = videoUrl.split("/av")[1].split("/")[0];
+	if (videoUrl.split("/av")[1].split("?p=")[0].split("/")[0]) {
+		aid = videoUrl.split("/av")[1].split("?p=")[0].split("/")[0];
+		p = videoUrl.split("/av")[1].split("?p=")[1];
 		getInfo();
 	}
 	else {
@@ -106,10 +107,7 @@ function getInfo() {
 			$("tbody").eq(1).html("");
 			for (var i in data) {
 				if (i == "cid") {
-					cid = data[i];
-					var params = "appkey=84956560bc028eb7&cid=" + cid + "&otype=json&qn=112&quality=112&type=";
-					var sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
-					playUrl = "http://interface.bilibili.com/v2/playurl?" + params + "&sign=" + sign;
+					//cid = data[i];
 				}
 				if (mime.getType(data[i]) && mime.getType(data[i]).indexOf("image") != -1) { //解析图片地址
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
@@ -119,28 +117,41 @@ function getInfo() {
 				<td>" + data[i] + "</td>\
 				</tr>");
 			}
+			$.ajax("https://www.bilibili.com/widget/getPageList?aid=" + aid, {
+				type: "get",
+				dataType: "text",
+				error: function(xhr, status, error) {
+					showError("获取视频信息出错！");
+				},
+				success: function(data, status, xhr) {
+					data = JSON.parse(data);
+					cid = data[p - 1].cid;
+					var params = `appkey=84956560bc028eb7&cid=${cid}&otype=json&qn=112&quality=112&type=`;
+					var sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
+					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
+					if (manual) {
+						playUrl = getPlayUrl();
+						if (cid != playUrl.split("?cid=")[1].split("&")[0]) {
+							//return; //视频地址和PlayUrl不匹配时结束
+							showWarning("视频地址和PlayUrl不匹配，可能造成问题！");
+							cid = playUrl.split("?cid=")[1].split("&")[0];
+						}
+						manual = false;
+					}
 
-			if (manual) {
-				playUrl = getPlayUrl();
-				if (cid != playUrl.split("?cid=")[1].split("&")[0]) {
-					//return; //视频地址和PlayUrl不匹配时结束
-					showWarning("视频地址和PlayUrl不匹配，可能造成问题！");
-					cid = playUrl.split("?cid=")[1].split("&")[0];
+					if (!cid) {
+						showError("获取视频cid出错！");
+						return;
+					}
+					getData(playUrl);
+					getDanmaku(); //获取cid后，获取下载链接和弹幕信息
+					$("#nav").show();
+					if ($(".info").eq(1).is(":hidden")) {
+						changeMenu(0);
+						//$(".info").eq(0).fadeIn();
+					}
 				}
-				manual = false;
-			}
-
-			if (!cid) {
-				showError("获取视频cid出错！");
-				return;
-			}
-			getData(playUrl);
-			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
-			$("#nav").show();
-			if ($(".info").eq(1).is(":hidden")) {
-				changeMenu(0);
-				//$(".info").eq(0).fadeIn();
-			}
+			});
 		}
 	});
 }
@@ -259,11 +270,9 @@ function openPath() {
 }
 
 function downloadLink(i, j) {
-	var downloadPath = $("#downloadPath").val() || "";
-	var filename;
-	if (count > 10 && i <= 9) filename = cid + "-0" + i + ".flv"
-	else filename = cid + "-" + i + ".flv";
-	var file = path.join(downloadPath, filename);
+	var downloadPath = $("#downloadPath").val() || "",
+		filename = (count > 10 && i <= 9) ? `${cid}-0${i}.flv` : `${cid}-${i}.flv`,
+		file = path.join(downloadPath, filename);
 	fs.exists(file, function(exist) {
 		if (exist) resumeDownload(i, j, file)
 		else newDownload(i, j, file);
@@ -291,12 +300,12 @@ function resumeDownload(i, j, file) {
 			url: links[i],
 			encoding: null, //当请求的是二进制文件时，一定要设置
 			headers: {
-				"Range": "bytes=" + state.size + "-", //断点续传
+				"Range": `bytes=${state.size}-`, //断点续传
 				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15",
 				"Referer": videoUrl
 			}
 		}
-		$(".addon").eq(j).html("从" + Math.round(state.size / 1e6) + "MB处恢复的下载");
+		$(".addon").eq(j).html(`从${Math.round(state.size / 1e6)}MB处恢复的下载`);
 		//console.log(cid, file, options.url);
 		var downloads = fs.createWriteStream(file, {"flags": "a"});
 		generalDownload(i, j, options, downloads);
@@ -313,7 +322,7 @@ function generalDownload(i, j, options, downloads) {
 		proStream.on("progress", function(progress) {
 			//console.log(progress);
 			$(".speed").eq(j).html(Math.round(progress.speed / 1e3) + "kb/s");
-			$(".eta").eq(j).html("eta:" + progress.eta + "s");
+			$(".eta").eq(j).html(`eta:${progress.eta}s`);
 			var percentage = progress.percentage; //显示进度条
 			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
 			$(".progress-bar").eq(j).css("width", percentage + "%");
