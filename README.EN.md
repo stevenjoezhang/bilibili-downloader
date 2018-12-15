@@ -8,7 +8,7 @@ A Bilibili video downloader based on Node.js and Electron.
 Download Video (`.flv` or `.mp4`) and Danmaku files (`.xml` or `.ass`).
 
 ## To Use
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
+To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 ```bash
 # Clone this repository
 git clone https://github.com/stevenjoezhang/mimi-downloader.git
@@ -31,13 +31,13 @@ cid=11090110
 for f in $cid-*.flv; do echo "file '$f'" > temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 ```
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
+Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell) or use `node` from the command prompt.
 
 ## Credits
-* [Mimi](https://zhangshuqiao.org) Developer of this project.
-* 田生 [XML to ASS Library](https://github.com/tiansh/us-danmaku) and bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
-* soimort [you-get](https://github.com/soimort/you-get) MIT license
-* [md5](http://pajhome.org.uk/crypt/md5) BSD License
+- [Mimi](https://zhangshuqiao.org) Developer of this project.
+- 田生 [XML to ASS Library](https://github.com/tiansh/us-danmaku) and bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
+- soimort [you-get](https://github.com/soimort/you-get) MIT license
+- [md5](http://pajhome.org.uk/crypt/md5) BSD License
 
 ## License
 Released under the GNU General Public License v3  

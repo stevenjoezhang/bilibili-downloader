@@ -6,19 +6,21 @@
 	"scripts": {
 		"start": "electron ."
 	},
-	"repository": "https://github.com/stevenjoezhang/bilibili-downloader",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/stevenjoezhang/bilibili-downloader"
+	},
 	"keywords": [
 		"Downloader",
 		"Bilibili"
 	],
 	"author": "Mimi",
-	"license": "GPL3.0",
-	"devDependencies": {
+	"license": "ISC",
+	"dependencies": {
 		"async": "^2.6.1",
-		"electron": "^3.0.12",
+		"electron": "^3.0.13",
 		"mime": "^2.4.0",
 		"progress": "^2.0.3",
 		"request": "^2.88.0"
-	},
-	"dependencies": {}
+	}
 }
