@@ -13,7 +13,7 @@
 - 某些情况下可能需要用户手动输入PlayUrl
 
 ## 使用方法
-你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download/)(以及[npm](http://npmjs.com))来运行本项目。 在命令行/终端输入：
+你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download)（以及[npm](http://npmjs.com)）来运行本程序。 在命令行/终端输入：
 ```bash
 # 克隆这个仓库
 git clone https://github.com/stevenjoezhang/mimi-downloader.git
@@ -29,6 +29,7 @@ npm start
 
 ![demo-video](help.png)
 
+否则由于B站限制，只能下载低清晰度视频！
 下载完成后，可以使用ffmpeg将flv片段合成为一个文件：
 ```bash
 cid=11090110
@@ -39,10 +40,10 @@ rm temp.txt
 ```
 
 ## 制作者/鸣谢
-* [Mimi](https://zhangshuqiao.org) 本项目的开发者
-* 田生 [XML 转 ASS 库](https://github.com/tiansh/us-danmaku/) 以及 bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
-* soimort [you-get](https://github.com/soimort/you-get/) MIT license 提供了部分B站api的调用方式
-* [md5](http://pajhome.org.uk/crypt/md5/) BSD License
+- [Mimi](https://zhangshuqiao.org) 本项目的开发者
+- 田生 [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
+- soimort [you-get](https://github.com/soimort/you-get) MIT license 提供了部分B站api的调用方式
+- [md5](http://pajhome.org.uk/crypt/md5) BSD License
 
 ## 许可证
 GNU General Public License v3  
@@ -54,7 +55,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - you-get 只需输入视频地址即可下载，但bangumi和movie没有高清flv源，只有分辨率较低的mp4
 
 ## 待实现
-- 允许用户开始/暂停下载  
+- 允许用户开始/暂停下载
 - 阻止拖入
 ```javascript
 document.addEventListener("drop", function(event) {
@@ -62,6 +63,6 @@ document.addEventListener("drop", function(event) {
     return false;
 });
 ```
-- 是否把视频存储在新文件夹中  
-- 下载进度单独菜单  
+- 是否把视频存储在新文件夹中
+- 下载进度单独菜单
 - 显示用户信息
