@@ -82,8 +82,7 @@ function searchUser(event) {
 }
 
 function xml() {
-	var url = `https://comment.bilibili.com/${cid}.xml`;
-	blobDownload(url, cid + ".xml");
+	blobDownload(`https://comment.bilibili.com/${cid}.xml`, cid + ".xml");
 }
 
 function ass() {

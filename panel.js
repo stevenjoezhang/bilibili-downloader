@@ -8,7 +8,7 @@ const electron = require("electron");
 const { dialog, shell } = electron.remote;
 const ipcRender = electron.ipcRenderer;
 
-var videoUrl, playUrl, aid, p, cid, count, links, downloadArray = new Array(), downloadIndex = 0, manual = false;
+var videoUrl, playUrl, aid, p = 1, cid, count, links, downloadArray = [], downloadIndex = 0, manual = false;
 var debug = !true;
 
 function showError(text) {
@@ -24,8 +24,9 @@ function getVideoUrl() {
 	//if (debug) videoUrl = "https://www.bilibili.com/bangumi/play/ep90832";
 	if (debug) videoUrl = "https://www.bilibili.com/video/av23498892";
 	if (videoUrl.indexOf("https://") != 0) {
-		if (videoUrl.indexOf("http://") == 0) videoUrl = videoUrl.replace("http://", "https://");
-		else if (videoUrl.indexOf("bilibili") != -1) videoUrl = "https://" + videoUrl;
+		if (videoUrl.indexOf("av") != -1) videoUrl = "https://www.bilibili.com/video/av" + videoUrl.split("av")[1];
+		else if (videoUrl.indexOf("ep") != -1) videoUrl = "https://www.bilibili.com/bangumi/play/ep" + videoUrl.split("ep")[1];
+		else if (videoUrl.indexOf("ss") != -1) videoUrl = "https://www.bilibili.com/bangumi/play/ss" + videoUrl.split("ss")[1];
 		else {
 			showError("无效的视频链接！");
 			$("#videoUrl").parent().addClass("has-error has-feedback");
@@ -39,16 +40,8 @@ function getVideoUrl() {
 function getPlayUrl() {
 	var playUrl = $("#playUrl").val();
 	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=84956560bc028eb7&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
-	if (playUrl.indexOf("https://") != 0) {
-		if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
-		else if (playUrl.indexOf("bilibili") != -1) playUrl = "https://" + playUrl;
-		else {
-			showError("无效的PlayUrl！");
-			$("#playUrl").parent().addClass("has-error has-feedback");
-			return null;
-		}
-	}
-	if (!playUrl.split("?cid=")[1]) {
+	if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
+	if (playUrl.indexOf("bilibili") != -1 || !playUrl.split("?cid=")[1]) {
 		showError("无效的PlayUrl！");
 		$("#playUrl").parent().addClass("has-error has-feedback");
 		return null;
@@ -58,10 +51,10 @@ function getPlayUrl() {
 }
 
 function backupUrl() {
-	showError("获取PlayUrl或下载链接出错，请手动输入PlayUrl！");
+	showError("获取PlayUrl或下载链接出错，请手动输入PlayUrl！否则由于B站限制，只能下载低清晰度视频！");
 	$("#backup-url, #error").show();
 	$("#playUrl").parent().addClass("has-error has-feedback");
-	$("#success").hide();
+	//$("#success").hide();
 	$("#playUrl").val("");
 	manual = true;
 }
@@ -74,9 +67,9 @@ function getAid() {
 	videoUrl = getVideoUrl();
 	if (!videoUrl || (manual && !playUrl)) return;
 
-	if (videoUrl.split("/av")[1].split("?p=")[0].split("/")[0]) {
-		aid = videoUrl.split("/av")[1].split("?p=")[0].split("/")[0];
-		p = videoUrl.split("/av")[1].split("?p=")[1];
+	if (videoUrl.split("av")[1]) {
+		aid = videoUrl.split("av")[1].split("/")[0];
+		p = videoUrl.split("av")[1].split("?p=")[1] || 1;
 		getInfo();
 	}
 	else {
@@ -126,8 +119,8 @@ function getInfo() {
 				success: function(data, status, xhr) {
 					data = JSON.parse(data);
 					cid = data[p - 1].cid;
-					var params = `appkey=84956560bc028eb7&cid=${cid}&otype=json&qn=112&quality=112&type=`;
-					var sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
+					var params = `appkey=84956560bc028eb7&cid=${cid}&otype=json&qn=112&quality=112&type=`,
+						sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 					if (manual) {
 						playUrl = getPlayUrl();
@@ -156,7 +149,7 @@ function getInfo() {
 	});
 }
 
-function getData(url) {
+function getData(url, isBangumi) {
 	$.ajax(url, {
 		type: "get",
 		dataType: "text",
@@ -164,38 +157,59 @@ function getData(url) {
 			backupUrl();
 		},
 		success: function(data, status, xhr) {
-			console.log(url, data);
-			data = JSON.parse(data);
-			parseData(data);
+			//console.log(url, data);
+			var data = isBangumi ? $(data) : JSON.parse(data),
+				target = isBangumi ? data.find("durl") : data.durl;
+			if (target) {
+				var quality = isBangumi ? $(data).find("quality").text() : data.quality,
+					qualityArray = {
+					112: "高清 1080P+",
+					80: "高清 1080P",
+					74: "高清 720P60",
+					64: "高清 720P",
+					48: "高清 720P",
+					32: "清晰 480P",
+					16: "流畅 360P",
+					15: "流畅 360P"
+				} //需要修改，不是一一对应
+				$("#quality").html(qualityArray[quality] || "未知");
+				parseData(target, isBangumi);
+			}
+			else {
+				backupUrl();
+				if (isBangumi) return;
+				var params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`;
+				sign = hex_md5(params + "9b288147e5474dd2aa67085f716c560d");
+				getData(`http://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`, true);
+			}
 		}
 	});
 }
 
-function parseData(data) {
-	var target = data.durl;
-	if (!target) {
-		backupUrl();
-		return;
-	}
-	$("#backup-url, #error").hide();
+function parseData(target, isBangumi) {
+	if (!isBangumi) $("#backup-url, #error").hide();
 	$("#success").show();
 	$("#cid").html(cid);
-	count = target.length;
-	var qualityArray = {
-		112: "高清 1080P+",
-		80: "高清 1080P",
-		74: "高清 720P60",
-		64: "高清 720P",
-		48: "高清 720P",
-		32: "清晰 480P",
-		16: "流畅 360P",
-		15: "流畅 360P"
-	} //需要修改，不是一一对应
-	var quality = qualityArray[data.quality] || "未知";
-	$("#quality").html(quality);
 	$("tbody").eq(0).html("");
-	links = new Array();
-	for (var i in target) {
+	count = target.length;
+	links = [];
+	if (isBangumi) target.each(function(i, o) {
+		var part = $(o);
+		links.push(part.find("url").text());
+		$("tbody").eq(0).append("<tr>\
+			<td>" + part.find("order").text() + "</td>\
+			<td>" + part.find("length").text()  / 1e3 + "</td>\
+			<td>" + part.find("size").text() / 1e6 + "</td>\
+			<td>\
+				<div class=\"checkbox\">\
+					<label>\
+				  		<input type=\"checkbox\" checked=\"true\">\
+					</label>\
+			  	</div>\
+			</td>\
+		</tr>");
+	});
+	else for (var i in target) {
 		var part = target[i];
 		links.push(part.url);
 		$("tbody").eq(0).append("<tr>\
@@ -229,7 +243,7 @@ function openDialog() {
 }
 
 function download(data) {
-	var functionArray = new Array();
+	var functionArray = [];
 	var flag = true;
 	//$("#download").html("");
 	for (var i = 0; i < count; i++) {

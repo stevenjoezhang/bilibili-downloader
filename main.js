@@ -86,3 +86,5 @@ app.on("activate", function() {
 ipc.on("length", function(event, message) {
 	length = message;
 });
+
+process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
