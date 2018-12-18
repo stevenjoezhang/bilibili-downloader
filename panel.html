@@ -1,95 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8">
 <title>Mimi Downloader</title>
-<link href="cdn/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-<link href="style.css" rel="stylesheet"/>
+<link href="cdn/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<style>
+	.checkbox {
+		margin: 0px auto !important;
+	}
+	.mt20 {
+		margin-top: 20px;
+	}
+	.info, #nav, .glyphicon {
+		display: none;
+	}
+	.has-feedback .glyphicon {
+		display: block;
+	}
+	table img {
+		max-width: 80%;
+	}
+	#bg {
+		width: 100%;
+		z-index: -1;
+	}
+	.input-group-addon {
+		cursor: pointer;
+	}
+	.capitalize {
+		text-transform: capitalize; /*首字母大写*/
+	}
+	/*
+	table {
+		word-break: break-all;
+		word-wrap: break-all;
+	}*/
+</style>
 </head>
 <body>
 <div class="container" style="margin: 0 20px 20px 20px;">
 	<div class="row">
 		<h1>Mimi Downloader</h1>
-		<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
+		<p id="help">欢迎使用米米下载器，轻松下载视频、弹幕</p>
 	</div>
+
 	<div class="row">
 		<div class="form-group">
 			<label class="control-label">视频链接</label>
-			<input type="text" class="form-control" id="videoUrl" placeholder="若有分p，请带上?p=参数"/>
-			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<input type="text" class="form-control" id="videoUrl"/>
+  			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
-	<div class="row" id="backup-url">
+	
+	<div class="row">
 		<div class="form-group">
 			<label class="control-label">PlayUrl</label>
 			<input type="text" class="form-control" id="playUrl"/>
-			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+  			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 		</div>
 	</div>
+
 	<div class="row">
 		<button class="btn btn-success" onclick="getAid()">获取下载链接</button>
 		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
+	
 	<ul class="nav nav-tabs row mt20" id="nav">
 		<li role="presentation" class="active" onclick="changeMenu(0)"><a>下载地址</a></li>
 		<li role="presentation" onclick="changeMenu(1)"><a>视频信息</a></li>
-		<li role="presentation" onclick="changeMenu(2)"><a>弹幕查询</a></li>
 	</ul>
+
 	<div class="info mt20">
 		<div class="row">
 			<div class="form-group">
 				<label class="control-label">视频CID：</label>
 				<span id="cid"></span>
-				&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;
 				<label class="control-label">清晰度：</label>
 				<span id="quality"></span>
-				&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;
 				<label class="control-label">下载弹幕：</label>
 				<button class="btn btn-success" onclick="xml()">.xml</button>
 				<button class="btn btn-primary" onclick="ass()">.ass</button>
 			</div>
 		</div>
-		<div id="error">
-			<div class="row">
-				<div class="form-group">
-					<label class="control-label">获取PlayUrl或下载链接出错，请手动输入PlayUrl！否则由于B站限制，只能下载低清晰度视频！</label>
+
+		<div class="row">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>编号</th>
+						<th>时长(s)</th>
+						<th>大小(MB)</th>
+						<th>选定</th>	
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+
+			<button class="btn btn-primary" onclick="selectAll()">全选</button>
+			<button class="btn btn-default" onclick="selectReverse()">反选</button>
+			<button class="btn btn-danger" onclick="selectNone()">全不选</button>
+		</div>
+	
+		<div class="row">
+			<div class="form-group mt20">
+				<label class="control-label">下载路径</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="downloadPath"/>
+				  	<div class="input-group-addon" onclick="openDialog()">浏览</div>
 				</div>
 			</div>
 		</div>
-		<div id="success">
-			<div class="row">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>编号</th>
-							<th>时长(s)</th>
-							<th>大小(MB)</th>
-							<th>选定</th>	
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-				<button class="btn btn-primary" onclick="selectAll()">全选</button>
-				<button class="btn btn-default" onclick="selectReverse()">反选</button>
-				<button class="btn btn-danger" onclick="selectNone()">全不选</button>
-			</div>
-			<div class="row">
-				<div class="form-group mt20">
-					<label class="control-label">下载路径</label>
-					<div class="input-group">
-						<input type="text" class="form-control" id="downloadPath"/>
-						<div class="input-group-addon" onclick="openDialog()">浏览</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<button class="btn btn-success" onclick="download()">下载选中片段</button>
-				<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
-			</div>
+
+		<div class="row">
+			<button class="btn btn-success" onclick="download()">下载选中片段</button>
+			<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+		</div>
+
+		<div class="row mt20" id="download">
 		</div>
 	</div>
+
 	<div class="info mt20">
 		<div class="row">
 			<table class="table table-striped">
@@ -104,119 +138,24 @@
 			</table>
 		</div>
 	</div>
-	<div class="info mt20">
-		<div class="row">
-			<div class="form-group">
-				<span>如果不需要过滤弹幕，以下内容留空即可</span>
-			</div>
-			<div class="form-group">
-				<label class="control-label">关键词</label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式"/>
-					<div class="input-group-addon" onclick="searchDanmaku()">搜索</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
-				</label>
-			</div>
-		</div>
-		<div id="filter" class="row mt20" style="margin-bottom: -20px; display: none;">
-			<label class="control-label">弹幕时间</label>
-			<div class="row">
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="T1" placeholder="单位：s"/>
-				</div>
-				<div class="form-group col-xs-2">
-					<span style="text-align: center;">至</span>
-				</div>
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="T2" placeholder="单位：s"/>
-				</div>
-			</div>
-			<label class="control-label">发送时间</label>
-			<div class="row">
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="ST1" placeholder="时间戳：s"/>
-				</div>
-				<div class="form-group col-xs-2">
-					<span style="text-align: center;">至</span>
-				</div>
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="ST2" placeholder="时间戳：s"/>
-				</div>
-			</div>
-			<div class="row">
-				<div class="form-group col-xs-12">
-					<label class="control-label">发送者</label>
-					<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名"/>
-				</div>
-			</div>
-		</div>
-		<div class="row mt20">
-			<table class="table table-striped" id="danmaku">
-				<thead>
-					<tr>
-						<th style="width: 80px;">弹幕时间</th>
-						<th style="width: 120px;">发送时间</th>	
-						<th>弹幕内容</th>
-						<th style="width: 100px;">发送者</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="row mt20" id="download">
-	</div>
+
 	<img src="bg.png" id="bg" class="mt20">
 </div>
-<script src="cdn/jquery-3.3.1.min.js"></script>
+
+<script src="cdn/jquery-3.2.1.min.js"></script>
 <script>if (typeof module === "object") { window.jQuery = window.$ = module.exports; }</script>
-<script src="md5.js"></script>
-<script src="crc32.js"></script>
 <script src="ass.js"></script>
 <script src="panel.js"></script>
-<script src="danmaku.js"></script>
 <script>
-//https://www.zhihu.com/question/51598623/answer/279834636
-const remote = require("electron").remote;
-const clipboard = require("electron").clipboard;
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
-let menu = new Menu(); //new一个菜单
-//添加菜单功能
-menu.append(new MenuItem({
-	label: "复制",
-	click: function() {
-		clipboard.writeText($(document.activeElement).val());
- 	}
-}));
-//添加菜单分割线
-menu.append(new MenuItem({
-	type: "separator"
-}));
-//添加菜单功能
-menu.append(new MenuItem({
-	label: "粘贴",
-	click: function() {
-		$(document.activeElement).val(clipboard.readText());
- 	}
-}));
-$('input[type="text"]').each(function() {
-	$(this).on("contextmenu", function(e) {
-		e.preventDefault();
-		this.focus();
-		menu.popup(remote.getCurrentWindow());
-	});
-}, false);
+window.addEventListener("beforeunload", e => {
+	if (downloadArray.length) {
+		e.returnValue = false;
+		alert("[Error]下载时无法退出，请先结束任务！");
+	}
+});
 
 $("button").each(function() {
-	$(this).on("click contextmenu", function() {
+	$(this).get(0).addEventListener("click", function() {
 		this.blur();
 	});
 });
@@ -224,15 +163,16 @@ $("button").each(function() {
 $("#downloadPath").val(__dirname);
 
 function help() {
-	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
+	alert("请填写视频链接（即视频播放界面的url），以及PlayUrl（请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内），然后点击“获取下载链接”进行下一步。");
 }
 function about() {
-	alert(`Mimi Downloader Ver 1.2.2\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
+	alert("Mimi Downloader Ver 1.1.0\n\nWe are using Node.js " + process.versions.node + ", Chromium " + process.versions.chrome + ", and Electron " + process.versions.electron + ". Powered by Mimi.");
 }
 function changeMenu(index) {
-	if (!$(".info").eq(index).is(":hidden")) return;
-	$(".info").hide().eq(index).fadeIn();
-	$("#nav").children().removeClass("active").eq(index).addClass("active");
+	$(".info").eq(!index).hide();
+	$(".info").eq(index).fadeIn();
+	$("li").eq(index).addClass("active");
+	$("li").eq(!index).removeClass("active");
 }
 function selectAll() {
 	$('input[type="checkbox"]').prop("checked", true);
@@ -241,25 +181,9 @@ function selectNone() {
 	$('input[type="checkbox"]').prop("checked", false);
 }
 function selectReverse() {
-	$('input[type="checkbox"]').each(function() {
+	$('input[type="checkbox"]').each(function () {
 		$(this).prop("checked", !$(this).prop("checked"));
 	});
-}
-function searchDanmaku() {
-	if (!$("#filterSwitch").is(":checked")) {
-		danmakuFilter();
-		return;
-	}
-	var T1 = parseFloat($("#T1").val()),
-		T2 = parseFloat($("#T2").val()),
-		ST1 = parseFloat($("#T1").val()),
-		ST2 = parseFloat($("#ST2").val()),
-		user = $("#user").val(),
-		text = $("#searchDanmaku").val();
-	danmakuFilter(T1, T2, ST1, ST2, user, text);
-}
-function filterSwitch() {
-	$("#filter").is(":hidden") ? $("#filter").slideDown() : $("#filter").slideUp();
 }
 </script>
 </body>
