@@ -39,14 +39,14 @@ function danmakuFilter(T1, T2, ST1, ST2, user, text) {
 		var newDate = new Date();
 		newDate.setTime(sendTime * 1000);
 		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");
-		$("tbody").eq(2).append("<tr>\
-			<td>" + formatSeconds(time) + "</td>\
-			<td>" + sendTime + "</td>\
-			<td class='wrap'>" + target.text + "</td>\
-			<td>\
-				<a href='#' onclick='searchUser(event)'>" + target.user + "</button>\
-			</td>\
-		</tr>");
+		$("tbody").eq(2).append(`<tr>
+			<td>${formatSeconds(time)}</td>
+			<td>${sendTime}</td>
+			<td class="wrap">${target.text}</td>
+			<td>
+				<a href="#" onclick="searchUser(event)">${target.user}</button>
+			</td>
+		</tr>`);
 	}
 }
 

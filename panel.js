@@ -105,10 +105,10 @@ function getInfo() {
 				if (mime.getType(data[i]) && mime.getType(data[i]).indexOf("image") != -1) { //解析图片地址
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
-				$("tbody").eq(1).append("<tr>\
-				<td class=\"capitalize\">" + i + "</td>\
-				<td>" + data[i] + "</td>\
-				</tr>");
+				$("tbody").eq(1).append(`<tr>
+				<td class="capitalize">${i}</td>
+				<td>${data[i]}</td>
+				</tr>`);
 			}
 			$.ajax("https://www.bilibili.com/widget/getPageList?aid=" + aid, {
 				type: "get",
@@ -196,34 +196,34 @@ function parseData(target, isBangumi) {
 	if (isBangumi) target.each(function(i, o) {
 		var part = $(o);
 		links.push(part.find("url").text());
-		$("tbody").eq(0).append("<tr>\
-			<td>" + part.find("order").text() + "</td>\
-			<td>" + part.find("length").text()  / 1e3 + "</td>\
-			<td>" + part.find("size").text() / 1e6 + "</td>\
-			<td>\
-				<div class=\"checkbox\">\
-					<label>\
-				  		<input type=\"checkbox\" checked=\"true\">\
-					</label>\
-			  	</div>\
-			</td>\
-		</tr>");
+		$("tbody").eq(0).append(`<tr>
+			<td>${part.find("order").text()}</td>
+			<td>${part.find("length").text()  / 1e3}</td>
+			<td>${part.find("size").text() / 1e6}</td>
+			<td>
+				<div class="checkbox">
+					<label>
+				  		<input type="checkbox" checked="true">
+					</label>
+			  	</div>
+			</td>
+		</tr>`);
 	});
 	else for (var i in target) {
 		var part = target[i];
 		links.push(part.url);
-		$("tbody").eq(0).append("<tr>\
-			<td>" + part.order + "</td>\
-			<td>" + part.length / 1e3 + "</td>\
-			<td>" + part.size / 1e6 + "</td>\
-			<td>\
-				<div class=\"checkbox\">\
-					<label>\
-						<input type=\"checkbox\" checked=\"true\">\
-					</label>\
-				</div>\
-			</td>\
-		</tr>");
+		$("tbody").eq(0).append(`<tr>
+			<td>${part.order}</td>
+			<td>${part.length / 1e3}</td>
+			<td>${part.size / 1e6}</td>
+			<td>
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" checked="true">
+					</label>
+				</div>
+			</td>
+		</tr>`);
 	}
 }
 
@@ -249,18 +249,18 @@ function download(data) {
 	for (var i = 0; i < count; i++) {
 		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
 			if (downloadArray.indexOf(links[i]) != -1) continue;
-			$("#download").append("<span>" + cid + "-" + i + '</span>\
-			&nbsp;&nbsp;&nbsp;\
-			<span class="addon"></span>\
-			&nbsp;&nbsp;&nbsp;\
-			<span class="speed"></span>\
-			&nbsp;&nbsp;&nbsp;\
-			<span class="eta"></span>\
-			<div class="progress progress-striped active">\
-				<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">\
-					<span class="progress-value">0%</span>\
-				</div>\
-			</div>');
+			$("#download").append(`<span>${cid}-${i}</span>
+			&nbsp;&nbsp;&nbsp;
+			<span class="addon"></span>
+			&nbsp;&nbsp;&nbsp;
+			<span class="speed"></span>
+			&nbsp;&nbsp;&nbsp;
+			<span class="eta"></span>
+			<div class="progress progress-striped active">
+				<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">
+					<span class="progress-value">0%</span>
+				</div>
+			</div>`);
 			let _i = i;
 			let _j = downloadIndex; //必须使用let或const
 			downloadIndex++;
