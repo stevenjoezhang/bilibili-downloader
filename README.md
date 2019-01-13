@@ -4,6 +4,8 @@
 
 [英文/English](README.EN.md)
 
+![](screenshot.png)
+
 ## 功能
 目前实现的功能：
 
@@ -24,17 +26,17 @@ npm install
 # 启动！
 npm start
 ```
-如果一切正常，会打开一个名为"Mimi Downloader"的新窗口。输入视频链接，按照提示即可下载视频。  
-如果程序提示需要输入PlayUrl，你可以如下图所示获取它：
+如果一切正常，会打开一个名为"Mimi Downloader"的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。  
+如果程序提示需要输入`PlayUrl`，你可以如下图所示获取它：
 
-![demo-video](help.png)
+![](help.png)
 
-否则由于B站限制，只能下载低清晰度视频！
+否则由于B站限制，只能下载低清晰度视频！  
 下载完成后，可以使用ffmpeg将flv片段合成为一个文件：
 ```bash
 cid=11090110
 # 将 11090110 替换为你下载的视频的 cid
-for f in $cid-*.flv; do echo "file '$f'" > temp.txt; done
+for f in $cid-*.flv; do echo "file '$f'" >> temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 rm temp.txt
 ```
