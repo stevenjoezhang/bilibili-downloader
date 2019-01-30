@@ -58,13 +58,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 ## 待实现
 - 允许用户开始/暂停下载
-- 阻止拖入
-```javascript
-document.addEventListener("drop", function(event) {
-    event.preventDefault();
-    return false;
-});
-```
 - 是否把视频存储在新文件夹中
 - 下载进度单独菜单
 - 显示用户信息

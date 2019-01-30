@@ -203,6 +203,7 @@ menu.append(new MenuItem({
 		$(document.activeElement).val(clipboard.readText());
 	}
 }));
+
 $('input[type="text"]').each(function() {
 	$(this).on("contextmenu", function(e) {
 		e.preventDefault();
@@ -222,25 +223,31 @@ $("#downloadPath").val(__dirname);
 function help() {
 	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
 }
+
 function about() {
 	alert(`Mimi Downloader Ver 1.2.2\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
 }
+
 function changeMenu(index) {
 	if (!$(".info").eq(index).is(":hidden")) return;
 	$(".info").hide().eq(index).fadeIn();
 	$("#nav").children().removeClass("active").eq(index).addClass("active");
 }
+
 function selectAll() {
 	$('input[type="checkbox"]').prop("checked", true);
 }
+
 function selectNone() {
 	$('input[type="checkbox"]').prop("checked", false);
 }
+
 function selectReverse() {
 	$('input[type="checkbox"]').each(function() {
 		$(this).prop("checked", !$(this).prop("checked"));
 	});
 }
+
 function searchDanmaku() {
 	if (!$("#filterSwitch").is(":checked")) {
 		danmakuFilter();
@@ -254,9 +261,20 @@ function searchDanmaku() {
 		text = $("#searchDanmaku").val();
 	danmakuFilter(T1, T2, ST1, ST2, user, text);
 }
+
 function filterSwitch() {
 	$("#filter").is(":hidden") ? $("#filter").slideDown() : $("#filter").slideUp();
 }
+
+document.addEventListener("dragover", function(event) {
+	event.preventDefault();
+	return false;
+}, false);
+
+document.addEventListener("drop", function(event) {
+	event.preventDefault();
+	return false;
+}, false);
 </script>
 </body>
 </html>
