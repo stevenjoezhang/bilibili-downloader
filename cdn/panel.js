@@ -12,11 +12,11 @@ var videoUrl, playUrl, aid, p = 1, cid, count, links, downloadArray = [], downlo
 var debug = !true;
 
 function showError(text) {
-	dialog.showMessageBox({type:"error", title: "[Error]", message: text});
+	dialog.showMessageBox({type: "error", title: "[Error]", message: text});
 }
 
 function showWarning(text) {
-	dialog.showMessageBox({type:"warning", title: "[Warning]", message: text});
+	dialog.showMessageBox({type: "warning", title: "[Warning]", message: text});
 }
 
 function getVideoUrl() {
@@ -39,7 +39,7 @@ function getVideoUrl() {
 
 function getPlayUrl() {
 	var playUrl = $("#playUrl").val();
-	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=84956560bc028eb7&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
+	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=iVGUTjsxvpLeuDCf&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
 	if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
 	if (playUrl.indexOf("bilibili") != -1 || !playUrl.split("?cid=")[1]) {
 		showError("无效的PlayUrl！");
@@ -119,8 +119,8 @@ function getInfo() {
 				success: function(data, status, xhr) {
 					data = JSON.parse(data);
 					cid = data[p - 1].cid;
-					var params = `appkey=84956560bc028eb7&cid=${cid}&otype=json&qn=112&quality=112&type=`,
-						sign = hex_md5(params + "94aba54af9065f71de72f5508f1cd42e");
+					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
+						sign = hex_md5(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt");
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 					if (manual) {
 						playUrl = getPlayUrl();
