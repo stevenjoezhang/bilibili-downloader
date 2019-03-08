@@ -6,16 +6,18 @@
 
 ![](screenshot.png)
 
+由于B站会不时更新请求方式，请记得通过GIT保持更新。如果无法正常使用，欢迎提交ISSUE或PR。
+
 ## 功能
 目前实现的功能：
 
 - 根据视频地址查询aid和cid以及视频详细信息
 - 根据视频cid获取视频和弹幕文件的下载地址
 - 下载视频（`.flv`或`.mp4`）和弹幕文件（`.xml`或`.ass`），支持断点续传
-- 某些情况下可能需要用户手动输入PlayUrl
 
 ## 使用方法
-你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download)（以及[npm](http://npmjs.com)）来运行本程序。 在命令行/终端输入：
+你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download)（以及[npm](http://npmjs.com)）来运行本程序。  
+在命令行/终端输入：
 ```bash
 # 克隆这个仓库
 git clone https://github.com/stevenjoezhang/mimi-downloader.git
@@ -27,7 +29,7 @@ npm install
 npm start
 ```
 如果一切正常，会打开一个名为"Mimi Downloader"的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。  
-如果程序提示需要输入`PlayUrl`，你可以如下图所示获取它：
+**注意：某些情况下程序可能提示用户需要手动输入PlayUrl。**你可以如下图所示获取它：
 
 ![](help.png)
 
