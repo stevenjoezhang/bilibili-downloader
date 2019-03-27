@@ -1,8 +1,8 @@
 # Mimi Downloader
 
-A Bilibili video downloader based on Node.js and Electron.
-
 [中文/Chinese](README.md)
+
+A Bilibili video downloader based on Node.js and Electron.
 
 ![](screenshot.png)
 

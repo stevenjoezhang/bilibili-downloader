@@ -35,7 +35,7 @@ function createPanel() {
 	//mainWindow.setPosition(0, 0, true);
 
 	// Open the DevTools.
-	// mainWindow.webContents.openDevTools()
+	//mainWindow.webContents.openDevTools();
 
 	mainWindow.on("close", (e) => {
 		//e.preventDefault();

@@ -235,7 +235,7 @@ function openDialog() {
 			"openDirectory", //打开路径
 		],
 		filters: [
-			//{ name: "zby", extensions: ["json"] },
+			//{ name: "", extensions: ["json"] },
 		]
 	}, function(res) {
 		if (res[0]) $("#downloadPath").val(res[0]);

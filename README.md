@@ -1,12 +1,12 @@
 # Mimi Downloader
 
-基于Node.js和Electron编写的Bilibili视频、弹幕下载器。
-
 [英文/English](README.EN.md)
 
-![](screenshot.png)
+基于Node.js和Electron编写的Bilibili视频、弹幕下载器。
 
-由于B站会不时更新请求方式，请记得通过GIT保持更新。如果无法正常使用，欢迎提交ISSUE或PR。
+**由于B站会不时更新请求方式，请记得通过GIT保持更新。如果无法正常使用，欢迎提交ISSUE或PR。**
+
+![](screenshot.png)
 
 ## 功能
 目前实现的功能：
