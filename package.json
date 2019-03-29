@@ -18,7 +18,7 @@
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
 		"async": "^2.6.2",
-		"electron": "^3.1.7",
+		"electron": "^4.0.0",
 		"mime": "^2.4.0",
 		"progress": "^2.0.3",
 		"request": "^2.88.0"
