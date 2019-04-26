@@ -4,7 +4,7 @@
 
 基于Node.js和Electron编写的Bilibili视频、弹幕下载器。
 
-**由于B站会不时更新请求方式，请记得通过GIT保持更新。如果无法正常使用，欢迎提交ISSUE或PR。**
+**由于B站会不时更新请求方式，请记得通过`Git`保持更新。如果无法正常使用，欢迎提交ISSUE或PR。**
 
 ![](screenshot.png)
 
@@ -29,7 +29,8 @@ npm install
 npm start
 ```
 如果一切正常，会打开一个名为"Mimi Downloader"的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。  
-**注意：某些情况下程序可能提示用户需要手动输入PlayUrl。**你可以如下图所示获取它：
+**注意：某些情况下程序可能提示用户需要手动输入PlayUrl。**  
+你可以如下图所示获取它：
 
 ![](help.png)
 

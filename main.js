@@ -23,7 +23,10 @@ function createPanel() {
 		minHeight: 600,
 		//resizable: true,
 		fullscreenable: false,
-		title: "Mimi Downloader"
+		title: "Mimi Downloader",
+		webPreferences: {
+			nodeIntegration: true
+		}
 	});
 
 	mainWindow.loadURL(url.format({
