@@ -17,7 +17,7 @@
 	"author": "Mimi",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
-		"async": "^2.6.2",
+		"async": "^3.0.0",
 		"electron": "^5.0.0",
 		"mime": "^2.4.0",
 		"progress": "^2.0.3",
