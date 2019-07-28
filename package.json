@@ -1,6 +1,6 @@
 {
 	"name": "MimiDownloader",
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"description": "Yet another video downloader for Bilibili",
 	"main": "main.js",
 	"scripts": {
@@ -17,9 +17,9 @@
 	"author": "Mimi",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
-		"async": "^3.0.0",
-		"electron": "^5.0.0",
-		"mime": "^2.4.0",
+		"async": "^3.1.0",
+		"electron": "^5.0.8",
+		"mime": "^2.4.4",
 		"progress": "^2.0.3",
 		"request": "^2.88.0"
 	}
