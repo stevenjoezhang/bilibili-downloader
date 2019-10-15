@@ -1,7 +1,7 @@
 {
-	"name": "MimiDownloader",
+	"name": "mimi-downloader",
 	"version": "1.2.3",
-	"description": "Yet another video downloader for Bilibili",
+	"description": "Yet another video downloader for Bilibili.",
 	"main": "main.js",
 	"scripts": {
 		"start": "electron ."
@@ -14,11 +14,11 @@
 		"Downloader",
 		"Bilibili"
 	],
-	"author": "Mimi",
+	"author": "Mimi <stevenjoezhang@gmail.com> https://zhangshuqiao.org",
 	"license": "GPL-3.0-or-later",
 	"dependencies": {
 		"async": "^3.1.0",
-		"electron": "^6.0.0",
+		"electron": "^6.0.12",
 		"mime": "^2.4.4",
 		"progress": "^2.0.3",
 		"request": "^2.88.0"
