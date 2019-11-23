@@ -10,7 +10,7 @@ function getDanmaku() {
 		},
 		success: function(data, status, xhr) {
 			danmakuArray = new Array();
-			$(data).find("d").each(function(i, o) {
+			$(data).find("d").each((i, o) => {
 				var info = $(o).attr("p").split(","),
 					danmaku = {
 					time: info[0],
@@ -115,7 +115,7 @@ function assDownload(data, filename) {
 	}),
 		url = window.URL.createObjectURL(blob);
 	blobDownload(url, filename);
-	document.addEventListener("unload", function() {
+	document.addEventListener("unload", () => {
 		window.URL.revokeObjectURL(url);
 	});
 }
@@ -127,7 +127,7 @@ function blobDownload(url, filename) {
 	document.body.appendChild(saveas);
 	saveas.download = filename;
 	saveas.click();
-	setTimeout(function() {
+	setTimeout(() => {
 		saveas.parentNode.removeChild(saveas);
 	}, 1000);
 }

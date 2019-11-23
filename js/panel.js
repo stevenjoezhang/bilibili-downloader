@@ -193,7 +193,7 @@ function parseData(target, isBangumi) {
 	$("tbody").eq(0).html("");
 	count = target.length;
 	links = [];
-	if (isBangumi) target.each(function(i, o) {
+	if (isBangumi) target.each((i, o) => {
 		var part = $(o);
 		links.push(part.find("url").text());
 		$("tbody").eq(0).append(`<tr>
@@ -237,7 +237,7 @@ function openDialog() {
 		filters: [
 			//{ name: "", extensions: ["json"] },
 		]
-	}, function(res) {
+	}, res => {
 		if (res[0]) $("#downloadPath").val(res[0]);
 	});
 }
@@ -266,7 +266,7 @@ function download(data) {
 			downloadIndex++;
 			downloadArray.push(links[i]);
 			ipcRender.send("length", downloadArray.length);
-			functionArray.push(function(callback) {
+			functionArray.push(callback => {
 				downloadLink(_i, _j);
 				//callback(null, j + " Done");
 			});
@@ -274,7 +274,7 @@ function download(data) {
 		} //由于js执行机制，此处不能直接传值
 	}
 	if (flag) showWarning("没有新的视频被下载！");
-	async.parallel(functionArray, function(err, results) {
+	async.parallel(functionArray, (err, results) => {
 		if (err) console.log(err);
 	});
 }
@@ -287,9 +287,8 @@ function downloadLink(i, j) {
 	var downloadPath = $("#downloadPath").val() || "",
 		filename = (count > 10 && i <= 9) ? `${cid}-0${i}.flv` : `${cid}-${i}.flv`,
 		file = path.join(downloadPath, filename);
-	fs.exists(file, function(exist) {
-		if (exist) resumeDownload(i, j, file)
-		else newDownload(i, j, file);
+	fs.exists(file, exist => {
+		exist ? resumeDownload(i, j, file) : newDownload(i, j, file);
 	});
 }
 
@@ -309,7 +308,7 @@ function newDownload(i, j, file) {
 }
 
 function resumeDownload(i, j, file) {
-	fs.stat(file, function(error, state) {
+	fs.stat(file, (error, state) => {
 		var options = {
 			url: links[i],
 			encoding: null, //当请求的是二进制文件时，一定要设置
@@ -327,13 +326,13 @@ function resumeDownload(i, j, file) {
 }
 
 function generalDownload(i, j, options, downloads) {
-	request.get(options).on("response", function(response) {
+	request.get(options).on("response", response => {
 		//https://blog.csdn.net/zhu_06/article/details/79772229
 		var proStream = progress({
 			length: response.headers["content-length"],
 			time: 500 //单位ms
 		});
-		proStream.on("progress", function(progress) {
+		proStream.on("progress", progress => {
 			//console.log(progress);
 			$(".speed").eq(j).html(Math.round(progress.speed / 1e3) + "kb/s");
 			$(".eta").eq(j).html(`eta:${progress.eta}s`);
@@ -346,7 +345,7 @@ function generalDownload(i, j, options, downloads) {
 				ipcRender.send("length", downloadArray.length);
 			}
 		});
-		request.get(options).pipe(proStream).pipe(downloads).on("error", function(e) {
+		request.get(options).pipe(proStream).pipe(downloads).on("error", e => {
 			console.error(e);
 		}); //先pipe到proStream再pipe到文件的写入流中
 	});

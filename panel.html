@@ -204,17 +204,17 @@ menu.append(new MenuItem({
 	}
 }));
 
-$('input[type="text"]').each(function() {
-	$(this).on("contextmenu", function(e) {
-		e.preventDefault();
-		this.focus();
+$('input[type="text"]').each((i, o) => {
+	$(o).on("contextmenu", event => {
+		event.preventDefault();
+		event.currentTarget.focus();
 		menu.popup(remote.getCurrentWindow());
 	});
 }, false);
 
-$("button").each(function() {
-	$(this).on("click contextmenu", function() {
-		this.blur();
+$("button").each((i, o) => {
+	$(o).on("click contextmenu", event => {
+		event.currentTarget.blur();
 	});
 });
 
@@ -243,8 +243,8 @@ function selectNone() {
 }
 
 function selectReverse() {
-	$('input[type="checkbox"]').each(function() {
-		$(this).prop("checked", !$(this).prop("checked"));
+	$('input[type="checkbox"]').each((i, o) => {
+		$(o).prop("checked", !$(o).prop("checked"));
 	});
 }
 
@@ -266,12 +266,12 @@ function filterSwitch() {
 	$("#filter").is(":hidden") ? $("#filter").slideDown() : $("#filter").slideUp();
 }
 
-document.addEventListener("dragover", function(event) {
+document.addEventListener("dragover", event => {
 	event.preventDefault();
 	return false;
 }, false);
 
-document.addEventListener("drop", function(event) {
+document.addEventListener("drop", event => {
 	event.preventDefault();
 	return false;
 }, false);
