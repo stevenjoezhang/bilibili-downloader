@@ -9,6 +9,7 @@
 ![](screenshot.png)
 
 ## 功能
+
 目前实现的功能：
 
 - 根据视频地址查询aid和cid以及视频详细信息
@@ -16,6 +17,7 @@
 - 下载视频（`.flv`或`.mp4`）和弹幕文件（`.xml`或`.ass`），支持断点续传
 
 ## 使用方法
+
 你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download)（以及[npm](http://npmjs.com)）来运行本程序。  
 在命令行/终端输入：
 ```bash
@@ -45,21 +47,25 @@ rm temp.txt
 ```
 
 ## 制作者/鸣谢
+
 - [Mimi](https://zhangshuqiao.org) 本项目的开发者
 - 田生 [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
 - soimort [you-get](https://github.com/soimort/you-get) MIT license 提供了部分B站api的调用方式
 - [md5](http://pajhome.org.uk/crypt/md5) BSD License
 
 ## 许可证
+
 GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
 
 ## 不同分支的内容
+
 - master 主分支，采用了来自you-get的api，bangumi和movie需要手动输入PlayUrl
 - backup 均需要手动输入PlayUrl
 - you-get 只需输入视频地址即可下载，但bangumi和movie没有高清flv源，只有分辨率较低的mp4
 
 ## 待实现
+
 - 允许用户开始/暂停下载
 - 是否把视频存储在新文件夹中
 - 下载进度单独菜单
