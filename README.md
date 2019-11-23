@@ -4,7 +4,7 @@
 
 基于Node.js和Electron编写的Bilibili视频、弹幕下载器。
 
-**由于B站会不时更新请求方式，请记得通过`Git`保持更新。如果无法正常使用，欢迎提交ISSUE或PR。**
+**由于B站会不时更新请求方式，请记得通过`git`保持更新。如果无法正常使用，欢迎提交Issue或Pull Request。**
 
 ![](screenshot.png)
 
@@ -19,7 +19,7 @@
 ## 使用方法
 
 你需要安装[Git](https://git-scm.com)和[Node.js](https://nodejs.org/en/download)（以及[npm](http://npmjs.com)）来运行本程序。  
-在命令行/终端输入：
+在命令行输入：
 ```bash
 # 克隆这个仓库
 git clone https://github.com/stevenjoezhang/mimi-downloader.git
@@ -31,12 +31,11 @@ npm install
 npm start
 ```
 如果一切正常，会打开一个名为"Mimi Downloader"的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。  
-**注意：某些情况下程序可能提示用户需要手动输入PlayUrl。**  
+**注意：某些情况下程序可能提示用户需要手动输入PlayUrl；否则由于B站限制，只能下载低清晰度视频！**  
 你可以如下图所示获取它：
 
 ![](help.png)
 
-否则由于B站限制，只能下载低清晰度视频！  
 下载完成后，可以使用ffmpeg将flv片段合成为一个文件：
 ```bash
 cid=11090110
@@ -51,7 +50,6 @@ rm temp.txt
 - [Mimi](https://zhangshuqiao.org) 本项目的开发者
 - 田生 [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
 - soimort [you-get](https://github.com/soimort/you-get) MIT license 提供了部分B站api的调用方式
-- [md5](http://pajhome.org.uk/crypt/md5) BSD License
 
 ## 许可证
 
@@ -66,7 +64,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 ## 待实现
 
-- 允许用户开始/暂停下载
-- 是否把视频存储在新文件夹中
-- 下载进度单独菜单
-- 显示用户信息
+- [ ] 允许用户开始/暂停下载
+- [ ] 是否把视频存储在新文件夹中
+- [ ] 下载进度单独菜单
+- [ ] 显示用户信息
