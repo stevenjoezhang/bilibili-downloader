@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const request = require("request");
 const progress = require("progress-stream");
 const async = require("async");
@@ -120,7 +121,7 @@ function getInfo() {
 					data = JSON.parse(data);
 					cid = data[p - 1].cid;
 					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
-						sign = hex_md5(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt");
+						sign = crypto.createHash('md5').update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest('hex');
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 					if (manual) {
 						playUrl = getPlayUrl();
@@ -179,7 +180,7 @@ function getData(url, isBangumi) {
 				backupUrl();
 				if (isBangumi) return;
 				var params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`;
-				sign = hex_md5(params + "9b288147e5474dd2aa67085f716c560d");
+				sign = crypto.createHash('md5').update(params + "9b288147e5474dd2aa67085f716c560d").digest('hex');
 				getData(`http://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`, true);
 			}
 		}
