@@ -30,12 +30,12 @@ function danmakuFilter(T1, T2, ST1, ST2, user, text) {
 		var target = danmakuArray[i],
 			time = parseFloat(target.time),
 			sendTime = parseFloat(target.sendTime);
-		if (T1 != null && time <= T1) continue; //time<=NaN为false
-		if (T2 != null && time >= T2) continue;
-		if (ST1 != null && sendTime <= ST1) continue;
-		if (ST2 != null && sendTime >= ST2) continue;
-		if (user != null && user != "" && target.user != user) continue;
-		if (text != null && !target.text.includes(text)) continue;
+		if (T1 && time <= T1) continue; //time<=NaN为false
+		if (T2 && time >= T2) continue;
+		if (ST1 && sendTime <= ST1) continue;
+		if (ST2 && sendTime >= ST2) continue;
+		if (user && target.user !== user) continue;
+		if (text && !target.text.includes(text)) continue;
 		var newDate = new Date();
 		newDate.setTime(sendTime * 1000);
 		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");

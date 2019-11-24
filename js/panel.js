@@ -24,7 +24,7 @@ function getVideoUrl() {
 	var videoUrl = $("#videoUrl").val();
 	//if (debug) videoUrl = "https://www.bilibili.com/bangumi/play/ep90832";
 	if (debug) videoUrl = "https://www.bilibili.com/video/av23498892";
-	if (videoUrl.indexOf("https://") != 0) {
+	if (videoUrl.indexOf("https://") !== 0) {
 		if (videoUrl.includes("av")) videoUrl = "https://www.bilibili.com/video/av" + videoUrl.split("av")[1];
 		else if (videoUrl.includes("ep")) videoUrl = "https://www.bilibili.com/bangumi/play/ep" + videoUrl.split("ep")[1];
 		else if (videoUrl.includes("ss")) videoUrl = "https://www.bilibili.com/bangumi/play/ss" + videoUrl.split("ss")[1];
@@ -41,7 +41,7 @@ function getVideoUrl() {
 function getPlayUrl() {
 	var playUrl = $("#playUrl").val();
 	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=iVGUTjsxvpLeuDCf&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
-	if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
+	if (playUrl.indexOf("http://") === 0) playUrl = playUrl.replace("http://", "https://");
 	if (playUrl.includes("bilibili") || !playUrl.split("?cid=")[1]) {
 		showError("无效的PlayUrl！");
 		$("#playUrl").parent().addClass("has-error has-feedback");
@@ -62,7 +62,7 @@ function backupUrl() {
 
 function getAid() {
 	if (manual) {
-		if (videoUrl != getVideoUrl()) manual = false; //用户在请求playUrl时改变了videoUrl
+		if (videoUrl !== getVideoUrl()) manual = false; //用户在请求playUrl时改变了videoUrl
 		else playUrl = getPlayUrl();
 	}
 	videoUrl = getVideoUrl();
@@ -99,7 +99,7 @@ function getInfo() {
 			data = JSON.parse(data);
 			$("tbody").eq(1).html("");
 			for (var i in data) {
-				if (i == "cid") {
+				if (i === "cid") {
 					//cid = data[i];
 				}
 				if (mime.getType(data[i]) && mime.getType(data[i]).includes("image")) { //解析图片地址
@@ -124,7 +124,7 @@ function getInfo() {
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 					if (manual) {
 						playUrl = getPlayUrl();
-						if (cid != playUrl.split("?cid=")[1].split("&")[0]) {
+						if (cid !== playUrl.split("?cid=")[1].split("&")[0]) {
 							//return; //视频地址和PlayUrl不匹配时结束
 							showWarning("视频地址和PlayUrl不匹配，可能造成问题！");
 							cid = playUrl.split("?cid=")[1].split("&")[0];
@@ -335,7 +335,7 @@ function generalDownload(i, j, options, downloads) {
 			var percentage = progress.percentage; //显示进度条
 			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
 			$(".progress-bar").eq(j).css("width", percentage + "%");
-			if (percentage == 100) {
+			if (percentage === 100) {
 				$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
 				downloadArray.splice(downloadArray.indexOf(links[i]), 1);
 				ipcRenderer.send("length", downloadArray.length);
