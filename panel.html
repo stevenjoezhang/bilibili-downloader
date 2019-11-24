@@ -224,7 +224,7 @@ function help() {
 }
 
 function about() {
-	alert(`Mimi Downloader Ver 1.2.2\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
+	alert(`Mimi Downloader Ver ${require("./package.json").version}\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
 }
 
 function changeMenu(index) {

@@ -17,13 +17,13 @@ var length;
 function createPanel() {
 
 	mainWindow = new BrowserWindow({
-		width: 600,
-		minWidth: 600,
-		height: electron.screen.getPrimaryDisplay().workAreaSize.height,
-		minHeight: 600,
-		//resizable: true,
+		width         : 600,
+		minWidth      : 600,
+		height        : electron.screen.getPrimaryDisplay().workAreaSize.height,
+		minHeight     : 600,
+		//resizable     : true,
 		fullscreenable: false,
-		title: "Mimi Downloader",
+		title         : "Mimi Downloader",
 		webPreferences: {
 			nodeIntegration: true
 		}
@@ -43,8 +43,8 @@ function createPanel() {
 	mainWindow.on("close", (e) => {
 		//e.preventDefault();
 		const options = {
-			type: "warning",
-			title: "[Warning]",
+			type   : "warning",
+			title  : "[Warning]",
 			message: "资源正在下载，您确定要强制退出吗？",
 			buttons: ["是", "否"]
 		}
