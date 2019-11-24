@@ -1,13 +1,8 @@
 const electron = require("electron");
 // Module to control application life.
-const app = electron.app;
-const ipc = electron.ipcMain;
-const dialog = electron.dialog;
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
-
-const path = require("path");
-const url = require("url");
+const { app, dialog, BrowserWindow } = electron;
+const ipc = electron.ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -29,11 +24,7 @@ function createPanel() {
 		}
 	});
 
-	mainWindow.loadURL(url.format({
-		pathname: path.join(__dirname, "panel.html"),
-		protocol: "file:",
-		slashes: true
-	}));
+	mainWindow.loadURL(`file://${__dirname}/panel.html`);
 
 	//mainWindow.setPosition(0, 0, true);
 

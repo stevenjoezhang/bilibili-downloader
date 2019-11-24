@@ -7,7 +7,7 @@ const async = require("async");
 const mime = require("mime");
 const electron = require("electron");
 const { dialog, shell } = electron.remote;
-const ipcRender = electron.ipcRenderer;
+const { ipcRenderer } = electron;
 
 var videoUrl, playUrl, aid, p = 1, cid, count, links, downloadArray = [], downloadIndex = 0, manual = false;
 var debug = !true;
@@ -164,13 +164,13 @@ function getData(url, isBangumi) {
 				var quality = isBangumi ? $(data).find("quality").text() : data.quality,
 					qualityArray = {
 					112: "高清 1080P+",
-					80: "高清 1080P",
-					74: "高清 720P60",
-					64: "高清 720P",
-					48: "高清 720P",
-					32: "清晰 480P",
-					16: "流畅 360P",
-					15: "流畅 360P"
+					80 : "高清 1080P",
+					74 : "高清 720P60",
+					64 : "高清 720P",
+					48 : "高清 720P",
+					32 : "清晰 480P",
+					16 : "流畅 360P",
+					15 : "流畅 360P"
 				} //需要修改，不是一一对应
 				$("#quality").html(qualityArray[quality] || "未知");
 				parseData(target, isBangumi);
@@ -261,7 +261,7 @@ function download(data) {
 			let _j = downloadIndex; //必须使用let或const
 			downloadIndex++;
 			downloadArray.push(links[i]);
-			ipcRender.send("length", downloadArray.length);
+			ipcRenderer.send("length", downloadArray.length);
 			functionArray.push(callback => {
 				downloadLink(_i, _j);
 				//callback(null, j + " Done");
@@ -338,7 +338,7 @@ function generalDownload(i, j, options, downloads) {
 			if (percentage == 100) {
 				$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
 				downloadArray.splice(downloadArray.indexOf(links[i]), 1);
-				ipcRender.send("length", downloadArray.length);
+				ipcRenderer.send("length", downloadArray.length);
 			}
 		});
 		request.get(options).pipe(proStream).pipe(downloads).on("error", e => {
