@@ -121,13 +121,13 @@ function assDownload(data, filename) {
 }
 
 function blobDownload(url, filename) {
-	var saveas = document.createElement("a");
-	saveas.href = url;
-	saveas.style.display = "none";
-	document.body.appendChild(saveas);
-	saveas.download = filename;
-	saveas.click();
+	var saveAs = document.createElement("a");
+	saveAs.href = url;
+	saveAs.style.display = "none";
+	document.body.appendChild(saveAs);
+	saveAs.download = filename;
+	saveAs.click();
 	setTimeout(() => {
-		saveas.parentNode.removeChild(saveas);
+		saveAs.parentNode.removeChild(saveAs);
 	}, 1000);
 }
