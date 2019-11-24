@@ -72,8 +72,7 @@ function getAid() {
 		aid = videoUrl.split("av")[1].split("/")[0];
 		p = videoUrl.split("av")[1].split("?p=")[1] || 1;
 		getInfo();
-	}
-	else {
+	} else {
 		$.ajax(videoUrl, {
 			type: "get",
 			dataType: "text",
@@ -121,7 +120,7 @@ function getInfo() {
 					data = JSON.parse(data);
 					cid = data[p - 1].cid;
 					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
-						sign = crypto.createHash('md5').update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest('hex');
+						sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 					if (manual) {
 						playUrl = getPlayUrl();
@@ -175,12 +174,11 @@ function getData(url, isBangumi) {
 				} //需要修改，不是一一对应
 				$("#quality").html(qualityArray[quality] || "未知");
 				parseData(target, isBangumi);
-			}
-			else {
+			} else {
 				backupUrl();
 				if (isBangumi) return;
 				var params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`;
-				sign = crypto.createHash('md5').update(params + "9b288147e5474dd2aa67085f716c560d").digest('hex');
+				sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
 				getData(`http://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`, true);
 			}
 		}
@@ -251,12 +249,9 @@ function download(data) {
 		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
 			if (downloadArray.includes(links[i])) continue;
 			$("#download").append(`<span>${cid}-${i}</span>
-			&nbsp;&nbsp;&nbsp;
-			<span class="addon"></span>
-			&nbsp;&nbsp;&nbsp;
 			<span class="speed"></span>
-			&nbsp;&nbsp;&nbsp;
 			<span class="eta"></span>
+			<span class="addon"></span>
 			<div class="progress progress-striped active">
 				<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">
 					<span class="progress-value">0%</span>

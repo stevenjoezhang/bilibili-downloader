@@ -29,6 +29,9 @@ table img {
 #download {
 	user-select: none;
 }
+#download span {
+	margin-right: 20px;
+}
 #danmaku {
 	table-layout: fixed;
 	max-width: 100%;
