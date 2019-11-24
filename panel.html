@@ -41,10 +41,8 @@
 			<div class="form-group">
 				<label class="control-label">视频CID：</label>
 				<span id="cid"></span>
-				&nbsp;&nbsp;&nbsp;
 				<label class="control-label">清晰度：</label>
 				<span id="quality"></span>
-				&nbsp;&nbsp;&nbsp;
 				<label class="control-label">下载弹幕：</label>
 				<button class="btn btn-success" onclick="xml()">.xml</button>
 				<button class="btn btn-primary" onclick="ass()">.ass</button>
@@ -172,17 +170,17 @@
 	<img src="bg.png" id="bg" class="mt20">
 </div>
 <script src="cdn/jquery-3.3.1.min.js"></script>
-<script>if (typeof module === "object") { window.jQuery = window.$ = module.exports; }</script>
+<script>
+if (typeof module === "object") { window.jQuery = window.$ = module.exports; }
+</script>
 <script src="cdn/crc32.js"></script>
 <script src="cdn/ass.js"></script>
 <script src="js/panel.js"></script>
 <script src="js/danmaku.js"></script>
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
-const remote = require("electron").remote;
-const clipboard = require("electron").clipboard;
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
+const { remote, clipboard } = require("electron");
+const { Menu, MenuItem } = remote;
 let menu = new Menu(); //new一个菜单
 //添加菜单功能
 menu.append(new MenuItem({
@@ -220,7 +218,7 @@ $("button").each((i, o) => {
 $("#downloadPath").val(__dirname);
 
 function help() {
-	alert("请填写视频链接（即视频播放界面的url），然后点击“获取下载链接”进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
+	alert("请填写视频链接（即视频播放界面的url），然后点击「获取下载链接」进行下一步。如果提示手动输入PlayUrl，请用浏览器打开视频链接，选择html5播放器播放视频，在浏览器的开发者菜单中查看XHR请求，找到名称为playurl的项，将其地址填入输入框内即可。");
 }
 
 function about() {

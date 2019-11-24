@@ -29,7 +29,7 @@ table img {
 #download {
 	user-select: none;
 }
-#download span {
+#download span, #cid, #quality {
 	margin-right: 20px;
 }
 #danmaku {

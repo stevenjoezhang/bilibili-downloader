@@ -16,7 +16,6 @@ function createPanel() {
 		minWidth      : 600,
 		height        : electron.screen.getPrimaryDisplay().workAreaSize.height,
 		minHeight     : 600,
-		//resizable     : true,
 		fullscreenable: false,
 		title         : "Mimi Downloader",
 		webPreferences: {
