@@ -35,7 +35,7 @@ function danmakuFilter(T1, T2, ST1, ST2, user, text) {
 		if (ST1 != null && sendTime <= ST1) continue;
 		if (ST2 != null && sendTime >= ST2) continue;
 		if (user != null && user != "" && target.user != user) continue;
-		if (text != null && target.text.indexOf(text) == -1) continue;
+		if (text != null && !target.text.includes(text)) continue;
 		var newDate = new Date();
 		newDate.setTime(sendTime * 1000);
 		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");
@@ -70,7 +70,7 @@ function searchUser(event) {
 	event.preventDefault();
 	var user = $(event.target).html(),
 		uid;
-	if (0 === user.indexOf("D")) uid = "";
+	if (user.indexOf("D") === 0) uid = "";
 	else if (/^b(\d+)$/.exec(user)) uid = /^b(\d+)$/.exec(user)[1];
 	else {
 		var crcEngine = new Crc32Engine();

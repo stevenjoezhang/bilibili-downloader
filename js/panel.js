@@ -25,9 +25,9 @@ function getVideoUrl() {
 	//if (debug) videoUrl = "https://www.bilibili.com/bangumi/play/ep90832";
 	if (debug) videoUrl = "https://www.bilibili.com/video/av23498892";
 	if (videoUrl.indexOf("https://") != 0) {
-		if (videoUrl.indexOf("av") != -1) videoUrl = "https://www.bilibili.com/video/av" + videoUrl.split("av")[1];
-		else if (videoUrl.indexOf("ep") != -1) videoUrl = "https://www.bilibili.com/bangumi/play/ep" + videoUrl.split("ep")[1];
-		else if (videoUrl.indexOf("ss") != -1) videoUrl = "https://www.bilibili.com/bangumi/play/ss" + videoUrl.split("ss")[1];
+		if (videoUrl.includes("av")) videoUrl = "https://www.bilibili.com/video/av" + videoUrl.split("av")[1];
+		else if (videoUrl.includes("ep")) videoUrl = "https://www.bilibili.com/bangumi/play/ep" + videoUrl.split("ep")[1];
+		else if (videoUrl.includes("ss")) videoUrl = "https://www.bilibili.com/bangumi/play/ss" + videoUrl.split("ss")[1];
 		else {
 			showError("无效的视频链接！");
 			$("#videoUrl").parent().addClass("has-error has-feedback");
@@ -42,7 +42,7 @@ function getPlayUrl() {
 	var playUrl = $("#playUrl").val();
 	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=iVGUTjsxvpLeuDCf&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
 	if (playUrl.indexOf("http://") == 0) playUrl = playUrl.replace("http://", "https://");
-	if (playUrl.indexOf("bilibili") != -1 || !playUrl.split("?cid=")[1]) {
+	if (playUrl.includes("bilibili") || !playUrl.split("?cid=")[1]) {
 		showError("无效的PlayUrl！");
 		$("#playUrl").parent().addClass("has-error has-feedback");
 		return null;
@@ -103,7 +103,7 @@ function getInfo() {
 				if (i == "cid") {
 					//cid = data[i];
 				}
-				if (mime.getType(data[i]) && mime.getType(data[i]).indexOf("image") != -1) { //解析图片地址
+				if (mime.getType(data[i]) && mime.getType(data[i]).includes("image")) { //解析图片地址
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
 				$("tbody").eq(1).append(`<tr>
@@ -249,7 +249,7 @@ function download(data) {
 	//$("#download").html("");
 	for (var i = 0; i < count; i++) {
 		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
-			if (downloadArray.indexOf(links[i]) != -1) continue;
+			if (downloadArray.includes(links[i])) continue;
 			$("#download").append(`<span>${cid}-${i}</span>
 			&nbsp;&nbsp;&nbsp;
 			<span class="addon"></span>
