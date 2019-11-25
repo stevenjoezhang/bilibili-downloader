@@ -2,7 +2,7 @@
 	"name": "mimi-downloader",
 	"version": "1.3.1",
 	"description": "Yet another video downloader for Bilibili.",
-	"main": "main.js",
+	"main": "app/main.js",
 	"scripts": {
 		"start": "electron ."
 	},
