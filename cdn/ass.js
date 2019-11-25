@@ -8,7 +8,6 @@
 // @copyright   2014+, 田生
 // @license     Mozilla Public License 2.0; http://www.mozilla.org/MPL/2.0/
 // @license     CC Attribution-ShareAlike 4.0 International; http://creativecommons.org/licenses/by-sa/4.0/
-// 注意：此文件删去了部分内容，无法再作为浏览器插件。参见 https://github.com/stevenjoezhang/mimi-downloader
 
 /*
  * Common

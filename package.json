@@ -15,7 +15,12 @@
 		"Bilibili"
 	],
 	"author": "Mimi <stevenjoezhang@gmail.com> https://zhangshuqiao.org",
+	"readme": "https://github.com/stevenjoezhang/bilibili-downloader/blob/master/README.md",
 	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/stevenjoezhang/bilibili-downloader/issues"
+	},
+	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
 	"dependencies": {
 		"async": "^3.1.0",
 		"electron": "^6.1.5",

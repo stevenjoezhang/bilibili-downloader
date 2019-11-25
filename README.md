@@ -22,9 +22,9 @@
 在命令行输入：
 ```bash
 # 克隆这个仓库
-git clone https://github.com/stevenjoezhang/mimi-downloader.git
+git clone https://github.com/stevenjoezhang/bilibili-downloader.git
 # 进入目录
-cd mimi-downloader
+cd bilibili-downloader
 # 安装依赖
 npm install
 # 启动！
