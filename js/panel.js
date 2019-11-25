@@ -208,8 +208,7 @@ function parseData(target, isBangumi) {
 			</td>
 		</tr>`);
 	});
-	else for (var i in target) {
-		var part = target[i];
+	else for (let part of target) {
 		links.push(part.url);
 		$("tbody").eq(0).append(`<tr>
 			<td>${part.order}</td>

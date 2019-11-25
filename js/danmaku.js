@@ -26,9 +26,8 @@ function getDanmaku() {
 
 function danmakuFilter(T1, T2, ST1, ST2, user, text) {
 	$("tbody").eq(2).html("");
-	for (var i in danmakuArray) {
-		var target = danmakuArray[i],
-			time = parseFloat(target.time),
+	for (let target of danmakuArray) {
+		var time = parseFloat(target.time),
 			sendTime = parseFloat(target.sendTime);
 		if (T1 && time <= T1) continue; //time<=NaN为false
 		if (T2 && time >= T2) continue;
