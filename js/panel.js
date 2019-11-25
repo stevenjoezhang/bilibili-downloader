@@ -312,7 +312,7 @@ function resumeDownload(i, j, file) {
 				"Referer": videoUrl
 			}
 		}
-		$(".addon").eq(j).html(`从${Math.round(state.size / 1e6)}MB处恢复的下载`);
+		$(".addon").eq(j).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
 		//console.log(cid, file, options.url);
 		var downloads = fs.createWriteStream(file, {"flags": "a"});
 		generalDownload(i, j, options, downloads);
@@ -320,29 +320,25 @@ function resumeDownload(i, j, file) {
 }
 
 function generalDownload(i, j, options, downloads) {
-	var req = request.get(options);
-	req.on("response", response => {
-		//https://blog.csdn.net/zhu_06/article/details/79772229
-		var proStream = progress({
-			length: response.headers["content-length"],
-			time: 500 //单位ms
-		});
-		proStream.on("progress", progress => {
-			//console.log(progress);
-			$(".speed").eq(j).html(Math.round(progress.speed / 1024) + "KiB/s");
-			$(".eta").eq(j).html(`eta:${progress.eta}s`);
-			var percentage = progress.percentage; //显示进度条
-			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
-			$(".progress-bar").eq(j).css("width", percentage + "%");
-			if (percentage === 100) {
-				$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
-				downloadArray.splice(downloadArray.indexOf(links[i]), 1);
-				ipcRenderer.send("length", downloadArray.length);
-			}
-		});
-		req.abort();
-		request.get(options).pipe(proStream).pipe(downloads).on("error", e => {
-			console.error(e);
-		}); //先pipe到proStream再pipe到文件的写入流中
+	//https://blog.csdn.net/zhu_06/article/details/79772229
+	var proStream = progress({
+		time: 500 //单位ms
+	}).on("progress", progress => {
+		$(".speed").eq(j).html(Math.round(progress.speed / 1024) + "KiB/s");
+		$(".eta").eq(j).html(`eta:${progress.eta}s`);
+		var percentage = progress.percentage; //显示进度条
+		$(".progress-value").eq(j).html(Math.round(percentage) + "%");
+		$(".progress-bar").eq(j).css("width", percentage + "%");
+		if (percentage === 100) {
+			$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
+			downloadArray.splice(downloadArray.indexOf(links[i]), 1);
+			ipcRenderer.send("length", downloadArray.length);
+		}
+	});
+	//先pipe到proStream再pipe到文件的写入流中
+	request.get(options).on("response", response => {
+		proStream.setLength(response.headers["content-length"]);
+	}).pipe(proStream).pipe(downloads).on("error", e => {
+		console.error(e);
 	});
 }
