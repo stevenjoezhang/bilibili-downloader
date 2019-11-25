@@ -6,8 +6,8 @@ const progress = require("progress-stream");
 const async = require("async");
 const mime = require("mime");
 const electron = require("electron");
-const { dialog, shell } = electron.remote;
 const { ipcRenderer } = electron;
+const { app, dialog, shell } = electron.remote;
 
 var videoUrl, playUrl, aid, p = 1, cid, count, links, downloadArray = [], downloadIndex = 0, manual = false;
 var debug = !true;
@@ -227,9 +227,8 @@ function parseData(target, isBangumi) {
 }
 
 function openDialog() {
-	var defaultpath = $("#downloadPath").val() || __dirname;
 	dialog.showOpenDialog({
-		defaultPath: defaultpath,
+		defaultPath: $("#downloadPath").val() || app.getPath("downloads") || __dirname,
 		properties: [
 			"openDirectory", //打开路径
 		],
@@ -280,7 +279,7 @@ function openPath() {
 }
 
 function downloadLink(i, j) {
-	var downloadPath = $("#downloadPath").val() || "",
+	var downloadPath = $("#downloadPath").val(),
 		filename = (count > 10 && i <= 9) ? `${cid}-0${i}.flv` : `${cid}-${i}.flv`,
 		file = path.join(downloadPath, filename);
 	fs.exists(file, exist => {
@@ -322,7 +321,8 @@ function resumeDownload(i, j, file) {
 }
 
 function generalDownload(i, j, options, downloads) {
-	request.get(options).on("response", response => {
+	var req = request.get(options);
+	req.on("response", response => {
 		//https://blog.csdn.net/zhu_06/article/details/79772229
 		var proStream = progress({
 			length: response.headers["content-length"],
@@ -330,7 +330,7 @@ function generalDownload(i, j, options, downloads) {
 		});
 		proStream.on("progress", progress => {
 			//console.log(progress);
-			$(".speed").eq(j).html(Math.round(progress.speed / 1e3) + "kb/s");
+			$(".speed").eq(j).html(Math.round(progress.speed / 1024) + "KiB/s");
 			$(".eta").eq(j).html(`eta:${progress.eta}s`);
 			var percentage = progress.percentage; //显示进度条
 			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
@@ -341,6 +341,7 @@ function generalDownload(i, j, options, downloads) {
 				ipcRenderer.send("length", downloadArray.length);
 			}
 		});
+		req.abort();
 		request.get(options).pipe(proStream).pipe(downloads).on("error", e => {
 			console.error(e);
 		}); //先pipe到proStream再pipe到文件的写入流中
