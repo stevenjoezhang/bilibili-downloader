@@ -9,7 +9,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, dialog, shell } = electron.remote;
 
-var videoUrl, playUrl, aid, p = 1, cid, count, links, downloadArray = [], downloadIndex = 0, manual = false;
+var videoUrl, playUrl, aid, p = 1, cid, links, downloadArray = [], downloadIndex = 0, manual = false;
 var debug = !true;
 
 function showError(text) {
@@ -190,7 +190,6 @@ function parseData(target, isBangumi) {
 	$("#success").show();
 	$("#cid").html(cid);
 	$("tbody").eq(0).html("");
-	count = target.length;
 	links = [];
 	if (isBangumi) target.each((i, o) => {
 		var part = $(o);
@@ -242,11 +241,9 @@ function openDialog() {
 function download(data) {
 	var functionArray = [];
 	var flag = true;
-	//$("#download").html("");
-	for (var i = 0; i < count; i++) {
-		if ($('input[type="checkbox"]').eq(i).prop("checked")) {
-			if (downloadArray.includes(links[i])) continue;
-			$("#download").append(`<span>${cid}-${i}</span>
+	[...document.querySelectorAll('input[type="checkbox"]')].forEach((element, i) => {
+		if (!element.getAttribute("checked") || downloadArray.includes(links[i])) return;
+		$("#download").append(`<span>${cid}-${i}</span>
 			<span class="speed"></span>
 			<span class="eta"></span>
 			<span class="addon"></span>
@@ -255,18 +252,15 @@ function download(data) {
 					<span class="progress-value">0%</span>
 				</div>
 			</div>`);
-			let _i = i;
-			let _j = downloadIndex; //必须使用let或const
-			downloadIndex++;
-			downloadArray.push(links[i]);
-			ipcRenderer.send("length", downloadArray.length);
-			functionArray.push(callback => {
-				downloadLink(_i, _j);
-				//callback(null, j + " Done");
-			});
-			flag = false;
-		} //由于js执行机制，此处不能直接传值
-	}
+		let j = downloadIndex++; //必须使用let或const
+		downloadArray.push(links[i]);
+		ipcRenderer.send("length", downloadArray.length);
+		functionArray.push(callback => {
+			downloadLink(i, j);
+			//callback(null, j + " Done");
+		});
+		flag = false;
+	});
 	if (flag) showWarning("没有新的视频被下载！");
 	async.parallel(functionArray, (err, results) => {
 		if (err) console.log(err);
@@ -279,7 +273,7 @@ function openPath() {
 
 function downloadLink(i, j) {
 	var downloadPath = $("#downloadPath").val(),
-		filename = (count > 10 && i <= 9) ? `${cid}-0${i}.flv` : `${cid}-${i}.flv`,
+		filename = `${cid}-${i}.flv`,
 		file = path.join(downloadPath, filename);
 	fs.exists(file, exist => {
 		exist ? resumeDownload(i, j, file) : newDownload(i, j, file);
