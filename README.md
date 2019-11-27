@@ -40,7 +40,7 @@ npm start
 ```bash
 cid=11090110
 # 将 11090110 替换为你下载的视频的 cid
-for f in $cid-*.flv; do echo "file '$f'" >> temp.txt; done
+for f in $(ls $cid-*.flv | sort -n); do echo "file '$f'" >> temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 rm temp.txt
 ```

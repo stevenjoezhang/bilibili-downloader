@@ -32,7 +32,7 @@ You can combine flv video parts using ffmpeg:
 ```bash
 cid=11090110
 # Replace 11090110 with your video's cid
-for f in $cid-*.flv; do echo "file '$f'" >> temp.txt; done
+for f in $(ls $cid-*.flv | sort -n); do echo "file '$f'" >> temp.txt; done
 ffmpeg -f concat -i temp.txt -c copy $cid.flv
 ```
 
