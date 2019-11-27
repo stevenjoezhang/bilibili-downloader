@@ -9,7 +9,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, dialog, shell } = electron.remote;
 
-var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [], downloadIndex = 0, manual = false;
+var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [], manual = false;
 var debug = !true;
 
 function showError(text) {
@@ -252,11 +252,10 @@ function download(data) {
 					<span class="progress-value">0%</span>
 				</div>
 			</div>`);
-		let j = downloadIndex++; //必须使用let或const
 		downloadArray.push(links[i]);
-		ipcRenderer.send("length", downloadArray.length);
+		ipcRenderer.send("length", downloadArray.filter(item => item !== "").length);
 		functionArray.push(callback => {
-			downloadLink(i, j);
+			downloadLink(i);
 			//callback(null, j + " Done");
 		});
 		flag = false;
@@ -271,7 +270,7 @@ function openPath() {
 	shell.openItem($("#downloadPath").val());
 }
 
-function downloadLink(i, j) {
+function downloadLink(i) {
 	var downloadPath = $("#downloadPath").val(),
 		filename = `${cid}-${i}.flv`,
 		file = path.join(downloadPath, filename);
@@ -285,7 +284,8 @@ function downloadLink(i, j) {
 				"Referer": videoUrl
 			}
 		};
-		var downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {});
+		var downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
+			j = downloadArray.indexOf(options.url);
 		generalDownload(j, options, downloads);
 		state && $(".addon").eq(j).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
 		//console.log(cid, file, options.url);
@@ -304,8 +304,8 @@ function generalDownload(j, options, downloads) {
 		$(".progress-bar").eq(j).css("width", percentage + "%");
 		if (percentage === 100) {
 			$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
-			downloadArray.splice(downloadArray.indexOf(options.url), 1);
-			ipcRenderer.send("length", downloadArray.length);
+			downloadArray[j] = "";
+			ipcRenderer.send("length", downloadArray.filter(item => item !== "").length);
 		}
 	});
 	//先pipe到proStream再pipe到文件的写入流中
