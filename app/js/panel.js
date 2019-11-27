@@ -196,7 +196,7 @@ function parseData(target, isBangumi) {
 		links.push(part.find("url").text());
 		$("tbody").eq(0).append(`<tr>
 			<td>${part.find("order").text()}</td>
-			<td>${part.find("length").text()  / 1e3}</td>
+			<td>${part.find("length").text() / 1e3}</td>
 			<td>${part.find("size").text() / 1e6}</td>
 			<td>
 				<div class="checkbox">
@@ -275,45 +275,24 @@ function downloadLink(i, j) {
 	var downloadPath = $("#downloadPath").val(),
 		filename = `${cid}-${i}.flv`,
 		file = path.join(downloadPath, filename);
-	fs.exists(file, exist => {
-		exist ? resumeDownload(i, j, file) : newDownload(i, j, file);
-	});
-}
-
-function newDownload(i, j, file) {
-	var options = {
-		url: links[i],
-		encoding: null, //当请求的是二进制文件时，一定要设置
-		headers: {
-			"Range": "bytes=0-", //断点续传
-			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
-			"Referer": videoUrl
-		}
-	}
-	//console.log(cid, file, options.url);
-	var downloads = fs.createWriteStream(file);
-	generalDownload(i, j, options, downloads);
-}
-
-function resumeDownload(i, j, file) {
 	fs.stat(file, (error, state) => {
 		var options = {
 			url: links[i],
 			encoding: null, //当请求的是二进制文件时，一定要设置
 			headers: {
-				"Range": `bytes=${state.size}-`, //断点续传
+				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
 				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
 				"Referer": videoUrl
 			}
-		}
-		$(".addon").eq(j).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
+		};
+		var downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {});
+		generalDownload(j, options, downloads);
+		state && $(".addon").eq(j).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
 		//console.log(cid, file, options.url);
-		var downloads = fs.createWriteStream(file, {"flags": "a"});
-		generalDownload(i, j, options, downloads);
 	});
 }
 
-function generalDownload(i, j, options, downloads) {
+function generalDownload(j, options, downloads) {
 	//https://blog.csdn.net/zhu_06/article/details/79772229
 	var proStream = progress({
 		time: 500 //单位ms
@@ -325,7 +304,7 @@ function generalDownload(i, j, options, downloads) {
 		$(".progress-bar").eq(j).css("width", percentage + "%");
 		if (percentage === 100) {
 			$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
-			downloadArray.splice(downloadArray.indexOf(links[i]), 1);
+			downloadArray.splice(downloadArray.indexOf(options.url), 1);
 			ipcRenderer.send("length", downloadArray.length);
 		}
 	});
