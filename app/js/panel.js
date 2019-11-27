@@ -9,7 +9,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, dialog, shell } = electron.remote;
 
-var videoUrl, playUrl, aid, p = 1, cid, links, downloadArray = [], downloadIndex = 0, manual = false;
+var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [], downloadIndex = 0, manual = false;
 var debug = !true;
 
 function showError(text) {
@@ -67,10 +67,10 @@ function getAid() {
 	}
 	videoUrl = getVideoUrl();
 	if (!videoUrl || (manual && !playUrl)) return;
-
-	if (videoUrl.split("av")[1]) {
-		aid = videoUrl.split("av")[1].split("/")[0];
-		p = videoUrl.split("av")[1].split("?p=")[1] || 1;
+	let id = videoUrl.split("av")[1];
+	if (id) {
+		aid = id.split("/")[0].split("?p=")[0];
+		pid = id.split("?p=")[1] || 1;
 		getInfo();
 	} else {
 		$.ajax(videoUrl, {
@@ -118,7 +118,7 @@ function getInfo() {
 				},
 				success: function(data, status, xhr) {
 					data = JSON.parse(data);
-					cid = data[p - 1].cid;
+					cid = data[pid - 1].cid;
 					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
 						sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
