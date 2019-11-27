@@ -286,7 +286,7 @@ function newDownload(i, j, file) {
 		encoding: null, //当请求的是二进制文件时，一定要设置
 		headers: {
 			"Range": "bytes=0-", //断点续传
-			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15",
+			"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
 			"Referer": videoUrl
 		}
 	}
@@ -302,7 +302,7 @@ function resumeDownload(i, j, file) {
 			encoding: null, //当请求的是二进制文件时，一定要设置
 			headers: {
 				"Range": `bytes=${state.size}-`, //断点续传
-				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15",
+				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
 				"Referer": videoUrl
 			}
 		}
