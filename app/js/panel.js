@@ -3,7 +3,6 @@ const fs = require("fs");
 const crypto = require("crypto");
 const request = require("request");
 const progress = require("progress-stream");
-const async = require("async");
 const mime = require("mime");
 const electron = require("electron");
 const { ipcRenderer } = electron;
@@ -239,7 +238,6 @@ function openDialog() {
 }
 
 function download(data) {
-	var functionArray = [];
 	var flag = true;
 	[...document.querySelectorAll('input[type="checkbox"]')].forEach((element, i) => {
 		if (!element.getAttribute("checked") || downloadArray.includes(links[i])) return;
@@ -254,16 +252,10 @@ function download(data) {
 			</div>`);
 		downloadArray.push(links[i]);
 		ipcRenderer.send("length", downloadArray.filter(item => item !== "").length);
-		functionArray.push(callback => {
-			downloadLink(i);
-			//callback(null, j + " Done");
-		});
 		flag = false;
+		downloadLink(i);
 	});
 	if (flag) showWarning("没有新的视频被下载！");
-	async.parallel(functionArray, (err, results) => {
-		if (err) console.log(err);
-	});
 }
 
 function openPath() {
@@ -295,7 +287,7 @@ function downloadLink(i) {
 function generalDownload(j, options, downloads) {
 	//https://blog.csdn.net/zhu_06/article/details/79772229
 	var proStream = progress({
-		time: 500 //单位ms
+		time: 250 //单位ms
 	}).on("progress", progress => {
 		$(".speed").eq(j).html(Math.round(progress.speed / 1024) + "KiB/s");
 		$(".eta").eq(j).html(`eta:${progress.eta}s`);

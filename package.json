@@ -22,7 +22,6 @@
 	},
 	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
 	"dependencies": {
-		"async": "^3.1.0",
 		"electron": "^6.1.5",
 		"mime": "^2.4.4",
 		"request": "^2.88.0"
