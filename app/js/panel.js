@@ -6,7 +6,7 @@ const progress = require("progress-stream");
 const mime = require("mime");
 const electron = require("electron");
 const { ipcRenderer } = electron;
-const { app, dialog, shell } = electron.remote;
+const { app, shell } = electron.remote;
 
 var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [], manual = false;
 var debug = !true;

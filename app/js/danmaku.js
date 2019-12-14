@@ -1,7 +1,6 @@
 var danmakuArray;
 
 function getDanmaku() {
-	//alert(cid);
 	$.ajax(`https://comment.bilibili.com/${cid}.xml`, {
 		type: "get",
 		dataType: "text", //避免ajax解析为xml造成问题
@@ -76,7 +75,6 @@ function searchUser(event) {
 		uid = crcEngine.crack(user)[0]; //计算量较大！手动点击开始查询用户
 	}
 	var url = "https://space.bilibili.com/" + uid;
-	//alert(url);
 	shell.openExternal(url);
 }
 
