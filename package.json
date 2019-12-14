@@ -24,6 +24,7 @@
 	"dependencies": {
 		"electron": "^7.1.4",
 		"mime": "^2.4.4",
+		"progress-stream": "^2.0.0",
 		"request": "^2.88.0"
 	}
 }
