@@ -1,26 +1,22 @@
 var danmakuArray;
 
 function getDanmaku() {
-	$.ajax(`https://comment.bilibili.com/${cid}.xml`, {
-		type: "get",
-		dataType: "text", //避免ajax解析为xml造成问题
-		error: function(xhr, status, error) {
-			showError("弹幕加载失败！");
-		},
-		success: function(data, status, xhr) {
-			danmakuArray = new Array();
-			$(data).find("d").each((i, o) => {
+	fetch(`https://comment.bilibili.com/${cid}.xml`)
+		.then(response => response.text())
+		.then(result => {
+			danmakuArray = [];
+			$(result).find("d").each((i, o) => {
 				var info = $(o).attr("p").split(","),
 					danmaku = {
-					time: info[0],
-					sendTime: info[4],
-					user: info[6],
-					text: $(o).html()
-				}
+						time: info[0],
+						sendTime: info[4],
+						user: info[6],
+						text: $(o).html()
+					}
 				danmakuArray.push(danmaku);
 			}); //解析xml文档
-		}
-	});
+		})
+		.catch(error => showError("弹幕加载失败！"));
 }
 
 function danmakuFilter(T1, T2, ST1, ST2, user, text) {
@@ -83,22 +79,18 @@ function xml() {
 }
 
 function ass() {
-	//使用ajax是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
-	$.ajax(`https://comment.bilibili.com/${cid}.xml`, {
-		type: "get",
-		dataType: "text",
-		error: function(xhr, status, error) {
-			showError("弹幕下载失败！");
-		},
-		success: function(data, status, xhr) {
-			var danmaku = parseFile(data),
+	//使用fetch是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
+	fetch(`https://comment.bilibili.com/${cid}.xml`)
+		.then(response => response.text())
+		.then(result => {
+			var danmaku = parseFile(result),
 				ass = generateASS(setPosition(danmaku), {
-				"title": document.title,
-				"ori": cid,
-			});
-			assDownload(ass, cid + ".ass"); //"\ufeff" + 
-		}
-	});
+					"title": document.title,
+					"ori": cid,
+				});
+			assDownload(ass, cid + ".ass"); //"\ufeff" +
+		})
+		.catch(error => showError("弹幕下载失败！"));
 }
 
 function parseFile(content) {

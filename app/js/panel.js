@@ -72,30 +72,21 @@ function getAid() {
 		pid = id.split("?p=")[1] || 1;
 		getInfo();
 	} else {
-		$.ajax(videoUrl, {
-			type: "get",
-			dataType: "text",
-			error: function(xhr, status, error) {
-				showError("获取视频aid出错！");
-			},
-			success: function(data, status, xhr) {
-				aid = data.split("//www.bilibili.com/video/av")[1].split("/")[0];
+		fetch(videoUrl)
+			.then(response => response.text())
+			.then(result => {
+				aid = result.split("//www.bilibili.com/video/av")[1].split("/")[0];
 				getInfo();
-			}
-		});
+			})
+			.catch(error => showError("获取视频aid出错！"));
 	}
 }
 
 function getInfo() {
-	$.ajax("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid, {
-		type: "get",
-		dataType: "text",
-		error: function(xhr, status, error) {
-			showError("获取视频信息出错！");
-		},
-		success: function(data, status, xhr) {
-			//console.log(data);
-			data = JSON.parse(data);
+	fetch("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid)
+		.then(response => response.json())
+		.then(data => {
+			//console.log(result);
 			$("tbody").eq(1).html("");
 			for (var i in data) {
 				if (i === "cid") {
@@ -109,15 +100,10 @@ function getInfo() {
 				<td>${data[i]}</td>
 				</tr>`);
 			}
-			$.ajax("https://www.bilibili.com/widget/getPageList?aid=" + aid, {
-				type: "get",
-				dataType: "text",
-				error: function(xhr, status, error) {
-					showError("获取视频信息出错！");
-				},
-				success: function(data, status, xhr) {
-					data = JSON.parse(data);
-					cid = data[pid - 1].cid;
+			fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)
+				.then(response => response.json())
+				.then(result => {
+					cid = result[pid - 1].cid;
 					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
 						sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
@@ -142,35 +128,30 @@ function getInfo() {
 						changeMenu(0);
 						//$(".info").eq(0).fadeIn();
 					}
-				}
-			});
-		}
-	});
+				}) //解析xml文档
+				.catch(error => showError("获取视频信息出错！"));
+		})
+		.catch(error => showError("获取视频信息出错！"));
 }
 
 function getData(url, isBangumi) {
-	$.ajax(url, {
-		type: "get",
-		dataType: "text",
-		error: function(xhr, status, error) {
-			backupUrl();
-		},
-		success: function(data, status, xhr) {
-			//console.log(url, data);
-			var data = isBangumi ? $(data) : JSON.parse(data),
+	fetch(url)
+		.then(response => response.text())
+		.then(result => {
+			var data = isBangumi ? $(result) : JSON.parse(result),
 				target = isBangumi ? data.find("durl") : data.durl;
 			if (target) {
 				var quality = isBangumi ? $(data).find("quality").text() : data.quality,
 					qualityArray = {
-					112: "高清 1080P+",
-					80 : "高清 1080P",
-					74 : "高清 720P60",
-					64 : "高清 720P",
-					48 : "高清 720P",
-					32 : "清晰 480P",
-					16 : "流畅 360P",
-					15 : "流畅 360P"
-				} //需要修改，不是一一对应
+						112: "高清 1080P+",
+						80: "高清 1080P",
+						74: "高清 720P60",
+						64: "高清 720P",
+						48: "高清 720P",
+						32: "清晰 480P",
+						16: "流畅 360P",
+						15: "流畅 360P"
+					} //需要修改，不是一一对应
 				$("#quality").html(qualityArray[quality] || "未知");
 				parseData(target, isBangumi);
 			} else {
@@ -180,8 +161,8 @@ function getData(url, isBangumi) {
 				sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
 				getData(`http://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`, true);
 			}
-		}
-	});
+		})
+		.catch(error => backupUrl());
 }
 
 function parseData(target, isBangumi) {
