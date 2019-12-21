@@ -23,7 +23,7 @@ function createPanel() {
 		}
 	});
 
-	mainWindow.loadURL(`file://${__dirname}/panel.html`);
+	mainWindow.loadFile("app/panel.html");
 
 	//mainWindow.setPosition(0, 0, true);
 
