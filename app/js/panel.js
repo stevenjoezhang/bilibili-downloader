@@ -68,8 +68,8 @@ function getAid() {
 	if (!videoUrl || (manual && !playUrl)) return;
 	let id = videoUrl.split("av")[1];
 	if (id) {
-		aid = id.split("/")[0].split("?p=")[0];
-		pid = id.split("?p=")[1] || 1;
+		aid = id.split("/")[0].split("?")[0];
+		pid = id.split("p=")[1] || 1;
 		getInfo();
 	} else {
 		fetch(videoUrl)
