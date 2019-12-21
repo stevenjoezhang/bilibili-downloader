@@ -218,10 +218,10 @@ function openDialog() {
 	});
 }
 
-function download(data) {
+function download() {
 	var flag = true;
 	[...document.querySelectorAll('input[type="checkbox"]')].forEach((element, i) => {
-		if (!element.getAttribute("checked") || downloadArray.includes(links[i])) return;
+		if (!element.checked || downloadArray.includes(links[i])) return;
 		$("#download").append(`<span>${cid}-${i}</span>
 			<span class="speed"></span>
 			<span class="eta"></span>
