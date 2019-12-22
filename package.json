@@ -1,6 +1,6 @@
 {
 	"name": "mimi-downloader",
-	"version": "1.4.1",
+	"version": "1.4.2",
 	"description": "Yet another video downloader for Bilibili.",
 	"main": "app/main.js",
 	"scripts": {
