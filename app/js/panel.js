@@ -75,7 +75,10 @@ function getAid() {
 		fetch(videoUrl)
 			.then(response => response.text())
 			.then(result => {
-				aid = result.split("//www.bilibili.com/video/av")[1].split("/")[0];
+				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
+				data = JSON.parse(data);
+				let epId = data.epList[0].id;
+				aid = data.epList[0].aid; // Not always correct
 				getInfo();
 			})
 			.catch(error => showError("获取视频aid出错！"));
