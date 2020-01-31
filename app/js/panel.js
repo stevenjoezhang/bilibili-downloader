@@ -55,7 +55,7 @@ function getAid() {
 				aid = data.epList[0].aid; // Not always correct
 				getInfo();
 			})
-			.catch(error => showError("获取视频aid出错！"));
+			.catch(error => showError("获取视频 aid 出错！"));
 	}
 }
 
@@ -86,7 +86,7 @@ function getInfo() {
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 
 					if (!cid) {
-						showError("获取视频cid出错！");
+						showError("获取视频 cid 出错！");
 						return;
 					}
 					getData(playUrl);
