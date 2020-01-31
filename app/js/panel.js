@@ -8,7 +8,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, shell } = electron.remote;
 
-var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [], manual = false;
+var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [];
 var debug = !true;
 
 function showError(text) {
@@ -37,35 +37,9 @@ function getVideoUrl() {
 	return videoUrl;
 }
 
-function getPlayUrl() {
-	var playUrl = $("#playUrl").val();
-	if (debug) playUrl = "https://bangumi.bilibili.com/player/web_api/v2/playurl?cid=11090110&appkey=iVGUTjsxvpLeuDCf&otype=json&type=&quality=80&module=bangumi&season_type=1&qn=80&sign=d6d73e8fbbc2adacaf047c48714e8e69";
-	if (playUrl.indexOf("http://") === 0) playUrl = playUrl.replace("http://", "https://");
-	if (playUrl.includes("bilibili") || !playUrl.split("?cid=")[1]) {
-		showError("无效的PlayUrl！");
-		$("#playUrl").parent().addClass("has-error has-feedback");
-		return null;
-	}
-	$("#playUrl").parent().removeClass("has-error has-feedback");
-	return playUrl;
-}
-
-function backupUrl() {
-	showError("获取PlayUrl或下载链接出错，请手动输入PlayUrl！否则由于B站限制，只能下载低清晰度视频！");
-	$("#backup-url, #error").show();
-	$("#playUrl").parent().addClass("has-error has-feedback");
-	//$("#success").hide();
-	$("#playUrl").val("");
-	manual = true;
-}
-
 function getAid() {
-	if (manual) {
-		if (videoUrl !== getVideoUrl()) manual = false; //用户在请求playUrl时改变了videoUrl
-		else playUrl = getPlayUrl();
-	}
 	videoUrl = getVideoUrl();
-	if (!videoUrl || (manual && !playUrl)) return;
+	if (!videoUrl) return;
 	let id = videoUrl.split("av")[1];
 	if (id) {
 		aid = id.split("/")[0].split("?")[0];
@@ -110,15 +84,6 @@ function getInfo() {
 					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
 						sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
-					if (manual) {
-						playUrl = getPlayUrl();
-						if (cid !== playUrl.split("?cid=")[1].split("&")[0]) {
-							//return; //视频地址和PlayUrl不匹配时结束
-							showWarning("视频地址和PlayUrl不匹配，可能造成问题！");
-							cid = playUrl.split("?cid=")[1].split("&")[0];
-						}
-						manual = false;
-					}
 
 					if (!cid) {
 						showError("获取视频cid出错！");
@@ -158,14 +123,15 @@ function getData(url, isBangumi) {
 				$("#quality").html(qualityArray[quality] || "未知");
 				parseData(target, isBangumi);
 			} else {
-				backupUrl();
 				if (isBangumi) return;
 				var params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`;
 				sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
 				getData(`http://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`, true);
 			}
 		})
-		.catch(error => backupUrl());
+		.catch(error => {
+			showError("获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。");
+		});
 }
 
 function parseData(target, isBangumi) {
