@@ -37,11 +37,6 @@ table img {
 	max-width: 100%;
 	width: 100%;
 }
-.wrap {
-	word-break: break-all;
-	word-wrap: break-all;
-	text-align: justify;
-}
 tr {
 	overflow: scroll;
 }
