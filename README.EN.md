@@ -23,18 +23,7 @@ npm install
 # Run the app
 npm start
 ```
-If everything's OK, you'll see a new window named "Mimi Downloader". Input the URL of video (e.g. https://www.bilibili.com/video/av11099139/), then follow the guide to download files.  
-If `PlayUrl` is required, you can get it like this:
-
-![](help.png)
-
-You can combine flv video parts using ffmpeg:
-```bash
-cid=11090110
-# Replace 11090110 with your video's cid
-for f in $(ls $cid-*.flv | sort -n); do echo "file '$f'" >> temp.txt; done
-ffmpeg -f concat -i temp.txt -c copy $cid.flv
-```
+If everything's OK, you'll see a new window named "Mimi Downloader". Input the URL of video (e.g. https://www.bilibili.com/video/av11099139/), then follow the guide to download video files.
 
 ## Credits
 

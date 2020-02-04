@@ -19,6 +19,12 @@
 ## 使用方法
 
 你需要安装 [Git](https://git-scm.com) 和 [Node.js](https://nodejs.org/en/download)（以及 [npm](http://npmjs.com)）来运行本程序。  
+本程序的一个重要依赖是 Electron，如果你所在的网络环境受到限制，请先设置如下环境变量，再执行后面的命令，以通过镜像安装之：
+```bash
+export ELECTRON_MIRROR="https://cdn.npm.taobao.org/dist/electron/" # 一般的 *NIX 命令行
+set ELECTRON_MIRROR="https://cdn.npm.taobao.org/dist/electron/" # 使用 Windows CMD 命令行
+```
+
 在命令行输入：
 ```bash
 # 克隆这个仓库
@@ -32,15 +38,6 @@ npm start
 ```
 如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。
 
-下载完成后，可以使用 ffmpeg 将 flv 片段合成为一个文件：
-```bash
-cid=11090110
-# 将 11090110 替换为你下载的视频的 cid
-for f in $(ls $cid-*.flv | sort -n); do echo "file '$f'" >> temp.txt; done
-ffmpeg -f concat -i temp.txt -c copy $cid.flv
-rm temp.txt
-```
-
 ## 制作者/鸣谢
 
 - [Mimi](https://zhangshuqiao.org) 本项目的开发者
@@ -51,12 +48,6 @@ rm temp.txt
 
 GNU General Public License v3  
 http://www.gnu.org/licenses/gpl-3.0.html
-
-## 不同分支的内容
-
-- master 主分支，采用了来自 you-get 的 api，bangumi 和 movie需要手动输入 PlayUrl
-- backup 均需要手动输入 PlayUrl
-- you-get 只需输入视频地址即可下载，但 bangumi 和 movie 没有高清 flv 源，只有分辨率较低的 mp4
 
 ## 待实现
 
