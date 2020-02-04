@@ -73,8 +73,8 @@ function getInfo() {
 					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
 				}
 				$("tbody").eq(1).append(`<tr>
-				<td class="capitalize">${i}</td>
-				<td>${data[i]}</td>
+				<td class="text-capitalize">${i}</td>
+				<td style="word-break: break-all;">${data[i]}</td>
 				</tr>`);
 			}
 			fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)

@@ -23,9 +23,6 @@ table img {
 .input-group-addon {
 	cursor: pointer;
 }
-.capitalize {
-	text-transform: capitalize; /*首字母大写*/
-}
 #download {
 	user-select: none;
 }
