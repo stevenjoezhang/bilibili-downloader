@@ -2,7 +2,7 @@
 
 [英文/English](README.EN.md)
 
-基于 Node.js 和 Electron 编写的 Bilibili 视频、弹幕下载器。
+基于 Node.js 和 Electron 开发的 Bilibili 视频、弹幕下载器。
 
 **由于B站会不时更新请求方式，请记得通过 `git` 保持更新。如果无法正常使用，欢迎提交 Issue 或 Pull Request。**
 
@@ -52,6 +52,4 @@ http://www.gnu.org/licenses/gpl-3.0.html
 ## 待实现
 
 - [ ] 允许用户开始/暂停下载
-- [ ] 是否把视频存储在新文件夹中
-- [ ] 下载进度单独菜单
-- [ ] 显示用户信息
+- [x] 显示发送弹幕的用户信息
