@@ -23,8 +23,7 @@
 	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
 	"dependencies": {
 		"mime": "^2.4.4",
-		"progress-stream": "^2.0.0",
-		"request": "^2.88.0"
+		"progress-stream": "^2.0.0"
 	},
 	"devDependencies": {
 		"electron": "8.0.0"

@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
-const request = require("request");
+const http = require("http");
 const progress = require("progress-stream");
 const mime = require("mime");
 const electron = require("electron");
@@ -251,9 +251,10 @@ function generalDownload(j, options, downloads) {
 		}
 	});
 	//先pipe到proStream再pipe到文件的写入流中
-	request.get(options).on("response", response => {
-		proStream.setLength(response.headers["content-length"]);
-	}).pipe(proStream).pipe(downloads).on("error", e => {
-		console.error(e);
+	http.get(options.url, options, res => {
+		proStream.setLength(res.headers["content-length"]);
+		res.pipe(proStream).pipe(downloads).on("error", e => {
+			console.error(e);
+		});
 	});
 }
