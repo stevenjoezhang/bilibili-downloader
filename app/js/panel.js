@@ -8,7 +8,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, shell } = electron.remote;
 
-var videoUrl, cid, links, downloadArray = [];
+var videoUrl, videoName, cid, links, downloadArray = [];
 
 function showError(text) {
 	dialog.showMessageBox({type: "error", title: "[Error]", message: text});
@@ -60,7 +60,7 @@ function getInfo(aid, pid) {
 	fetch("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid)
 		.then(response => response.json())
 		.then(data => {
-			//console.log(result);
+			console.log("VIDEO INFO", data);
 			$("tbody").eq(1).html("");
 			for (var i in data) {
 				if (i === "cid") {
@@ -74,11 +74,14 @@ function getInfo(aid, pid) {
 				<td style="word-break: break-all;">${data[i]}</td>
 				</tr>`);
 			}
+			//cid = data.cid;
+			videoName = data.title + data.partname;
 		})
 		.catch(error => showError("获取视频信息出错！"));
 	fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)
 		.then(response => response.json())
 		.then(result => {
+			console.log("PAGE LIST", result);
 			cid = result[pid - 1].cid;
 			let params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
 				sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
