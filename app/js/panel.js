@@ -63,11 +63,8 @@ function getInfo(aid, pid) {
 			console.log("VIDEO INFO", data);
 			$("tbody").eq(1).html("");
 			for (var i in data) {
-				if (i === "cid") {
-					//cid = data[i];
-				}
 				if (mime.getType(data[i]) && mime.getType(data[i]).includes("image")) { //解析图片地址
-					data[i] = '<a href="' + data[i] + '" download=""><img src="' + data[i] + '"></a>';
+					data[i] = `<a href="${data[i]}" download=""><img src="${data[i]}"></a>`;
 				}
 				$("tbody").eq(1).append(`<tr>
 				<td class="text-capitalize">${i}</td>
@@ -75,7 +72,8 @@ function getInfo(aid, pid) {
 				</tr>`);
 			}
 			//cid = data.cid;
-			videoName = data.title + data.partname;
+			videoName = `${data.cid}-${data.title}`;
+			$("#videoName").val(videoName);
 		})
 		.catch(error => showError("获取视频信息出错！"));
 	fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)
@@ -213,9 +211,9 @@ function openPath() {
 }
 
 function downloadLink(i) {
-	var downloadPath = $("#downloadPath").val(),
-		filename = `${cid}-${i}.flv`,
-		file = path.join(downloadPath, filename);
+	let downloadPath = $("#downloadPath").val(),
+		filename = $("#videoName").val() || videoName || cid,
+		file = path.join(downloadPath, `${filename}-${i}.flv`);
 	fs.stat(file, (error, state) => {
 		var options = {
 			url: links[i],
