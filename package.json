@@ -23,6 +23,7 @@
 	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
 	"dependencies": {
 		"bootstrap": "^3.4.1",
+		"jquery": "^3.4.1",
 		"mime": "^2.4.4",
 		"progress-stream": "^2.0.0"
 	},
