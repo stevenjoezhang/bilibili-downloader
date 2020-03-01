@@ -8,8 +8,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, shell } = electron.remote;
 
-var videoUrl, playUrl, cid, links, downloadArray = [];
-var debug = !true;
+var videoUrl, cid, links, downloadArray = [];
 
 function showError(text) {
 	dialog.showMessageBox({type: "error", title: "[Error]", message: text});
@@ -21,8 +20,6 @@ function showWarning(text) {
 
 function getVideoUrl() {
 	var videoUrl = $("#videoUrl").val();
-	//if (debug) videoUrl = "https://www.bilibili.com/bangumi/play/ep90832";
-	if (debug) videoUrl = "https://www.bilibili.com/video/av23498892";
 	if (videoUrl.indexOf("https://") !== 0) {
 		if (videoUrl.includes("av")) videoUrl = "https://www.bilibili.com/video/av" + videoUrl.split("av")[1];
 		else if (videoUrl.includes("ep")) videoUrl = "https://www.bilibili.com/bangumi/play/ep" + videoUrl.split("ep")[1];
@@ -83,9 +80,9 @@ function getInfo(aid, pid) {
 		.then(response => response.json())
 		.then(result => {
 			cid = result[pid - 1].cid;
-			var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
-				sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
-			playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
+			let params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
+				sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
+				playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 
 			if (!cid) {
 				showError("获取视频 cid 出错！");
