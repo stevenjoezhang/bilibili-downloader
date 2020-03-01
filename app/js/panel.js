@@ -8,7 +8,7 @@ const electron = require("electron");
 const { ipcRenderer } = electron;
 const { app, shell } = electron.remote;
 
-var videoUrl, playUrl, aid, pid = 1, cid, links, downloadArray = [];
+var videoUrl, playUrl, cid, links, downloadArray = [];
 var debug = !true;
 
 function showError(text) {
@@ -42,9 +42,9 @@ function getAid() {
 	if (!videoUrl) return;
 	let id = videoUrl.split("av")[1];
 	if (id) {
-		aid = id.split("/")[0].split("?")[0];
-		pid = id.split("p=")[1] || 1;
-		getInfo();
+		let aid = id.split("/")[0].split("?")[0],
+			pid = id.split("p=")[1] || 1;
+		getInfo(aid, pid);
 	} else {
 		fetch(videoUrl)
 			.then(response => response.text())
@@ -52,14 +52,14 @@ function getAid() {
 				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
 				data = JSON.parse(data);
 				let epId = data.epList[0].id;
-				aid = data.epList[0].aid; // Not always correct
-				getInfo();
+				let { aid } = data.epList[0]; // Not always correct
+				getInfo(aid, 1);
 			})
 			.catch(error => showError("获取视频 aid 出错！"));
 	}
 }
 
-function getInfo() {
+function getInfo(aid, pid) {
 	fetch("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid)
 		.then(response => response.json())
 		.then(data => {
@@ -77,28 +77,28 @@ function getInfo() {
 				<td style="word-break: break-all;">${data[i]}</td>
 				</tr>`);
 			}
-			fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)
-				.then(response => response.json())
-				.then(result => {
-					cid = result[pid - 1].cid;
-					var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
-						sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
-					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
-
-					if (!cid) {
-						showError("获取视频 cid 出错！");
-						return;
-					}
-					getData(playUrl);
-					getDanmaku(); //获取cid后，获取下载链接和弹幕信息
-					$("#nav").show();
-					if ($(".info").eq(1).is(":hidden")) {
-						changeMenu(0);
-						//$(".info").eq(0).fadeIn();
-					}
-				}) //解析xml文档
-				.catch(error => showError("获取视频信息出错！"));
 		})
+		.catch(error => showError("获取视频信息出错！"));
+	fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)
+		.then(response => response.json())
+		.then(result => {
+			cid = result[pid - 1].cid;
+			var params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
+				sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
+			playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
+
+			if (!cid) {
+				showError("获取视频 cid 出错！");
+				return;
+			}
+			getData(playUrl);
+			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
+			$("#nav").show();
+			if ($(".info").eq(1).is(":hidden")) {
+				changeMenu(0);
+				//$(".info").eq(0).fadeIn();
+			}
+		}) //解析xml文档
 		.catch(error => showError("获取视频信息出错！"));
 }
 
