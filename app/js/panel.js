@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const http = require("http");
+const https = require("https");
 const progress = require("progress-stream");
 const mime = require("mime");
 const electron = require("electron");
@@ -46,7 +47,8 @@ function getAid() {
 	let { videoUrl, type } = getVideoUrl();
 	if (!videoUrl) return;
 	video.url = videoUrl;
-	if (type === "av") {
+	video.type = type;
+	if (video.type === "av") {
 		let id = video.url.split("av")[1],
 			aid = id.split("/")[0].split("?")[0],
 			pid = id.split("p=")[1] || 1;
@@ -58,7 +60,7 @@ function getAid() {
 				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
 				console.log("INITIAL STATE", data);
 				data = JSON.parse(data);
-				let { aid, cid } = type === "ss" ? data.epList[0] : data.epInfo;
+				let { aid, cid } = video.type === "ss" ? data.epList[0] : data.epInfo;
 				getInfo({ aid, cid });
 			})
 			.catch(error => showError("获取视频 aid 出错！"));
@@ -89,23 +91,19 @@ function getInfo({ aid, pid, cid }) {
 		.then(response => response.json())
 		.then(result => {
 			console.log("PAGE LIST", result);
-			if (cid) {
-				video.cid = cid;
-				let params = `cid=${video.cid}&module=movie&player=1&quality=112&ts=1`,
-					sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex"),
-					playUrl = `http://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`;
-				getData(playUrl, true);
-			} else {
-				if (!result[pid - 1].cid) {
-					showError("获取视频 cid 出错！");
-					return;
-				}
-				video.cid = result[pid - 1].cid;
-				let params = `appkey=iVGUTjsxvpLeuDCf&cid=${video.cid}&otype=json&qn=112&quality=112&type=`,
-					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
-					playUrl = `http://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
-				getData(playUrl);
+			video.cid = cid || result[pid - 1].cid;
+			if (!video.cid) {
+				showError("获取视频 cid 出错！");
+				return;
 			}
+			if (video.type === "av") {
+				var params = `appkey=iVGUTjsxvpLeuDCf&cid=${video.cid}&otype=json&qn=112&quality=112&type=`,
+					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
+					playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
+			} else {
+				var playUrl = `https://api.bilibili.com/pgc/player/web/playurl?qn=80&cid=${video.cid}`;
+			}
+			getData(playUrl);
 			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 			$("#nav").show();
 			if ($(".info").eq(1).is(":hidden")) {
@@ -116,15 +114,15 @@ function getInfo({ aid, pid, cid }) {
 		.catch(error => showError("获取视频信息出错！"));
 }
 
-function getData(url, isBangumi) {
+function getData(url, fallback) {
 	fetch(url)
 		.then(response => response.text())
 		.then(result => {
 			console.log("PLAY URL", result);
-			var data = isBangumi ? $(result) : JSON.parse(result),
-				target = isBangumi ? data.find("durl") : data.durl;
+			var data = fallback ? $(result) : JSON.parse(result),
+				target = fallback ? data.find("durl") : (data.durl || data.result.durl);
 			if (target) {
-				var quality = isBangumi ? $(data).find("quality").text() : data.quality,
+				var quality = fallback ? $(data).find("quality").text() : (data.quality || data.result.quality),
 					qualityArray = {
 						112: "高清 1080P+",
 						80: "高清 1080P",
@@ -139,9 +137,15 @@ function getData(url, isBangumi) {
 				$("#success").show();
 				$("#cid").html(video.cid);
 				$("tbody").eq(0).html("");
-				$("#backup-url, #error").hide();
+				fallback ? $("#error").show() : $("#error").hide();
 				links = [];
-				isBangumi ? parseDataBangumi(target, links) : parseData(target, links);
+				fallback ? parseDataBangumi(target, links) : parseData(target, links);
+			} else {
+				if (fallback) throw Error();
+				let params = `cid=${video.cid}&module=movie&player=1&quality=112&ts=1`,
+					sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex"),
+					playUrl = `https://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`;
+				getData(playUrl, true);
 			}
 		})
 		.catch(error => {
@@ -264,7 +268,7 @@ function generalDownload(j, options, downloads) {
 		}
 	});
 	//先pipe到proStream再pipe到文件的写入流中
-	http.get(options.url, options, res => {
+	(options.url.startsWith("https") ? https : http).get(options.url, options, res => {
 		proStream.setLength(res.headers["content-length"]);
 		res.pipe(proStream).pipe(downloads).on("error", e => {
 			console.error(e);
