@@ -1,3 +1,6 @@
+body {
+	overflow-x: hidden;
+}
 .container {
 	margin: 0 20px 20px 20px;
 }
@@ -13,8 +16,14 @@
 .has-feedback .glyphicon {
 	display: block;
 }
+td {
+	word-break: break-all;
+}
 table img {
 	max-width: 80%;
+}
+table pre {
+	white-space: pre-wrap;
 }
 #bg {
 	width: 100%;
@@ -33,7 +42,4 @@ table img {
 	table-layout: fixed;
 	max-width: 100%;
 	width: 100%;
-}
-tr {
-	overflow: scroll;
 }

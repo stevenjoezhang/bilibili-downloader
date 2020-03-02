@@ -36,11 +36,19 @@ npm start
 ```
 如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。
 
+对于分为多个 flv 片段的视频，下载完成后，可以使用 ffmpeg 将其合并为一个文件：
+```bash
+name=11090110
+# 将 11090110 替换为视频文件名
+ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "file '$PWD/$f'"; done) -c copy $name.flv
+```
+见 https://trac.ffmpeg.org/wiki/Concatenate
+
 ## 制作者/鸣谢
 
 - [Mimi](https://zhangshuqiao.org) 本项目的开发者
 - 田生 [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
-- soimort [you-get](https://github.com/soimort/you-get) MIT license 提供了部分B站api的调用方式
+- soimort [you-get](https://github.com/soimort/you-get) MIT license 提供了部分B站 API 的调用方式
 
 ## 许可证
 

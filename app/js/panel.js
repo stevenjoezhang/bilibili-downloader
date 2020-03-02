@@ -68,18 +68,20 @@ function getAid() {
 }
 
 function getInfo({ aid, pid, cid }) {
-	fetch("https://api.bilibili.com/view?type=jsonp&appkey=8e9fc618fbd41e28&id=" + aid)
+	fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 		.then(response => response.json())
-		.then(data => {
+		.then(({ data }) => {
 			console.log("VIDEO INFO", data);
 			$("tbody").eq(1).html("");
-			for (var i in data) {
-				if (mime.getType(data[i]) && mime.getType(data[i]).includes("image")) { //解析图片地址
-					data[i] = `<a href="${data[i]}" download=""><img src="${data[i]}"></a>`;
+			for (let [key, value] of Object.entries(data)) {
+				if (mime.getType(value) && mime.getType(value).includes("image")) { //解析图片地址
+					value = `<a href="${value}" download=""><img src="${value}"></a>`;
+				} else if (typeof value === "object") {
+					value = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
 				}
 				$("tbody").eq(1).append(`<tr>
-				<td class="text-capitalize">${i}</td>
-				<td style="word-break: break-all;">${data[i]}</td>
+				<th class="text-capitalize">${key}</th>
+				<td>${value}</td>
 				</tr>`);
 			}
 			//video.cid = data.cid;
@@ -236,7 +238,6 @@ function downloadLink(i) {
 	fs.stat(file, (error, state) => {
 		var options = {
 			url: links[i],
-			encoding: null, //当请求的是二进制文件时，一定要设置
 			headers: {
 				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
 				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
