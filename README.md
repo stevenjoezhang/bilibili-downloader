@@ -44,11 +44,20 @@ ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "fil
 ```
 见 https://trac.ffmpeg.org/wiki/Concatenate
 
-## 制作者/鸣谢
+## 相关项目
 
-- [Mimi](https://zhangshuqiao.org) 本项目的开发者
-- 田生 [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader, Mozilla Public License 2.0
-- soimort [you-get](https://github.com/soimort/you-get) MIT license 提供了部分B站 API 的调用方式
+如果你需要更为强大的命令行工具，那么以下仓库或许有帮助。它们均使用了和本项目完全相同的 API 调用方式，不需要手动设置 Cookie 或 playurl。
+
+- [you-get](https://github.com/soimort/you-get) by soimort, MIT license
+- [annie](https://github.com/iawia002/annie) by iawia002
+- [Bilibili_video_download](https://github.com/Henryhaohao/Bilibili_video_download) by Henryhaohao
+
+这里还有一些其它的库和浏览器插件供参考。
+
+- [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader by tiansh, Mozilla Public License 2.0
+- [bilibili-get](https://github.com/kamikat/bilibili-get) by kamikat
+- [bilitwin](https://github.com/Xmader/bilitwin) by Xmader
+- [bili-api](https://github.com/simon300000/bili-api) by simon300000
 
 ## 许可证
 
@@ -62,6 +71,7 @@ This software is distributed under the GPL-3.0 license.
 In particular, please be aware that
 
 > THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
 Translated to human words:
 
 *In case your use of the software forms the basis of copyright infringement, or you use the software for any other illegal purposes, the authors cannot take any responsibility for you.*
