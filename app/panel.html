@@ -175,9 +175,8 @@
 	<div class="row mt20" id="download"></div>
 	<img src="bg.png" id="bg" class="mt20">
 </div>
-<script src="../node_modules/jquery/dist/jquery.min.js"></script>
 <script>
-if (typeof module === "object") { window.jQuery = window.$ = module.exports; }
+window.$ = window.jQuery = require('jquery');
 </script>
 <script src="cdn/crc32.js"></script>
 <script src="cdn/ass.js"></script>
@@ -207,9 +206,9 @@ menu.append(new MenuItem({
 	}
 }));
 
-function message(msg) {
+function message(message) {
 	dialog.showMessageBox({
-		message: msg
+		message
 	});
 }
 
