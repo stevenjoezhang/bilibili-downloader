@@ -37,7 +37,7 @@ function getVideoUrl() {
 	else {
 		showError("无效的视频链接！");
 		$("#videoUrl").parent().addClass("has-error has-feedback");
-		return null;
+		return {};
 	}
 	$("#videoUrl").parent().removeClass("has-error has-feedback");
 	return { videoUrl, type };
@@ -138,10 +138,8 @@ function getData(url, fallback) {
 				$("#quality").html(qualityArray[quality] || "未知");
 				$("#success").show();
 				$("#cid").html(video.cid);
-				$("tbody").eq(0).html("");
 				fallback ? $("#error").show() : $("#error").hide();
-				links = [];
-				fallback ? parseDataBangumi(target, links) : parseData(target, links);
+				fallback ? parseDataBangumi(target) : parseData(target);
 			} else {
 				if (fallback) throw Error();
 				let params = `cid=${video.cid}&module=movie&player=1&quality=112&ts=1`,
@@ -155,7 +153,9 @@ function getData(url, fallback) {
 		});
 }
 
-function parseDataBangumi(target, links) {
+function parseDataBangumi(target) {
+	links = [];
+	$("tbody").eq(0).html("");
 	target.each((i, o) => {
 		var part = $(o);
 		links.push(part.find("url").text());
@@ -174,7 +174,9 @@ function parseDataBangumi(target, links) {
 	});
 }
 
-function parseData(target, links) {
+function parseData(target) {
+	links = [];
+	$("tbody").eq(0).html("");
 	for (let part of target) {
 		links.push(part.url);
 		$("tbody").eq(0).append(`<tr>
@@ -208,9 +210,9 @@ function openDialog() {
 
 function download() {
 	var flag = true;
-	[...document.querySelectorAll('input[type="checkbox"]')].forEach((element, i) => {
-		if (!element.checked || downloadArray.includes(links[i])) return;
-		$("#download").append(`<span>${video.cid}-${i}</span>
+	[...document.querySelectorAll('input[type="checkbox"]')].forEach((element, index) => {
+		if (!element.checked || downloadArray.includes(links[index])) return;
+		$("#download").append(`<span>${video.cid}-${index}</span>
 			<span class="speed"></span>
 			<span class="eta"></span>
 			<span class="addon"></span>
@@ -219,10 +221,10 @@ function download() {
 					<span class="progress-value">0%</span>
 				</div>
 			</div>`);
-		downloadArray.push(links[i]);
+		downloadArray.push(links[index]);
 		ipcRenderer.send("length", downloadArray.filter(item => item !== "").length);
 		flag = false;
-		downloadLink(i);
+		downloadLink(index);
 	});
 	if (flag) showWarning("没有新的视频被下载！");
 }
@@ -231,13 +233,13 @@ function openPath() {
 	shell.openItem($("#downloadPath").val());
 }
 
-function downloadLink(i) {
+function downloadLink(index) {
 	let downloadPath = $("#downloadPath").val(),
 		filename = $("#videoName").val() || video.name || video.cid,
-		file = path.join(downloadPath, `${filename}-${i}.flv`);
+		file = path.join(downloadPath, `${filename}-${index}.flv`);
 	fs.stat(file, (error, state) => {
 		var options = {
-			url: links[i],
+			url: links[index],
 			headers: {
 				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
 				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",

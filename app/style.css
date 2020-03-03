@@ -3,14 +3,15 @@ body {
 }
 .container {
 	margin: 0 20px 20px 20px;
+	width: unset;
 }
 .checkbox {
-	margin: 0px auto !important;
+	margin: 0px auto;
 }
 .mt20 {
 	margin-top: 20px;
 }
-.info, #nav, #backup-url, .glyphicon {
+.info, #nav, .glyphicon {
 	display: none;
 }
 .has-feedback .glyphicon {
@@ -40,6 +41,4 @@ table pre {
 }
 #danmaku {
 	table-layout: fixed;
-	max-width: 100%;
-	width: 100%;
 }
