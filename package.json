@@ -28,6 +28,6 @@
 		"progress-stream": "^2.0.0"
 	},
 	"devDependencies": {
-		"electron": "8.0.3"
+		"electron": "8.1.0"
 	}
 }
