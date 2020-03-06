@@ -261,7 +261,7 @@ function generalDownload(j, options, downloads) {
 	}).on("progress", progress => {
 		$(".speed").eq(j).html(Math.round(progress.speed / 1024) + "KiB/s");
 		$(".eta").eq(j).html(`eta:${progress.eta}s`);
-		var percentage = progress.percentage; //显示进度条
+		let { percentage } = progress; //显示进度条
 		$(".progress-value").eq(j).html(Math.round(percentage) + "%");
 		$(".progress-bar").eq(j).css("width", percentage + "%");
 		if (percentage === 100) {
