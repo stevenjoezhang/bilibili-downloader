@@ -52,36 +52,51 @@ function getAid() {
 	if (!videoUrl) return;
 	video.url = videoUrl;
 	video.type = type;
-	if (video.type === "av") {
-		let id = video.url.split("av")[1],
-			aid = id.split("/")[0].split("?")[0],
-			pid = id.split("p=")[1] || 1;
-		getInfo({ aid, pid });
-	} else {
-		fetch(video.url)
-			.then(response => response.text())
-			.then(result => {
-				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
-				console.log("INITIAL STATE", data);
-				data = JSON.parse(data);
-				let target;
-				if (video.type === "BV") {
-					target = data.videoData;
-				}
-				else if (video.type === "ep") {
-					target = data.epInfo;
-				}
-				else if (video.type === "ss") {
-					target = data.epList[0];
-				}
-				let { aid, cid } = target;
-				getInfo({ aid, cid });
-			})
-			.catch(error => showError("获取视频 aid 出错！"));
-	}
+	fetch(video.url)
+		.then(response => response.text())
+		.then(result => {
+			let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
+			console.log("INITIAL STATE", data);
+			data = JSON.parse(data);
+			let aid, cid;
+			if (video.type === "BV" || video.type === "av") {
+				aid = data.videoData.aid;
+				let pid = video.url.split("p=")[1] || 1;
+				cid = data.videoData.pages[pid - 1].cid;
+			}
+			else if (video.type === "ep") {
+				aid = data.epInfo.aid;
+				cid = data.epInfo.cid;
+			}
+			else if (video.type === "ss") {
+				aid = data.epList[0].aid;
+				cid = data.epList[0].cid;
+			}
+			getInfo(aid, cid);
+		})
+		.catch(error => showError("获取视频 aid 出错！"));
 }
 
-function getInfo({ aid, pid, cid }) {
+function getInfo(aid, cid) {
+	video.cid = cid;
+	if (!video.cid) {
+		showError("获取视频 cid 出错！");
+		return;
+	}
+	if (video.type === "BV" || video.type === "av") {
+		var params = `appkey=iVGUTjsxvpLeuDCf&cid=${video.cid}&otype=json&qn=112&quality=112&type=`,
+			sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
+			playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
+	} else {
+		var playUrl = `https://api.bilibili.com/pgc/player/web/playurl?qn=80&cid=${video.cid}`;
+	}
+	getData(playUrl);
+	getDanmaku(); //获取cid后，获取下载链接和弹幕信息
+	$("#nav").show();
+	if ($(".info").eq(1).is(":hidden")) {
+		changeMenu(0);
+		//$(".info").eq(0).fadeIn();
+	} //解析xml文档
 	fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 		.then(response => response.json())
 		.then(({ data }) => {
@@ -102,31 +117,6 @@ function getInfo({ aid, pid, cid }) {
 			video.name = `${data.cid}-${data.title}`;
 			$("#videoName").val(video.name);
 		})
-		.catch(error => showError("获取视频信息出错！"));
-	fetch("https://www.bilibili.com/widget/getPageList?aid=" + aid)
-		.then(response => response.json())
-		.then(result => {
-			console.log("PAGE LIST", result);
-			video.cid = cid || result[pid - 1].cid;
-			if (!video.cid) {
-				showError("获取视频 cid 出错！");
-				return;
-			}
-			if (video.type === "BV" || video.type === "av") {
-				var params = `appkey=iVGUTjsxvpLeuDCf&cid=${video.cid}&otype=json&qn=112&quality=112&type=`,
-					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
-					playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
-			} else {
-				var playUrl = `https://api.bilibili.com/pgc/player/web/playurl?qn=80&cid=${video.cid}`;
-			}
-			getData(playUrl);
-			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
-			$("#nav").show();
-			if ($(".info").eq(1).is(":hidden")) {
-				changeMenu(0);
-				//$(".info").eq(0).fadeIn();
-			}
-		}) //解析xml文档
 		.catch(error => showError("获取视频信息出错！"));
 }
 
