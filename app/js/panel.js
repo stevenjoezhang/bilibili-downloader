@@ -22,7 +22,11 @@ function showWarning(message) {
 
 function getVideoUrl() {
 	let videoUrl = $("#videoUrl").val(), type;
-	if (videoUrl.includes("av")) {
+	if (videoUrl.includes("BV")) {
+		type = "BV";
+		videoUrl = "https://www.bilibili.com/video/BV" + videoUrl.split("BV")[1];
+	}
+	else if (videoUrl.includes("av")) {
 		type = "av";
 		videoUrl = "https://www.bilibili.com/video/av" + videoUrl.split("av")[1];
 	}
@@ -60,7 +64,17 @@ function getAid() {
 				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
 				console.log("INITIAL STATE", data);
 				data = JSON.parse(data);
-				let { aid, cid } = video.type === "ss" ? data.epList[0] : data.epInfo;
+				let target;
+				if (video.type === "BV") {
+					target = data.videoData;
+				}
+				else if (video.type === "ep") {
+					target = data.epInfo;
+				}
+				else if (video.type === "ss") {
+					target = data.epList[0];
+				}
+				let { aid, cid } = target;
 				getInfo({ aid, cid });
 			})
 			.catch(error => showError("获取视频 aid 出错！"));
@@ -98,7 +112,7 @@ function getInfo({ aid, pid, cid }) {
 				showError("获取视频 cid 出错！");
 				return;
 			}
-			if (video.type === "av") {
+			if (video.type === "BV" || video.type === "av") {
 				var params = `appkey=iVGUTjsxvpLeuDCf&cid=${video.cid}&otype=json&qn=112&quality=112&type=`,
 					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex"),
 					playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
