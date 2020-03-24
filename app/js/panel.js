@@ -56,8 +56,8 @@ function getAid() {
 		.then(response => response.text())
 		.then(result => {
 			let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
-			console.log("INITIAL STATE", data);
 			data = JSON.parse(data);
+			console.log("INITIAL STATE", data);
 			let aid, cid;
 			if (video.type === "BV" || video.type === "av") {
 				aid = data.videoData.aid;
@@ -96,7 +96,7 @@ function getInfo(aid, cid) {
 	if ($(".info").eq(1).is(":hidden")) {
 		changeMenu(0);
 		//$(".info").eq(0).fadeIn();
-	} //解析xml文档
+	}
 	fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 		.then(response => response.json())
 		.then(({ data }) => {
@@ -124,11 +124,11 @@ function getData(url, fallback) {
 	fetch(url)
 		.then(response => response.text())
 		.then(result => {
-			console.log("PLAY URL", result);
-			var data = fallback ? $(result) : JSON.parse(result),
+			let data = fallback ? $(result) : JSON.parse(result),
 				target = fallback ? data.find("durl") : (data.durl || data.result.durl);
+			console.log("PLAY URL", data);
 			if (target) {
-				var quality = fallback ? $(data).find("quality").text() : (data.quality || data.result.quality),
+				let quality = fallback ? $(data).find("quality").text() : (data.quality || data.result.quality),
 					qualityArray = {
 						112: "高清 1080P+",
 						80: "高清 1080P",
@@ -138,7 +138,7 @@ function getData(url, fallback) {
 						32: "清晰 480P",
 						16: "流畅 360P",
 						15: "流畅 360P"
-					} //需要修改，不是一一对应
+					}; //需要修改，不是一一对应
 				$("#quality").html(qualityArray[quality] || "未知");
 				$("#success").show();
 				$("#cid").html(video.cid);
@@ -214,7 +214,7 @@ function openDialog() {
 
 function download() {
 	var flag = true;
-	[...document.querySelectorAll('input[type="checkbox"]')].forEach((element, index) => {
+	document.querySelectorAll('input[type="checkbox"]').forEach((element, index) => {
 		if (!element.checked || downloadArray.includes(links[index])) return;
 		$("#download").append(`<span>${video.cid}-${index}</span>
 			<span class="speed"></span>
@@ -246,7 +246,7 @@ function downloadLink(index) {
 			url: links[index],
 			headers: {
 				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
-				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
 				"Referer": video.url
 			}
 		};
