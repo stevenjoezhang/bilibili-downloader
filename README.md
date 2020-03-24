@@ -34,7 +34,7 @@ npm install
 # 启动！
 npm start
 ```
-如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/av11099139/ ），按照提示即可下载视频。
+如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/BV1Lx411a7NQ ），按照提示即可下载视频。
 
 对于分为多个 flv 片段的视频，下载完成后，可以使用 ffmpeg 将其合并为一个文件：
 ```bash

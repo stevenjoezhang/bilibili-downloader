@@ -23,7 +23,7 @@ npm install
 # Run the app
 npm start
 ```
-If everything's OK, you'll see a new window named "Mimi Downloader". Input the URL of video (e.g. https://www.bilibili.com/video/av11099139/), then follow the guide to download video files.
+If everything's OK, you'll see a new window named "Mimi Downloader". Input the URL of video (e.g. https://www.bilibili.com/video/BV1Lx411a7NQ ), then follow the guide to download video files.
 
 ## Credits
 
