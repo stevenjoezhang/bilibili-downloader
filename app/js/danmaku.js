@@ -1,7 +1,7 @@
 var danmakuArray;
 
 function getDanmaku() {
-	fetch(`https://comment.bilibili.com/${video.cid}.xml`)
+	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
 		.then(response => response.text())
 		.then(result => {
 			danmakuArray = [];
@@ -75,20 +75,20 @@ function searchUser(event) {
 }
 
 function xml() {
-	blobDownload(`https://comment.bilibili.com/${video.cid}.xml`, video.cid + ".xml");
+	blobDownload(`https://comment.bilibili.com/${downloader.cid}.xml`, downloader.cid + ".xml");
 }
 
 function ass() {
 	//使用fetch是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
-	fetch(`https://comment.bilibili.com/${video.cid}.xml`)
+	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
 		.then(response => response.text())
 		.then(result => {
 			var danmaku = parseFile(result),
 				ass = generateASS(setPosition(danmaku), {
 					title: document.title,
-					ori: video.cid,
+					ori: downloader.cid,
 				});
-			assDownload(ass, video.cid + ".ass"); //"\ufeff" +
+			assDownload(ass, downloader.cid + ".ass"); //"\ufeff" +
 		})
 		.catch(error => showError("弹幕下载失败！"));
 }

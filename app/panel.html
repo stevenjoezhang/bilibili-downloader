@@ -20,7 +20,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<button class="btn btn-success" onclick="getAid()">获取下载链接</button>
+		<button class="btn btn-success" onclick="downloader.getAid()">获取下载链接</button>
 		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
@@ -81,7 +81,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<button class="btn btn-success" onclick="download()">下载选中片段</button>
+				<button class="btn btn-success" onclick="downloader.download()">下载选中片段</button>
 				<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
 			</div>
 		</div>
@@ -178,7 +178,7 @@ window.$ = window.jQuery = require('jquery');
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
 const { remote, clipboard } = require("electron");
-const { Menu, MenuItem, dialog } = remote;
+const { Menu, MenuItem, dialog, app, shell } = remote;
 let menu = new Menu(); //new一个菜单
 //添加菜单功能
 menu.append(new MenuItem({
@@ -241,6 +241,24 @@ function selectReverse() {
 	$('input[type="checkbox"]').each((i, o) => {
 		$(o).prop("checked", !$(o).prop("checked"));
 	});
+}
+
+function openDialog() {
+	dialog.showOpenDialog({
+		defaultPath: $("#downloadPath").val() || app.getPath("downloads") || __dirname,
+		properties: [
+			"openDirectory", //打开路径
+		],
+		filters: [
+			//{ name: "", extensions: ["json"] },
+		]
+	}, res => {
+		if (res[0]) $("#downloadPath").val(res[0]);
+	});
+}
+
+function openPath() {
+	shell.openItem($("#downloadPath").val());
 }
 
 function searchDanmaku() {
