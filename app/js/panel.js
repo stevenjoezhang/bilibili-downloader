@@ -8,8 +8,6 @@ const mime = require("mime");
 const electron = require("electron");
 const { ipcRenderer } = electron;
 
-var links, downloadArray = [];
-
 function showError(message) {
 	dialog.showMessageBox({type: "error", title: "[Error]", message});
 }
@@ -27,6 +25,8 @@ class Downloader {
 		this.pid = 1;
 		this.cid = -1;
 		this.name = "";
+		this.links = [];
+		this.downloading = [];
 	}
 
 	getVideoUrl() {
@@ -166,11 +166,11 @@ class Downloader {
 	}
 
 	parseDataBangumi(target) {
-		links = [];
+		this.links = [];
 		$("tbody").eq(0).html("");
 		target.each((i, o) => {
 			var part = $(o);
-			links.push(part.find("url").text());
+			this.links.push(part.find("url").text());
 			$("tbody").eq(0).append(`<tr>
 				<td>${part.find("order").text()}</td>
 				<td>${part.find("length").text() / 1e3}</td>
@@ -187,10 +187,10 @@ class Downloader {
 	}
 
 	parseData(target) {
-		links = [];
+		this.links = [];
 		$("tbody").eq(0).html("");
 		for (let part of target) {
-			links.push(part.url);
+			this.links.push(part.url);
 			$("tbody").eq(0).append(`<tr>
 				<td>${part.order}</td>
 				<td>${part.length / 1e3}</td>
@@ -208,9 +208,9 @@ class Downloader {
 
 	download() {
 		let { cid } = this, flag = true;
-		document.querySelectorAll('input[type="checkbox"]').forEach((element, index) => {
-			if (!element.checked || downloadArray.includes(links[index])) return;
-			$("#download").append(`<span>${cid}-${index}</span>
+		document.querySelectorAll('input[type="checkbox"]').forEach((element, part) => {
+			if (!element.checked || this.downloading.includes(this.links[part])) return;
+			$("#download").append(`<span>${cid}-${part}</span>
 				<span class="speed"></span>
 				<span class="eta"></span>
 				<span class="addon"></span>
@@ -219,22 +219,22 @@ class Downloader {
 						<span class="progress-value">0%</span>
 					</div>
 				</div>`);
-			downloadArray.push(links[index]);
-			ipcRenderer.send("length", downloadArray.filter(item => item !== "").length);
+			this.downloading.push(this.links[part]);
+			ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
 			flag = false;
-			this.downloadLink(index);
+			this.downloadLink(part);
 		});
 		if (flag) showWarning("没有新的视频被下载！");
 	}
 
-	downloadLink(index) {
+	downloadLink(part) {
 		let { name, cid, url } = this;
 		let downloadPath = $("#downloadPath").val(),
 			filename = $("#videoName").val() || name || cid,
-			file = path.join(downloadPath, `${filename}-${index}.flv`);
+			file = path.join(downloadPath, `${filename}-${part}.flv`);
 		fs.stat(file, (error, state) => {
 			var options = {
-				url: links[index],
+				url: this.links[part],
 				headers: {
 					"Range": `bytes=${state ? state.size : 0}-`, //断点续传
 					"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
@@ -242,27 +242,27 @@ class Downloader {
 				}
 			};
 			var downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
-				j = downloadArray.indexOf(options.url);
-			this.generalDownload(j, options, downloads);
-			state && $(".addon").eq(j).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
+				index = this.downloading.indexOf(options.url);
+			this.generalDownload(index, options, downloads);
+			state && $(".addon").eq(index).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
 			//console.log(this.cid, file, options.url);
 		});
 	}
 
-	generalDownload(j, options, downloads) {
+	generalDownload(index, options, downloads) {
 		//https://blog.csdn.net/zhu_06/article/details/79772229
 		var proStream = progress({
 			time: 250 //单位ms
 		}).on("progress", progress => {
-			$(".speed").eq(j).html(Math.round(progress.speed / 1024) + "KiB/s");
-			$(".eta").eq(j).html(`eta:${progress.eta}s`);
+			$(".speed").eq(index).html(Math.round(progress.speed / 1024) + "KiB/s");
+			$(".eta").eq(index).html(`eta:${progress.eta}s`);
 			let { percentage } = progress; //显示进度条
-			$(".progress-value").eq(j).html(Math.round(percentage) + "%");
-			$(".progress-bar").eq(j).css("width", percentage + "%");
+			$(".progress-value").eq(index).html(Math.round(percentage) + "%");
+			$(".progress-bar").eq(index).css("width", percentage + "%");
 			if (percentage === 100) {
-				$(".progress-bar").eq(j).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
-				downloadArray[j] = "";
-				ipcRenderer.send("length", downloadArray.filter(item => item !== "").length);
+				$(".progress-bar").eq(index).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
+				this.downloading[index] = "";
+				ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
 			}
 		});
 		//先pipe到proStream再pipe到文件的写入流中
