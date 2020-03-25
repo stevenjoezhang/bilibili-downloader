@@ -5,8 +5,7 @@ const http = require("http");
 const https = require("https");
 const progress = require("progress-stream");
 const mime = require("mime");
-const electron = require("electron");
-const { ipcRenderer } = electron;
+const { ipcRenderer } = require("electron");
 
 function showError(message) {
 	dialog.showMessageBox({type: "error", title: "[Error]", message});
@@ -154,7 +153,7 @@ class Downloader {
 					$("#quality").html(qualityArray[quality] || "未知");
 					$("#success").show();
 					fallback ? $("#error").show() : $("#error").hide();
-					fallback ? this.parseDataBangumi(target) : this.parseData(target);
+					fallback ? this.parseDataFallback(target) : this.parseData(target);
 				} else {
 					if (fallback) throw Error();
 					this.getData(true);
@@ -165,7 +164,7 @@ class Downloader {
 			});
 	}
 
-	parseDataBangumi(target) {
+	parseDataFallback(target) {
 		this.links = [];
 		$("tbody").eq(0).html("");
 		target.each((i, o) => {
@@ -244,7 +243,7 @@ class Downloader {
 			var downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
 				index = this.downloading.indexOf(options.url);
 			this.generalDownload(index, options, downloads);
-			state && $(".addon").eq(index).html(`从${Math.round(state.size / 1048576)}MiB处恢复的下载`);
+			state && $(".addon").eq(index).html(`从 ${Math.round(state.size / 1048576)}MiB 处恢复的下载`);
 			//console.log(this.cid, file, options.url);
 		});
 	}
@@ -254,9 +253,9 @@ class Downloader {
 		var proStream = progress({
 			time: 250 //单位ms
 		}).on("progress", progress => {
-			$(".speed").eq(index).html(Math.round(progress.speed / 1024) + "KiB/s");
-			$(".eta").eq(index).html(`eta:${progress.eta}s`);
-			let { percentage } = progress; //显示进度条
+			let { speed, eta, percentage } = progress; //显示进度条
+			$(".speed").eq(index).html(Math.round(speed / 1024) + "KiB/s");
+			$(".eta").eq(index).html(`eta:${eta}s`);
 			$(".progress-value").eq(index).html(Math.round(percentage) + "%");
 			$(".progress-bar").eq(index).css("width", percentage + "%");
 			if (percentage === 100) {
@@ -268,8 +267,8 @@ class Downloader {
 		//先pipe到proStream再pipe到文件的写入流中
 		(options.url.startsWith("https") ? https : http).get(options.url, options, res => {
 			proStream.setLength(res.headers["content-length"]);
-			res.pipe(proStream).pipe(downloads).on("error", e => {
-				console.error(e);
+			res.pipe(proStream).pipe(downloads).on("error", error => {
+				console.error(error);
 			});
 		});
 	}
