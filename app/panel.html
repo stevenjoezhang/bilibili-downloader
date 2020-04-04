@@ -205,7 +205,7 @@ function message(message) {
 	});
 }
 
-$('input[type="text"]').each((i, o) => {
+$("input[type=text]").each((i, o) => {
 	$(o).on("contextmenu", event => {
 		event.preventDefault();
 		event.currentTarget.focus();
@@ -230,15 +230,15 @@ function changeMenu(index) {
 }
 
 function selectAll() {
-	$('input[type="checkbox"]').prop("checked", true);
+	$("tbody input[type=checkbox]").prop("checked", true);
 }
 
 function selectNone() {
-	$('input[type="checkbox"]').prop("checked", false);
+	$("tbody input[type=checkbox]").prop("checked", false);
 }
 
 function selectReverse() {
-	$('input[type="checkbox"]').each((i, o) => {
+	$("tbody input[type=checkbox]").each((i, o) => {
 		$(o).prop("checked", !$(o).prop("checked"));
 	});
 }

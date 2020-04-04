@@ -207,7 +207,7 @@ class Downloader {
 
 	download() {
 		let { cid } = this, flag = true;
-		document.querySelectorAll('input[type="checkbox"]').forEach((element, part) => {
+		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
 			if (!element.checked || this.downloading.includes(this.links[part])) return;
 			$("#download").append(`<span>${cid}-${part}</span>
 				<span class="speed"></span>
