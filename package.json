@@ -25,7 +25,8 @@
 		"bootstrap": "^3.4.1",
 		"jquery": "^3.4.1",
 		"mime": "^2.4.4",
-		"progress-stream": "^2.0.0"
+		"progress-stream": "^2.0.0",
+		"sanitize-filename": "^1.6.3"
 	},
 	"devDependencies": {
 		"electron": "8.2.1"

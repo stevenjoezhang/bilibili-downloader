@@ -5,6 +5,7 @@ const http = require("http");
 const https = require("https");
 const progress = require("progress-stream");
 const mime = require("mime");
+const sanitize = require("sanitize-filename");
 const { ipcRenderer } = require("electron");
 
 function showError(message) {
@@ -112,7 +113,7 @@ class Downloader {
 					</tr>`);
 				}
 				this.name = `${id}-${data.title}`;
-				$("#videoName").val(this.name);
+				$("#videoName").val(sanitize(this.name));
 			})
 			.catch(error => showError("获取视频信息出错！"));
 	}
@@ -230,7 +231,7 @@ class Downloader {
 		let { name, cid, url } = this;
 		let downloadPath = $("#downloadPath").val(),
 			filename = $("#videoName").val() || name || cid,
-			file = path.join(downloadPath, `${filename}-${part}.flv`);
+			file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
 		fs.stat(file, (error, state) => {
 			var options = {
 				url: this.links[part],

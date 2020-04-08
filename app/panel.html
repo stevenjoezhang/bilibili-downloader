@@ -252,8 +252,8 @@ function openDialog() {
 		filters: [
 			//{ name: "", extensions: ["json"] },
 		]
-	}, res => {
-		if (res[0]) $("#downloadPath").val(res[0]);
+	}).then(({ filePaths }) => {
+		if (filePaths[0]) $("#downloadPath").val(filePaths[0]);
 	});
 }
 
