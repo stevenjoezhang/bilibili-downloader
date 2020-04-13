@@ -24,12 +24,12 @@
 		<button class="btn btn-default" onclick="help()">帮助</button>
 		<button class="btn btn-default" onclick="about()">关于</button>
 	</div>
-	<ul class="nav nav-tabs row mt20" id="nav">
+	<ul class="nav nav-tabs row mt-4" id="nav">
 		<li role="presentation" class="active" onclick="changeMenu(0)"><a>下载地址</a></li>
 		<li role="presentation" onclick="changeMenu(1)"><a>视频信息</a></li>
 		<li role="presentation" onclick="changeMenu(2)"><a>弹幕查询</a></li>
 	</ul>
-	<div class="info mt20">
+	<div class="info mt-4">
 		<div class="row">
 			<div class="form-group">
 				<label class="control-label">视频 CID：</label>
@@ -66,7 +66,7 @@
 				<button class="btn btn-danger" onclick="selectNone()">全不选</button>
 			</div>
 			<div class="row">
-				<div class="form-group mt20">
+				<div class="form-group mt-4">
 					<label class="control-label">下载路径</label>
 					<div class="input-group">
 						<input type="text" class="form-control" id="downloadPath">
@@ -86,7 +86,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="info mt20">
+	<div class="info mt-4">
 		<div class="row">
 			<table class="table table-striped">
 				<thead>
@@ -99,7 +99,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="info mt20">
+	<div class="info mt-4">
 		<div class="row">
 			<div class="form-group">
 				<span>如果不需要过滤弹幕，以下内容留空即可</span>
@@ -119,7 +119,7 @@
 				</label>
 			</div>
 		</div>
-		<div id="filter" class="row mt20" style="margin-bottom: -20px; display: none;">
+		<div id="filter" class="row mt-4" style="margin-bottom: -20px; display: none;">
 			<label class="control-label">弹幕时间</label>
 			<div class="row">
 				<div class="form-group col-xs-5">
@@ -151,7 +151,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="row mt20">
+		<div class="row mt-4">
 			<table class="table table-striped" id="danmaku">
 				<thead>
 					<tr>
@@ -165,8 +165,8 @@
 			</table>
 		</div>
 	</div>
-	<div class="row mt20" id="download"></div>
-	<img src="bg.png" id="bg" class="mt20">
+	<div class="row mt-4" id="download"></div>
+	<img src="bg.png" id="bg" class="mt-4">
 </div>
 <script>
 window.$ = window.jQuery = require('jquery');
