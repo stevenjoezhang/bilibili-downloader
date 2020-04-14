@@ -5,9 +5,6 @@ body {
 	margin: 20px;
 	max-width: calc(100% - 40px);;
 }
-.checkbox {
-	margin: 0px auto;
-}
 .info, #nav {
 	display: none;
 }
@@ -22,12 +19,12 @@ table pre {
 }
 #bg {
 	width: 100%;
-	z-index: -1;
 }
 .input-group-append {
 	cursor: pointer;
 }
 #download {
+	display: block;
 	user-select: none;
 }
 #download span:not(:last-of-type), #cid, #quality {

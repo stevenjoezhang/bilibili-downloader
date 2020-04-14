@@ -176,11 +176,9 @@ class Downloader {
 				<td>${part.find("length").text() / 1e3}</td>
 				<td>${part.find("size").text() / 1e6}</td>
 				<td>
-					<div class="checkbox">
-						<label>
-							<input type="checkbox" checked="true">
-						</label>
-					</div>
+					<label>
+						<input type="checkbox" checked="true">
+					</label>
 				</td>
 			</tr>`);
 		});
@@ -196,11 +194,9 @@ class Downloader {
 				<td>${part.length / 1e3}</td>
 				<td>${part.size / 1e6}</td>
 				<td>
-					<div class="checkbox">
-						<label>
-							<input type="checkbox" checked="true">
-						</label>
-					</div>
+					<label>
+						<input type="checkbox" checked="true">
+					</label>
 				</td>
 			</tr>`);
 		}
@@ -214,9 +210,9 @@ class Downloader {
 				<span class="speed"></span>
 				<span class="eta"></span>
 				<span class="addon"></span>
-				<div class="progress progress-striped active">
-					<div class="progress-bar progress-bar-info" role="progressbar" style="width: 0%;">
-						<span class="progress-value">0%</span>
+				<div class="progress mt-1 mb-3">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">
+						0%
 					</div>
 				</div>`);
 			this.downloading.push(this.links[part]);
@@ -257,10 +253,9 @@ class Downloader {
 			let { speed, eta, percentage } = progress; //显示进度条
 			$(".speed").eq(index).html(Math.round(speed / 1024) + "KiB/s");
 			$(".eta").eq(index).html(`eta:${eta}s`);
-			$(".progress-value").eq(index).html(Math.round(percentage) + "%");
-			$(".progress-bar").eq(index).css("width", percentage + "%");
+			$(".progress-bar").eq(index).css("width", percentage + "%").html(Math.round(percentage) + "%");
 			if (percentage === 100) {
-				$(".progress-bar").eq(index).removeClass("progress-bar-info").addClass("progress-bar-success").parent().removeClass("active");
+				$(".progress-bar").eq(index).addClass("bg-success").removeClass("progress-bar-animated");
 				this.downloading[index] = "";
 				ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
 			}

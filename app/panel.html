@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-	<div class="row">
+	<div class="row" style="display: block;">
 		<h1>Mimi Downloader</h1>
 		<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
 	</div>
@@ -113,50 +113,38 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
-				</label>
-			</div>
+			<label>
+				<input type="checkbox" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
+			</label>
 		</div>
-		<div id="filter" class="row mt-4" style="margin-bottom: -20px; display: none;">
-			<label class="control-label">弹幕时间</label>
-			<div class="row">
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="T1" placeholder="单位：s">
+		<div id="filter" class="row" style="display: none;">
+			<div class="input-group mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text">弹幕时间</span>
 				</div>
-				<div class="form-group col-xs-2">
-					<span style="text-align: center;">至</span>
-				</div>
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="T2" placeholder="单位：s">
-				</div>
+				<input type="text" class="form-control" id="T1" placeholder="起始（s）">
+				<input type="text" class="form-control" id="T2" placeholder="结束（s）">
 			</div>
-			<label class="control-label">发送时间</label>
-			<div class="row">
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="ST1" placeholder="时间戳：s">
+			<div class="input-group mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text">发送时间</span>
 				</div>
-				<div class="form-group col-xs-2">
-					<span style="text-align: center;">至</span>
-				</div>
-				<div class="form-group col-xs-5">
-					<input type="text" class="form-control" id="ST2" placeholder="时间戳：s">
-				</div>
+				<input type="text" class="form-control" id="ST1" placeholder="起始（s）">
+				<input type="text" class="form-control" id="ST2" placeholder="结束（s）">
 			</div>
-			<div class="row">
-				<div class="form-group col-xs-12">
-					<label class="control-label">发送者</label>
-					<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名">
+			<div class="input-group mt-2">
+				<div class="input-group-prepend">
+					<span class="input-group-text">发送者</span>
 				</div>
+				<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名">
 			</div>
 		</div>
 		<div class="row mt-4">
 			<table class="table table-striped" id="danmaku">
 				<thead>
 					<tr>
-						<th style="width: 80px;">弹幕时间</th>
-						<th style="width: 120px;">发送时间</th>
+						<th style="width: 100px;">弹幕时间</th>
+						<th style="width: 140px;">发送时间</th>
 						<th>弹幕内容</th>
 						<th style="width: 100px;">发送者</th>
 					</tr>
