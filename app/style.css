@@ -2,20 +2,14 @@ body {
 	overflow-x: hidden;
 }
 .container {
-	margin: 0 20px 20px 20px;
-	width: unset;
+	margin: 20px;
+	max-width: calc(100% - 40px);;
 }
 .checkbox {
 	margin: 0px auto;
 }
-.mt-4 {
-	margin-top: 20px;
-}
-.info, #nav, .glyphicon {
+.info, #nav {
 	display: none;
-}
-.has-feedback .glyphicon {
-	display: block;
 }
 td {
 	word-break: break-all;
@@ -30,7 +24,7 @@ table pre {
 	width: 100%;
 	z-index: -1;
 }
-.input-group-addon {
+.input-group-append {
 	cursor: pointer;
 }
 #download {

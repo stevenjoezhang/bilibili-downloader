@@ -47,10 +47,10 @@ class Downloader {
 			}
 		}
 		if (this.url) {
-			$("#videoUrl").parent().removeClass("has-error has-feedback");
+			$("#videoUrl").removeClass("is-invalid").addClass("is-valid");
 		} else {
 			showError("无效的视频链接！");
-			$("#videoUrl").parent().addClass("has-error has-feedback");
+			$("#videoUrl").addClass("is-invalid").removeClass("is-valid");
 		}
 	}
 
@@ -91,7 +91,7 @@ class Downloader {
 		this.getData();
 		getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 		$("#cid").html(cid);
-		$("#nav").show();
+		$("#nav").css("display", "flex");
 		if ($(".info").eq(1).is(":hidden")) {
 			changeMenu(0);
 			//$(".info").eq(0).fadeIn();

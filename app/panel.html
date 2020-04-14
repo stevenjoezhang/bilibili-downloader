@@ -12,22 +12,22 @@
 		<h1>Mimi Downloader</h1>
 		<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
 	</div>
+	<div class="form-group row">
+		<label class="control-label">视频链接</label>
+		<input type="text" class="form-control" id="videoUrl" placeholder="若有分p，请带上?p=参数">
+		<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+	</div>
 	<div class="row">
 		<div class="form-group">
-			<label class="control-label">视频链接</label>
-			<input type="text" class="form-control" id="videoUrl" placeholder="若有分p，请带上?p=参数">
-			<span class="glyphicon glyphicon-remove form-control-feedback"></span>
+			<button class="btn btn-success" onclick="downloader.getAid()">获取下载链接</button>
+			<button class="btn btn-secondary" onclick="help()">帮助</button>
+			<button class="btn btn-secondary" onclick="about()">关于</button>
 		</div>
 	</div>
-	<div class="row">
-		<button class="btn btn-success" onclick="downloader.getAid()">获取下载链接</button>
-		<button class="btn btn-default" onclick="help()">帮助</button>
-		<button class="btn btn-default" onclick="about()">关于</button>
-	</div>
 	<ul class="nav nav-tabs row mt-4" id="nav">
-		<li role="presentation" class="active" onclick="changeMenu(0)"><a>下载地址</a></li>
-		<li role="presentation" onclick="changeMenu(1)"><a>视频信息</a></li>
-		<li role="presentation" onclick="changeMenu(2)"><a>弹幕查询</a></li>
+		<li class="nav-item" role="presentation"><a class="nav-link active" href="javascript:changeMenu(0)">下载地址</a></li>
+		<li class="nav-item" role="presentation"><a class="nav-link" href="javascript:changeMenu(1)">视频信息</a></li>
+		<li class="nav-item" role="presentation"><a class="nav-link" href="javascript:changeMenu(2)">弹幕查询</a></li>
 	</ul>
 	<div class="info mt-4">
 		<div class="row">
@@ -42,10 +42,8 @@
 			</div>
 		</div>
 		<div id="error">
-			<div class="row">
-				<div class="form-group">
-					<label class="control-label">获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。</label>
-				</div>
+			<div class="form-group row">
+				<label class="control-label">获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。</label>
 			</div>
 		</div>
 		<div id="success">
@@ -61,28 +59,30 @@
 					</thead>
 					<tbody></tbody>
 				</table>
-				<button class="btn btn-primary" onclick="selectAll()">全选</button>
-				<button class="btn btn-default" onclick="selectReverse()">反选</button>
-				<button class="btn btn-danger" onclick="selectNone()">全不选</button>
+				<div class="form-group">
+					<button class="btn btn-primary" onclick="selectAll()">全选</button>
+					<button class="btn btn-secondary" onclick="selectReverse()">反选</button>
+					<button class="btn btn-danger" onclick="selectNone()">全不选</button>
+				</div>
 			</div>
-			<div class="row">
-				<div class="form-group mt-4">
-					<label class="control-label">下载路径</label>
-					<div class="input-group">
-						<input type="text" class="form-control" id="downloadPath">
-						<div class="input-group-addon" onclick="openDialog()">浏览</div>
+			<div class="form-group row mt-4">
+				<label class="control-label">下载路径</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="downloadPath">
+					<div class="input-group-append" onclick="openDialog()">
+						<span class="input-group-text">浏览</span>
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="form-group">
-					<label class="control-label">文件名</label>
-					<input type="text" class="form-control" id="videoName">
-				</div>
+			<div class="form-group row">
+				<label class="control-label">文件名</label>
+				<input type="text" class="form-control" id="videoName">
 			</div>
 			<div class="row">
-				<button class="btn btn-success" onclick="downloader.download()">下载选中片段</button>
-				<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+				<div class="form-group">
+					<button class="btn btn-success" onclick="downloader.download()">下载选中片段</button>
+					<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -100,15 +100,15 @@
 		</div>
 	</div>
 	<div class="info mt-4">
-		<div class="row">
-			<div class="form-group">
-				<span>如果不需要过滤弹幕，以下内容留空即可</span>
-			</div>
-			<div class="form-group">
-				<label class="control-label">关键词</label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
-					<div class="input-group-addon" onclick="searchDanmaku()">搜索</div>
+		<div class="form-group row">
+			<span>如果不需要过滤弹幕，以下内容留空即可</span>
+		</div>
+		<div class="form-group row">
+			<label class="control-label">关键词</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
+				<div class="input-group-append" onclick="searchDanmaku()">
+					<span class="input-group-text">搜索</span>
 				</div>
 			</div>
 		</div>
@@ -226,7 +226,7 @@ function about() {
 function changeMenu(index) {
 	if (!$(".info").eq(index).is(":hidden")) return;
 	$(".info").hide().eq(index).fadeIn();
-	$("#nav").children().removeClass("active").eq(index).addClass("active");
+	$("#nav").find("a").removeClass("active").eq(index).addClass("active");
 }
 
 function selectAll() {
