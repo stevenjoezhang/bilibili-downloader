@@ -3,7 +3,7 @@ body {
 }
 .container {
 	margin: 20px;
-	max-width: calc(100% - 40px);;
+	max-width: calc(100% - 40px);
 }
 .info, #nav {
 	display: none;

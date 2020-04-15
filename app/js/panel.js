@@ -169,7 +169,7 @@ class Downloader {
 		this.links = [];
 		$("tbody").eq(0).html("");
 		target.each((i, o) => {
-			var part = $(o);
+			let part = $(o);
 			this.links.push(part.find("url").text());
 			$("tbody").eq(0).append(`<tr>
 				<td>${part.find("order").text()}</td>
@@ -229,7 +229,7 @@ class Downloader {
 			filename = $("#videoName").val() || name || cid,
 			file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
 		fs.stat(file, (error, state) => {
-			var options = {
+			let options = {
 				url: this.links[part],
 				headers: {
 					"Range": `bytes=${state ? state.size : 0}-`, //断点续传
@@ -237,21 +237,21 @@ class Downloader {
 					"Referer": url
 				}
 			};
-			var downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
+			let downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
 				index = this.downloading.indexOf(options.url);
 			this.generalDownload(index, options, downloads);
-			state && $(".addon").eq(index).html(`从 ${Math.round(state.size / 1048576)}MiB 处恢复的下载`);
+			state && $(".addon").eq(index).html(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
 			//console.log(this.cid, file, options.url);
 		});
 	}
 
 	generalDownload(index, options, downloads) {
 		//https://blog.csdn.net/zhu_06/article/details/79772229
-		var proStream = progress({
+		let proStream = progress({
 			time: 250 //单位ms
 		}).on("progress", progress => {
 			let { speed, eta, percentage } = progress; //显示进度条
-			$(".speed").eq(index).html(Math.round(speed / 1024) + "KiB/s");
+			$(".speed").eq(index).html(Math.round(speed / 1e3) + "KB/s");
 			$(".eta").eq(index).html(`eta:${eta}s`);
 			$(".progress-bar").eq(index).css("width", percentage + "%").html(Math.round(percentage) + "%");
 			if (percentage === 100) {
@@ -270,4 +270,4 @@ class Downloader {
 	}
 }
 
-var downloader = new Downloader();
+const downloader = new Downloader();
