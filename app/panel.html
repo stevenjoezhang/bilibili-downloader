@@ -13,7 +13,7 @@
 		<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
 	</div>
 	<div class="form-group row">
-		<label class="control-label">视频链接</label>
+		<label class="font-weight-bold">视频链接</label>
 		<input type="text" class="form-control" id="videoUrl" placeholder="若有分p，请带上?p=参数">
 		<span class="glyphicon glyphicon-remove form-control-feedback"></span>
 	</div>
@@ -32,18 +32,18 @@
 	<div class="info mt-4">
 		<div class="row">
 			<div class="form-group">
-				<label class="control-label">视频 CID：</label>
+				<label class="font-weight-bold">视频 CID：</label>
 				<span id="cid"></span>
-				<label class="control-label">清晰度：</label>
+				<label class="font-weight-bold">清晰度：</label>
 				<span id="quality"></span>
-				<label class="control-label">下载弹幕：</label>
+				<label class="font-weight-bold">下载弹幕：</label>
 				<button class="btn btn-success" onclick="xml()">.xml</button>
 				<button class="btn btn-primary" onclick="ass()">.ass</button>
 			</div>
 		</div>
 		<div id="error">
 			<div class="form-group row">
-				<label class="control-label">获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。</label>
+				<label class="font-weight-bold">获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。</label>
 			</div>
 		</div>
 		<div id="success">
@@ -66,7 +66,7 @@
 				</div>
 			</div>
 			<div class="form-group row mt-4">
-				<label class="control-label">下载路径</label>
+				<label class="font-weight-bold">下载路径</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="downloadPath">
 					<div class="input-group-append" onclick="openDialog()">
@@ -75,7 +75,7 @@
 				</div>
 			</div>
 			<div class="form-group row">
-				<label class="control-label">文件名</label>
+				<label class="font-weight-bold">文件名</label>
 				<input type="text" class="form-control" id="videoName">
 			</div>
 			<div class="row">
@@ -104,7 +104,7 @@
 			<span>如果不需要过滤弹幕，以下内容留空即可</span>
 		</div>
 		<div class="form-group row">
-			<label class="control-label">关键词</label>
+			<label class="font-weight-bold">关键词</label>
 			<div class="input-group">
 				<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
 				<div class="input-group-append" onclick="searchDanmaku()">
