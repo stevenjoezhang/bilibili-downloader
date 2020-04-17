@@ -5,7 +5,7 @@ body {
 	margin: 20px;
 	max-width: calc(100% - 40px);
 }
-.info, #nav {
+.tab-pane, #nav {
 	display: none;
 }
 td {
@@ -24,7 +24,6 @@ table pre {
 	cursor: pointer;
 }
 #download {
-	display: block;
 	user-select: none;
 }
 #download span:not(:last-of-type), #cid, #quality {

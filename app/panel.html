@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-	<div class="row" style="display: block;">
+	<div class="row d-block">
 		<h1>Mimi Downloader</h1>
 		<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
 	</div>
@@ -29,7 +29,7 @@
 		<li class="nav-item" role="presentation"><a class="nav-link" href="javascript:changeMenu(1)">视频信息</a></li>
 		<li class="nav-item" role="presentation"><a class="nav-link" href="javascript:changeMenu(2)">弹幕查询</a></li>
 	</ul>
-	<div class="info mt-4">
+	<div class="tab-pane mt-4">
 		<div class="row">
 			<div class="form-group">
 				<label class="font-weight-bold">视频 CID：</label>
@@ -86,7 +86,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="info mt-4">
+	<div class="tab-pane mt-4">
 		<div class="row">
 			<table class="table table-striped">
 				<thead>
@@ -99,7 +99,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="info mt-4">
+	<div class="tab-pane mt-4">
 		<div class="form-group row">
 			<span>如果不需要过滤弹幕，以下内容留空即可</span>
 		</div>
@@ -153,7 +153,7 @@
 			</table>
 		</div>
 	</div>
-	<div class="row mt-4" id="download"></div>
+	<div class="row d-block mt-4" id="download"></div>
 	<img src="bg.png" id="bg" class="mt-4">
 </div>
 <script>
@@ -212,8 +212,8 @@ function about() {
 }
 
 function changeMenu(index) {
-	if (!$(".info").eq(index).is(":hidden")) return;
-	$(".info").hide().eq(index).fadeIn();
+	if (!$(".tab-pane").eq(index).is(":hidden")) return;
+	$(".tab-pane").hide().eq(index).fadeIn();
 	$("#nav").find("a").removeClass("active").eq(index).addClass("active");
 }
 
