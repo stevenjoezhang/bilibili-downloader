@@ -250,17 +250,17 @@ function openPath() {
 }
 
 function searchDanmaku() {
+	let text = $("#searchDanmaku").val();
 	if (!$("#filterSwitch").is(":checked")) {
-		danmakuFilter();
+		danmakuFilter(text);
 		return;
 	}
 	let T1 = parseFloat($("#T1").val()),
 		T2 = parseFloat($("#T2").val()),
 		ST1 = parseFloat($("#T1").val()),
 		ST2 = parseFloat($("#ST2").val()),
-		user = $("#user").val(),
-		text = $("#searchDanmaku").val();
-	danmakuFilter(T1, T2, ST1, ST2, user, text);
+		user = $("#user").val();
+	danmakuFilter(text, T1, T2, ST1, ST2, user);
 }
 
 function filterSwitch() {
