@@ -113,9 +113,12 @@
 			</div>
 		</div>
 		<div class="row">
-			<label>
-				<input type="checkbox" id="filterSwitch" onchange="filterSwitch()">开启高级过滤器
-			</label>
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" id="filterSwitch" onchange="filterSwitch()">
+				<label class="form-check-label" for="filterSwitch">
+					开启高级过滤器
+				</label>
+			</div>
 		</div>
 		<div id="filter" class="row" style="display: none;">
 			<div class="input-group mt-2">

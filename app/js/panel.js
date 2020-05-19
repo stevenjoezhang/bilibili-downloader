@@ -176,9 +176,9 @@ class Downloader {
 				<td>${part.find("length").text() / 1e3}</td>
 				<td>${part.find("size").text() / 1e6}</td>
 				<td>
-					<label>
-						<input type="checkbox" checked="true">
-					</label>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" checked="true">
+					</div>
 				</td>
 			</tr>`);
 		});
@@ -194,9 +194,9 @@ class Downloader {
 				<td>${part.length / 1e3}</td>
 				<td>${part.size / 1e6}</td>
 				<td>
-					<label>
-						<input type="checkbox" checked="true">
-					</label>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" checked="true">
+					</div>
 				</td>
 			</tr>`);
 		}
