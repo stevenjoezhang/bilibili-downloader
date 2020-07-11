@@ -14,7 +14,7 @@
 		"Downloader",
 		"Bilibili"
 	],
-	"author": "Mimi <stevenjoezhang@gmail.com> https://zhangshuqiao.org",
+	"author": "Mimi <stevenjoezhang@gmail.com> (https://zhangshuqiao.org)",
 	"readme": "https://github.com/stevenjoezhang/bilibili-downloader/blob/master/README.md",
 	"license": "GPL-3.0-or-later",
 	"bugs": {
@@ -23,7 +23,7 @@
 	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
 	"dependencies": {
 		"bootstrap": "^4.0.0",
-		"jquery": "^3.4.1",
+		"jquery": "^3.5.1",
 		"mime": "^2.4.4",
 		"progress-stream": "^2.0.0",
 		"sanitize-filename": "^1.6.3"

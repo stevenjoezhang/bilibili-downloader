@@ -1,4 +1,4 @@
-var danmakuArray;
+let danmakuArray;
 
 function getDanmaku() {
 	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
@@ -6,13 +6,13 @@ function getDanmaku() {
 		.then(result => {
 			danmakuArray = [];
 			$(result).find("d").each((i, o) => {
-				var info = $(o).attr("p").split(","),
+				const info = $(o).attr("p").split(","),
 					danmaku = {
 						time: info[0],
 						sendTime: info[4],
 						user: info[6],
 						text: $(o).html()
-					}
+					};
 				danmakuArray.push(danmaku);
 			}); //解析xml文档
 		})
@@ -22,15 +22,15 @@ function getDanmaku() {
 function danmakuFilter(text, T1, T2, ST1, ST2, user) {
 	$("tbody").eq(2).html("");
 	for (let target of danmakuArray) {
-		var time = parseFloat(target.time),
-			sendTime = parseFloat(target.sendTime);
+		const time = parseFloat(target.time);
+		let sendTime = parseFloat(target.sendTime);
 		if (text && !target.text.includes(text)) continue;
 		if (T1 && time <= T1) continue; //time<=NaN为false
 		if (T2 && time >= T2) continue;
 		if (ST1 && sendTime <= ST1) continue;
 		if (ST2 && sendTime >= ST2) continue;
 		if (user && target.user !== user) continue;
-		var newDate = new Date();
+		const newDate = new Date();
 		newDate.setTime(sendTime * 1000);
 		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");
 		$("tbody").eq(2).append(`<tr>
@@ -50,7 +50,7 @@ function formatSeconds(value) {
 		while (string.length < 2) string = "0" + string;
 		return string;
 	}
-	var ms = value - parseInt(value),
+	let ms = value - parseInt(value),
 		secondTime = parseInt(value) || 0,
 		minuteTime = 0;
 	if (secondTime > 60) {
@@ -62,15 +62,15 @@ function formatSeconds(value) {
 
 function searchUser(event) {
 	event.preventDefault();
-	var user = $(event.target).html(),
-		uid;
+	const user = $(event.target).html();
+	let uid;
 	if (user.indexOf("D") === 0) uid = "";
 	else if (/^b(\d+)$/.exec(user)) uid = /^b(\d+)$/.exec(user)[1];
 	else {
-		var crcEngine = new Crc32Engine();
+		const crcEngine = new Crc32Engine();
 		uid = crcEngine.crack(user)[0]; //计算量较大！手动点击开始查询用户
 	}
-	var url = "https://space.bilibili.com/" + uid;
+	const url = "https://space.bilibili.com/" + uid;
 	shell.openExternal(url);
 }
 
@@ -83,7 +83,7 @@ function ass() {
 	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
 		.then(response => response.text())
 		.then(result => {
-			var danmaku = parseFile(result),
+			const danmaku = parseFile(result),
 				ass = generateASS(setPosition(danmaku), {
 					title: document.title,
 					ori: downloader.cid,
@@ -99,9 +99,9 @@ function parseFile(content) {
 }
 
 function assDownload(data, filename) {
-	var blob = new Blob([data], {
-		type: "application/octet-stream"
-	}),
+	const blob = new Blob([data], {
+			type: "application/octet-stream"
+		}),
 		url = window.URL.createObjectURL(blob);
 	blobDownload(url, filename);
 	document.addEventListener("unload", () => {
@@ -110,7 +110,7 @@ function assDownload(data, filename) {
 }
 
 function blobDownload(url, filename) {
-	var saveAs = document.createElement("a");
+	const saveAs = document.createElement("a");
 	saveAs.href = url;
 	saveAs.style.display = "none";
 	document.body.appendChild(saveAs);
