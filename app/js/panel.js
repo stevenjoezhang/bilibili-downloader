@@ -202,7 +202,7 @@ class Downloader {
 		}
 	}
 
-	download() {
+	downloadAll() {
 		let { cid } = this, flag = true;
 		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
 			if (!element.checked || this.downloading.includes(this.links[part])) return;
@@ -239,13 +239,13 @@ class Downloader {
 			};
 			let downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
 				index = this.downloading.indexOf(options.url);
-			this.generalDownload(index, options, downloads);
+			this.download(index, options, downloads);
 			state && $(".addon").eq(index).html(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
 			//console.log(this.cid, file, options.url);
 		});
 	}
 
-	generalDownload(index, options, downloads) {
+	download(index, options, downloads) {
 		//https://blog.csdn.net/zhu_06/article/details/79772229
 		let proStream = progress({
 			time: 250 //单位ms
