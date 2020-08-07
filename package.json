@@ -29,6 +29,6 @@
 		"sanitize-filename": "^1.6.3"
 	},
 	"devDependencies": {
-		"electron": "9.1.0"
+		"electron": "9.2.0"
 	}
 }
