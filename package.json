@@ -1,6 +1,6 @@
 {
 	"name": "mimi-downloader",
-	"version": "1.6.1",
+	"version": "1.6.2",
 	"description": "Yet another video downloader for Bilibili.",
 	"main": "app/main.js",
 	"scripts": {
@@ -15,7 +15,7 @@
 		"Bilibili"
 	],
 	"author": "Mimi <stevenjoezhang@gmail.com> (https://zhangshuqiao.org)",
-	"readme": "https://github.com/stevenjoezhang/bilibili-downloader/blob/master/README.md",
+	"readme": "https://github.com/stevenjoezhang/bilibili-downloader#readme",
 	"license": "GPL-3.0-or-later",
 	"bugs": {
 		"url": "https://github.com/stevenjoezhang/bilibili-downloader/issues"
