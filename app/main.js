@@ -19,7 +19,8 @@ function createPanel() {
 		fullscreenable: false,
 		title         : "Mimi Downloader",
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration: true,
+			enableRemoteModule: true
 		}
 	});
 
