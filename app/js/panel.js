@@ -34,6 +34,7 @@ class Downloader {
 		this.url = "";
 		const mapping = {
 			"BV": "https://www.bilibili.com/video/",
+			"bv": "https://www.bilibili.com/video/",
 			"av": "https://www.bilibili.com/video/",
 			"ep": "https://www.bilibili.com/bangumi/play/",
 			"ss": "https://www.bilibili.com/bangumi/play/"
@@ -64,7 +65,7 @@ class Downloader {
 				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
 				data = JSON.parse(data);
 				console.log("INITIAL STATE", data);
-				if (type === "BV" || type === "av") {
+				if (type === "BV" || type === "bv" || type === "av") {
 					this.aid = data.videoData.aid;
 					this.pid = parseInt(url.split("p=")[1], 10) || 1;
 					this.cid = data.videoData.pages[this.pid - 1].cid;
@@ -125,7 +126,7 @@ class Downloader {
 				sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
 			playUrl = `https://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`;
 		} else {
-			if (type === "BV" || type === "av") {
+			if (type === "BV" || type === 'bv' || type === "av") {
 				let params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
 					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 				playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
