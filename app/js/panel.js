@@ -6,7 +6,6 @@ const https = require("https");
 const progress = require("progress-stream");
 const mime = require("mime");
 const sanitize = require("sanitize-filename");
-const { ipcRenderer } = require("electron");
 
 function showError(message) {
 	dialog.showMessageBox({type: "error", title: "[Error]", message});

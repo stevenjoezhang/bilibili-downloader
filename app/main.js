@@ -1,7 +1,7 @@
 const electron = require("electron");
 // Module to control application life.
 // Module to create native browser window.
-const { app, dialog, BrowserWindow } = electron;
+const { app, dialog, BrowserWindow, Menu, MenuItem } = electron;
 const ipc = electron.ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -82,3 +82,26 @@ ipc.on("length", (event, message) => {
 });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
+
+ipc.on('show-context-menu', (event) => {
+	let menu = new Menu(); //new一个菜单
+	//添加菜单功能
+	menu.append(new MenuItem({
+		label: "复制",
+		click: function() {
+			event.sender.send('context-menu-command', 'copy');
+		}
+	}));
+	//添加菜单分割线
+	menu.append(new MenuItem({
+		type: "separator"
+	}));
+	//添加菜单功能
+	menu.append(new MenuItem({
+		label: "粘贴",
+		click: function() {
+			event.sender.send('context-menu-command', 'paste');
+		}
+	}));
+	menu.popup(BrowserWindow.fromWebContents(event.sender));
+});

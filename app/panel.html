@@ -168,27 +168,8 @@ window.$ = window.jQuery = require("jquery");
 <script src="js/danmaku.js"></script>
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
-const { remote, clipboard } = require("electron");
-const { Menu, MenuItem, dialog, app, shell } = remote;
-let menu = new Menu(); //new一个菜单
-//添加菜单功能
-menu.append(new MenuItem({
-	label: "复制",
-	click: function() {
-		clipboard.writeText($(document.activeElement).val());
-	}
-}));
-//添加菜单分割线
-menu.append(new MenuItem({
-	type: "separator"
-}));
-//添加菜单功能
-menu.append(new MenuItem({
-	label: "粘贴",
-	click: function() {
-		$(document.activeElement).val(clipboard.readText());
-	}
-}));
+const { remote, clipboard, ipcRenderer } = require("electron");
+const { dialog, app, shell } = remote;
 
 function message(message) {
 	dialog.showMessageBox({
@@ -200,9 +181,17 @@ $("input[type=text]").each((i, o) => {
 	$(o).on("contextmenu", event => {
 		event.preventDefault();
 		event.currentTarget.focus();
-		menu.popup(remote.getCurrentWindow());
+		ipcRenderer.send('show-context-menu');
 	});
 }, false);
+
+ipcRenderer.on('context-menu-command', (e, command) => {
+	if (command === 'copy') {
+		clipboard.writeText($(document.activeElement).val());
+	} else if (command === 'paste') {
+		$(document.activeElement).val(clipboard.readText());
+	}
+});
 
 $("#downloadPath").val(app.getPath("downloads") || __dirname);
 
