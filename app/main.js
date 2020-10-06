@@ -26,6 +26,10 @@ function createPanel() {
 
 	mainWindow.loadFile("app/panel.html");
 
+	mainWindow.webContents.on("did-finish-load", () => {
+		mainWindow.webContents.send("default-path", app.getPath("downloads") || __dirname);
+	});
+
 	//mainWindow.setPosition(0, 0, true);
 
 	// Open the DevTools.

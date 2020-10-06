@@ -169,7 +169,8 @@ window.$ = window.jQuery = require("jquery");
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
 const { remote, clipboard, ipcRenderer } = require("electron");
-const { dialog, app } = remote;
+const { dialog } = remote;
+let defaultPath = __dirname;
 
 function message(message) {
 	dialog.showMessageBox({
@@ -193,7 +194,10 @@ ipcRenderer.on('context-menu-command', (e, command) => {
 	}
 });
 
-$("#downloadPath").val(app.getPath("downloads") || __dirname);
+ipcRenderer.on('default-path', (e, command) => {
+	defaultPath = command;
+	$("#downloadPath").val(defaultPath);
+});
 
 function help() {
 	message("请填写视频链接（即视频播放界面的 URL），然后点击「获取下载链接」进行下一步。");
@@ -225,7 +229,7 @@ function selectReverse() {
 
 function openDialog() {
 	dialog.showOpenDialog({
-		defaultPath: $("#downloadPath").val() || app.getPath("downloads") || __dirname,
+		defaultPath: $("#downloadPath").val() || defaultPath,
 		properties: [
 			"openDirectory", //打开路径
 		],
