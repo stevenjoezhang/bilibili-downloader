@@ -1,6 +1,6 @@
 {
 	"name": "mimi-downloader",
-	"version": "1.6.2",
+	"version": "1.7.0",
 	"description": "Yet another video downloader for Bilibili.",
 	"main": "app/main.js",
 	"scripts": {
@@ -22,9 +22,9 @@
 	},
 	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
 	"dependencies": {
-		"bootstrap": "^4.0.0",
+		"bootstrap": "^4.5.2",
 		"jquery": "^3.5.1",
-		"mime": "^2.4.4",
+		"mime": "^2.4.6",
 		"progress-stream": "^2.0.0",
 		"sanitize-filename": "^1.6.3"
 	},
