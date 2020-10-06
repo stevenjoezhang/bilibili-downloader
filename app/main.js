@@ -1,8 +1,7 @@
 const electron = require("electron");
 // Module to control application life.
 // Module to create native browser window.
-const { app, dialog, BrowserWindow, Menu, MenuItem, shell } = electron;
-const ipc = electron.ipcMain;
+const { app, ipcMain, dialog, BrowserWindow, Menu, MenuItem, shell } = electron;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -80,19 +79,19 @@ app.on("activate", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-ipc.on("length", (event, message) => {
+ipcMain.on("length", (event, message) => {
 	length = message;
 });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
 
-ipc.on('show-context-menu', (event) => {
+ipcMain.on("show-context-menu", (event) => {
 	let menu = new Menu(); //new一个菜单
 	//添加菜单功能
 	menu.append(new MenuItem({
 		label: "复制",
 		click: function() {
-			event.sender.send('context-menu-command', 'copy');
+			event.sender.send("context-menu-command", "copy");
 		}
 	}));
 	//添加菜单分割线
@@ -103,21 +102,21 @@ ipc.on('show-context-menu', (event) => {
 	menu.append(new MenuItem({
 		label: "粘贴",
 		click: function() {
-			event.sender.send('context-menu-command', 'paste');
+			event.sender.send("context-menu-command", "paste");
 		}
 	}));
 	menu.popup(BrowserWindow.fromWebContents(event.sender));
 });
 
-ipc.on('open-item', (event, command) => {
+ipcMain.on("open-path", (event, command) => {
 	shell.openPath(command);
 });
 
-ipc.on('open-external', (event, command) => {
+ipcMain.on("open-external", (event, command) => {
 	shell.openExternal(command);
 });
 
-ipc.on('open-dialog', (event, command) => {
+ipcMain.on("open-dialog", (event, command) => {
 	dialog.showOpenDialog({
 		defaultPath: command,
 		properties: [
@@ -127,11 +126,11 @@ ipc.on('open-dialog', (event, command) => {
 			//{ name: "", extensions: ["json"] },
 		]
 	}).then(({ filePaths }) => {
-		if (filePaths[0]) event.sender.send('download-path', filePaths[0]);
+		if (filePaths[0]) event.sender.send("download-path", filePaths[0]);
 	});
 });
 
-ipc.on('show-error', (event, message) => {
+ipcMain.on("show-error", (event, message) => {
 	dialog.showMessageBox({
 		type: "error",
 		title: "[Error]",
@@ -139,7 +138,7 @@ ipc.on('show-error', (event, message) => {
 	});
 });
 
-ipc.on('show-warning', (event, message) => {
+ipcMain.on("show-warning", (event, message) => {
 	dialog.showMessageBox({
 		type: "warning",
 		title: "[Warning]",
@@ -147,7 +146,7 @@ ipc.on('show-warning', (event, message) => {
 	});
 });
 
-ipc.on('show-message', (event, message) => {
+ipcMain.on("show-message", (event, message) => {
 	dialog.showMessageBox({
 		message
 	});

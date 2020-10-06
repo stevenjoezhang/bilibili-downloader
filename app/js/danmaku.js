@@ -71,7 +71,7 @@ function searchUser(event) {
 		uid = crcEngine.crack(user)[0]; //计算量较大！手动点击开始查询用户
 	}
 	const url = "https://space.bilibili.com/" + uid;
-	ipcRenderer.send('open-external', url);
+	ipcRenderer.send("open-external", url);
 }
 
 function xml() {
