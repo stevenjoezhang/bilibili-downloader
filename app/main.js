@@ -1,7 +1,7 @@
 const electron = require("electron");
 // Module to control application life.
 // Module to create native browser window.
-const { app, dialog, BrowserWindow, Menu, MenuItem } = electron;
+const { app, dialog, BrowserWindow, Menu, MenuItem, shell } = electron;
 const ipc = electron.ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -104,4 +104,12 @@ ipc.on('show-context-menu', (event) => {
 		}
 	}));
 	menu.popup(BrowserWindow.fromWebContents(event.sender));
+});
+
+ipc.on('open-item', (event, command) => {
+	shell.openPath(command);
+});
+
+ipc.on('open-external', (event, command) => {
+	shell.openExternal(command);
 });

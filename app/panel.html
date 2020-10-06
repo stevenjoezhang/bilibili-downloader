@@ -169,7 +169,7 @@ window.$ = window.jQuery = require("jquery");
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
 const { remote, clipboard, ipcRenderer } = require("electron");
-const { dialog, app, shell } = remote;
+const { dialog, app } = remote;
 
 function message(message) {
 	dialog.showMessageBox({
@@ -238,7 +238,7 @@ function openDialog() {
 }
 
 function openPath() {
-	shell.openItem($("#downloadPath").val());
+	ipcRenderer.send('open-item', $("#downloadPath").val());
 }
 
 function searchDanmaku() {
