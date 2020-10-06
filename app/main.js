@@ -19,8 +19,7 @@ function createPanel() {
 		fullscreenable: false,
 		title         : "Mimi Downloader",
 		webPreferences: {
-			nodeIntegration: true,
-			enableRemoteModule: true
+			nodeIntegration: true
 		}
 	});
 
@@ -116,4 +115,40 @@ ipc.on('open-item', (event, command) => {
 
 ipc.on('open-external', (event, command) => {
 	shell.openExternal(command);
+});
+
+ipc.on('open-dialog', (event, command) => {
+	dialog.showOpenDialog({
+		defaultPath: command,
+		properties: [
+			"openDirectory", //打开路径
+		],
+		filters: [
+			//{ name: "", extensions: ["json"] },
+		]
+	}).then(({ filePaths }) => {
+		if (filePaths[0]) event.sender.send('download-path', filePaths[0]);
+	});
+});
+
+ipc.on('show-error', (event, message) => {
+	dialog.showMessageBox({
+		type: "error",
+		title: "[Error]",
+		message
+	});
+});
+
+ipc.on('show-warning', (event, message) => {
+	dialog.showMessageBox({
+		type: "warning",
+		title: "[Warning]",
+		message
+	});
+});
+
+ipc.on('show-message', (event, message) => {
+	dialog.showMessageBox({
+		message
+	});
 });

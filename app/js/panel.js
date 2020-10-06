@@ -7,14 +7,6 @@ const progress = require("progress-stream");
 const mime = require("mime");
 const sanitize = require("sanitize-filename");
 
-function showError(message) {
-	dialog.showMessageBox({type: "error", title: "[Error]", message});
-}
-
-function showWarning(message) {
-	dialog.showMessageBox({type: "warning", title: "[Warning]", message});
-}
-
 class Downloader {
 	constructor() {
 		this.type = "";

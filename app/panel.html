@@ -168,14 +168,19 @@ window.$ = window.jQuery = require("jquery");
 <script src="js/danmaku.js"></script>
 <script>
 //https://www.zhihu.com/question/51598623/answer/279834636
-const { remote, clipboard, ipcRenderer } = require("electron");
-const { dialog } = remote;
+const { clipboard, ipcRenderer } = require("electron");
 let defaultPath = __dirname;
 
-function message(message) {
-	dialog.showMessageBox({
-		message
-	});
+function showMessage(message) {
+	ipcRenderer.send('show-message', message);
+}
+
+function showError(message) {
+	ipcRenderer.send('show-error', message);
+}
+
+function showWarning(message) {
+	ipcRenderer.send('show-warning', message);
 }
 
 $("input[type=text]").each((i, o) => {
@@ -228,18 +233,12 @@ function selectReverse() {
 }
 
 function openDialog() {
-	dialog.showOpenDialog({
-		defaultPath: $("#downloadPath").val() || defaultPath,
-		properties: [
-			"openDirectory", //打开路径
-		],
-		filters: [
-			//{ name: "", extensions: ["json"] },
-		]
-	}).then(({ filePaths }) => {
-		if (filePaths[0]) $("#downloadPath").val(filePaths[0]);
-	});
+	ipcRenderer.send('open-dialog', $("#downloadPath").val() || defaultPath);
 }
+
+ipcRenderer.on('download-path', (event, command) => {
+	$("#downloadPath").val(command);
+});
 
 function openPath() {
 	ipcRenderer.send('open-item', $("#downloadPath").val());
