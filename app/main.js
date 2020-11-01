@@ -35,7 +35,7 @@ function createPanel() {
 			title  : "[Warning]",
 			message: "资源正在下载，您确定要强制退出吗？",
 			buttons: ["是", "否"]
-		}
+		};
 		if (length && dialog.showMessageBoxSync(options)) e.preventDefault();
 	});
 }
