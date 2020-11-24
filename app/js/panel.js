@@ -238,7 +238,7 @@ class Downloader {
 	}
 
 	download(index, options, downloads) {
-		//https://blog.csdn.net/zhu_06/article/details/79772229
+		// https://blog.csdn.net/zhu_06/article/details/79772229
 		let proStream = progress({
 			time: 250 //单位ms
 		}).on("progress", progress => {

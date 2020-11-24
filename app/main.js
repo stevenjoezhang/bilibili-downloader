@@ -69,6 +69,7 @@ ipcMain.on("length", (event, message) => {
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
 
+// https://www.zhihu.com/question/51598623/answer/279834636
 ipcMain.on("show-context-menu", (event) => {
 	let menu = new Menu(); //new一个菜单
 	//添加菜单功能

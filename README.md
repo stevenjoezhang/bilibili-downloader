@@ -50,6 +50,7 @@ ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "fil
 
 - [you-get](https://github.com/soimort/you-get) by soimort, MIT license
 - [annie](https://github.com/iawia002/annie) by iawia002
+- [youtube-dl](https://github.com/ytdl-org/youtube-dl) by ytdl-org
 - [Bilibili_video_download](https://github.com/Henryhaohao/Bilibili_video_download) by Henryhaohao
 
 这里还有一些其它的库和浏览器插件供参考。
