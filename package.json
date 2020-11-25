@@ -1,35 +1,32 @@
 {
-	"name": "mimi-downloader",
-	"version": "1.7.1",
-	"private": true,
-	"description": "Yet another video downloader for Bilibili.",
-	"main": "app/main.js",
-	"scripts": {
-		"start": "electron ."
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/stevenjoezhang/bilibili-downloader"
-	},
-	"keywords": [
-		"Downloader",
-		"Bilibili"
-	],
-	"author": "Mimi <stevenjoezhang@gmail.com> (https://zhangshuqiao.org)",
-	"readme": "https://github.com/stevenjoezhang/bilibili-downloader#readme",
-	"license": "GPL-3.0-or-later",
-	"bugs": {
-		"url": "https://github.com/stevenjoezhang/bilibili-downloader/issues"
-	},
-	"homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
-	"dependencies": {
-		"bootstrap": "^4.5.2",
-		"jquery": "^3.5.1",
-		"mime": "^2.4.6",
-		"progress-stream": "^2.0.0",
-		"sanitize-filename": "^1.6.3"
-	},
-	"devDependencies": {
-		"electron": "11.0.2"
-	}
+  "name": "mimi-downloader",
+  "version": "1.7.1",
+  "private": true,
+  "description": "Yet another video downloader for Bilibili.",
+  "main": "app/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "stevenjoezhang/bilibili-downloader",
+  "keywords": [
+    "Downloader",
+    "Bilibili"
+  ],
+  "author": "Mimi <stevenjoezhang@gmail.com> (https://zhangshuqiao.org)",
+  "readme": "https://github.com/stevenjoezhang/bilibili-downloader#readme",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/stevenjoezhang/bilibili-downloader/issues"
+  },
+  "homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
+  "dependencies": {
+    "bootstrap": "^4.5.2",
+    "jquery": "^3.5.1",
+    "mime": "^2.4.6",
+    "progress-stream": "^2.0.0",
+    "sanitize-filename": "^1.6.3"
+  },
+  "devDependencies": {
+    "electron": "11.0.2"
+  }
 }

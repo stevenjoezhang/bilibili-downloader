@@ -225,7 +225,7 @@ class Downloader {
 				url: this.links[part],
 				headers: {
 					"Range": `bytes=${state ? state.size : 0}-`, //断点续传
-					"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+					"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36",
 					"Referer": url
 				}
 			};
