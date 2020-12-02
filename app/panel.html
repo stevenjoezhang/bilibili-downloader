@@ -204,11 +204,11 @@ ipcRenderer.on("default-path", (e, command) => {
 });
 
 function help() {
-	message("请填写视频链接（即视频播放界面的 URL），然后点击「获取下载链接」进行下一步。");
+	showMessage("请填写视频链接（即视频播放界面的 URL），然后点击「获取下载链接」进行下一步。");
 }
 
 function about() {
-	message(`Mimi Downloader Ver ${require("../package.json").version}\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
+	showMessage(`Mimi Downloader Ver ${require("../package.json").version}\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
 }
 
 function changeMenu(index) {
