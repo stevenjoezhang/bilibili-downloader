@@ -13,7 +13,8 @@ function createPanel() {
 		fullscreenable: false,
 		title         : "Mimi Downloader",
 		webPreferences: {
-			nodeIntegration: true
+			nodeIntegration : true,
+			contextIsolation: false
 		}
 	});
 
