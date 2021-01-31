@@ -229,7 +229,7 @@ class Downloader {
 					"Referer": url
 				}
 			};
-			let downloads = fs.createWriteStream(file, state ? {"flags": "a"} : {}),
+			let downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
 				index = this.downloading.indexOf(options.url);
 			this.download(index, options, downloads);
 			state && $(".addon").eq(index).html(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
