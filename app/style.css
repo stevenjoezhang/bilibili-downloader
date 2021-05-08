@@ -20,9 +20,6 @@ table pre {
 #bg {
 	width: 100%;
 }
-.input-group-append {
-	cursor: pointer;
-}
 #download {
 	user-select: none;
 }
