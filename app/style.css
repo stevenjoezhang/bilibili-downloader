@@ -1,10 +1,6 @@
 body {
 	overflow-x: hidden;
 }
-.container {
-	margin: 20px;
-	max-width: calc(100% - 40px);
-}
 .tab-pane, #nav {
 	display: none;
 }

@@ -21,7 +21,7 @@ class Downloader {
 	}
 
 	getVideoUrl() {
-		let videoUrl = $("#videoUrl").val();
+		const videoUrl = $("#videoUrl").val();
 		this.url = "";
 		const mapping = {
 			"BV": "https://www.bilibili.com/video/",
@@ -30,7 +30,7 @@ class Downloader {
 			"ep": "https://www.bilibili.com/bangumi/play/",
 			"ss": "https://www.bilibili.com/bangumi/play/"
 		};
-		for (let [key, value] of Object.entries(mapping)) {
+		for (const [key, value] of Object.entries(mapping)) {
 			if (videoUrl.includes(key)) {
 				this.type = key;
 				this.id = key + videoUrl.split(key)[1];
@@ -48,7 +48,7 @@ class Downloader {
 
 	getAid() {
 		this.getVideoUrl();
-		let { type, url } = this;
+		const { type, url } = this;
 		if (!url) return;
 		fetch(url)
 			.then(response => response.text())
@@ -75,7 +75,7 @@ class Downloader {
 	}
 
 	getInfo() {
-		let { id, aid, cid } = this;
+		const { id, aid, cid } = this;
 		if (!cid) {
 			showError("获取视频 cid 出错！");
 			return;
@@ -111,14 +111,15 @@ class Downloader {
 	}
 
 	getData(fallback) {
-		let { cid, type } = this, playUrl;
+		const { cid, type } = this;
+		let playUrl;
 		if (fallback) {
-			let params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`,
+			const params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`,
 				sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
 			playUrl = `https://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`;
 		} else {
 			if (type === "BV" || type === "bv" || type === "av") {
-				let params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
+				const params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
 					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 				playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 			} else {
@@ -128,11 +129,11 @@ class Downloader {
 		fetch(playUrl)
 			.then(response => response.text())
 			.then(result => {
-				let data = fallback ? $(result) : JSON.parse(result),
-					target = fallback ? data.find("durl") : (data.durl || data.result.durl);
+				const data = fallback ? $(result) : JSON.parse(result);
+				const target = fallback ? data.find("durl") : (data.durl || data.result.durl);
 				console.log("PLAY URL", data);
 				if (target) {
-					let quality = fallback ? $(data).find("quality").text() : (data.quality || data.result.quality),
+					const quality = fallback ? $(data).find("quality").text() : (data.quality || data.result.quality),
 						qualityArray = {
 							112: "高清 1080P+",
 							80: "高清 1080P",
@@ -161,7 +162,7 @@ class Downloader {
 		this.links = [];
 		$("tbody").eq(0).html("");
 		target.each((i, o) => {
-			let part = $(o);
+			const part = $(o);
 			this.links.push(part.find("url").text());
 			$("tbody").eq(0).append(`<tr>
 				<td>${part.find("order").text()}</td>
@@ -179,7 +180,7 @@ class Downloader {
 	parseData(target) {
 		this.links = [];
 		$("tbody").eq(0).html("");
-		for (let part of target) {
+		target.forEach(part => {
 			this.links.push(part.url);
 			$("tbody").eq(0).append(`<tr>
 				<td>${part.order}</td>
@@ -191,11 +192,12 @@ class Downloader {
 					</div>
 				</td>
 			</tr>`);
-		}
+		});
 	}
 
 	downloadAll() {
-		let { cid } = this, flag = true;
+		const { cid } = this;
+		let flag = true;
 		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
 			if (!element.checked || this.downloading.includes(this.links[part])) return;
 			$("#download").append(`<span>${cid}-${part}</span>
@@ -216,12 +218,12 @@ class Downloader {
 	}
 
 	downloadLink(part) {
-		let { name, cid, url } = this;
-		let downloadPath = $("#downloadPath").val(),
-			filename = $("#videoName").val() || name || cid,
-			file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
+		const { name, cid, url } = this;
+		const downloadPath = $("#downloadPath").val();
+		const filename = $("#videoName").val() || name || cid;
+		const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
 		fs.stat(file, (error, state) => {
-			let options = {
+			const options = {
 				url: this.links[part],
 				headers: {
 					"Range": `bytes=${state ? state.size : 0}-`, //断点续传
@@ -229,20 +231,20 @@ class Downloader {
 					"Referer": url
 				}
 			};
-			let downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
+			const downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
 				index = this.downloading.indexOf(options.url);
 			this.download(index, options, downloads);
-			state && $(".addon").eq(index).html(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
+			if (state) $(".addon").eq(index).html(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
 			//console.log(this.cid, file, options.url);
 		});
 	}
 
 	download(index, options, downloads) {
-		// https://blog.csdn.net/zhu_06/article/details/79772229
-		let proStream = progress({
+		// https://www.npmjs.com/package/progress-stream
+		const proStream = progress({
 			time: 250 //单位ms
 		}).on("progress", progress => {
-			let { speed, eta, percentage } = progress; //显示进度条
+			const { speed, eta, percentage } = progress; //显示进度条
 			$(".speed").eq(index).html(Math.round(speed / 1e3) + "KB/s");
 			$(".eta").eq(index).html(`eta:${eta}s`);
 			$(".progress-bar").eq(index).css("width", percentage + "%").html(Math.round(percentage) + "%");

@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container g-0">
+<div class="container-fluid g-4 mt-3">
 	<h1>Mimi Downloader</h1>
 	<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
 	<div class="mb-3">
@@ -220,16 +220,16 @@ function openPath() {
 }
 
 function searchDanmaku() {
-	let text = $("#searchDanmaku").val();
+	const text = $("#searchDanmaku").val();
 	if (!$("#filterSwitch").is(":checked")) {
 		danmakuFilter(text);
 		return;
 	}
-	let T1 = parseFloat($("#T1").val()),
-		T2 = parseFloat($("#T2").val()),
-		ST1 = parseFloat($("#T1").val()),
-		ST2 = parseFloat($("#ST2").val()),
-		user = $("#user").val();
+	const T1 = parseFloat($("#T1").val());
+	const T2 = parseFloat($("#T2").val());
+	const ST1 = parseFloat($("#ST1").val());
+	const ST2 = parseFloat($("#ST2").val());
+	const user = $("#user").val();
 	danmakuFilter(text, T1, T2, ST1, ST2, user);
 }
 
