@@ -5,7 +5,7 @@ const http = require("http");
 const https = require("https");
 const progress = require("progress-stream");
 const mime = require("mime");
-const sanitize = require("sanitize-filename");
+const sanitize = require("filenamify");
 
 class Downloader {
 	constructor() {
