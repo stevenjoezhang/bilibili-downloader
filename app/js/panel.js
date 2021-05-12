@@ -114,13 +114,13 @@ class Downloader {
 		const { cid, type } = this;
 		let playUrl;
 		if (fallback) {
-			const params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`,
-				sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
+			const params = `cid=${cid}&module=movie&player=1&quality=112&ts=1`;
+			const sign = crypto.createHash("md5").update(params + "9b288147e5474dd2aa67085f716c560d").digest("hex");
 			playUrl = `https://bangumi.bilibili.com/player/web_api/playurl?${params}&sign=${sign}`;
 		} else {
 			if (type === "BV" || type === "bv" || type === "av") {
-				const params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`,
-					sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
+				const params = `appkey=iVGUTjsxvpLeuDCf&cid=${cid}&otype=json&qn=112&quality=112&type=`;
+				const sign = crypto.createHash("md5").update(params + "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt").digest("hex");
 				playUrl = `https://interface.bilibili.com/v2/playurl?${params}&sign=${sign}`;
 			} else {
 				playUrl = `https://api.bilibili.com/pgc/player/web/playurl?qn=80&cid=${cid}`;
