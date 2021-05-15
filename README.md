@@ -51,12 +51,10 @@ ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "fil
 - [you-get](https://github.com/soimort/you-get) by soimort, MIT license
 - [annie](https://github.com/iawia002/annie) by iawia002
 - [youtube-dl](https://github.com/ytdl-org/youtube-dl) by ytdl-org
-- [Bilibili_video_download](https://github.com/Henryhaohao/Bilibili_video_download) by Henryhaohao
 
 这里还有一些其它的库和浏览器插件供参考。
 
 - [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader by tiansh, Mozilla Public License 2.0
-- [bilibili-get](https://github.com/kamikat/bilibili-get) by kamikat
 - [bilitwin](https://github.com/Xmader/bilitwin) by Xmader
 - [bili-api](https://github.com/simon300000/bili-api) by simon300000
 

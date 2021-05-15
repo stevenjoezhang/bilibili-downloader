@@ -86,7 +86,6 @@ class Downloader {
 		$("#nav").css("display", "flex");
 		if ($(".tab-pane").eq(1).is(":hidden")) {
 			changeMenu(0);
-			//$(".tab-pane").eq(0).fadeIn();
 		}
 		fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 			.then(response => response.json())
@@ -227,7 +226,7 @@ class Downloader {
 				url: this.links[part],
 				headers: {
 					"Range": `bytes=${state ? state.size : 0}-`, //断点续传
-					"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36",
+					"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
 					"Referer": url
 				}
 			};
