@@ -5,6 +5,7 @@
 <title>Mimi Downloader</title>
 <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="style.css">
+<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container-fluid g-4 mt-3">
@@ -19,117 +20,125 @@
 		<button class="btn btn-secondary" onclick="help()">帮助</button>
 		<button class="btn btn-secondary" onclick="about()">关于</button>
 	</div>
-	<ul class="nav nav-tabs mt-4" id="nav">
-		<li class="nav-item" role="presentation"><a class="nav-link active" href="javascript:changeMenu(0)">下载地址</a></li>
-		<li class="nav-item" role="presentation"><a class="nav-link" href="javascript:changeMenu(1)">视频信息</a></li>
-		<li class="nav-item" role="presentation"><a class="nav-link" href="javascript:changeMenu(2)">弹幕查询</a></li>
+	<ul class="nav nav-tabs mt-4 d-none" id="nav" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-pane-0" type="button" role="tab">下载地址</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-pane-1" type="button" role="tab">视频信息</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-pane-2" type="button" role="tab">弹幕查询</button>
+		</li>
 	</ul>
-	<div class="tab-pane mt-4">
-		<div class="mb-3">
-			<label class="form-label fw-bold">视频 CID：</label>
-			<span id="cid"></span>
-			<label class="form-label fw-bold">清晰度：</label>
-			<span id="quality"></span>
-			<br>
-			<label class="form-label fw-bold">下载弹幕：</label>
-			<button class="btn btn-success" onclick="xml()">.xml</button>
-			<button class="btn btn-primary" onclick="ass()">.ass</button>
-		</div>
-		<div id="error">
+	<div class="tab-content">
+		<div class="tab-pane fade mt-4" id="tab-pane-0">
 			<div class="mb-3">
-				<label class="form-label fw-bold">获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。</label>
+				<label class="form-label fw-bold">视频 CID：</label>
+				<span id="cid"></span>
+				<label class="form-label fw-bold">清晰度：</label>
+				<span id="quality"></span>
+				<br>
+				<label class="form-label fw-bold">下载弹幕：</label>
+				<button class="btn btn-success" onclick="xml()">.xml</button>
+				<button class="btn btn-primary" onclick="ass()">.ass</button>
+			</div>
+			<div id="error">
+				<div class="mb-3">
+					<label class="form-label fw-bold">获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。</label>
+				</div>
+			</div>
+			<div id="success">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>编号</th>
+							<th>时长(s)</th>
+							<th>大小(MB)</th>
+							<th>选定</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				<div class="mb-3">
+					<button class="btn btn-primary" onclick="selectAll()">全选</button>
+					<button class="btn btn-secondary" onclick="selectReverse()">反选</button>
+					<button class="btn btn-danger" onclick="selectNone()">全不选</button>
+				</div>
+				<div class="mb-3 mt-4">
+					<label class="form-label fw-bold">下载路径</label>
+					<div class="input-group">
+						<input type="text" class="form-control" id="downloadPath">
+						<button class="btn btn-outline-secondary" type="button" onclick="openDialog()">浏览</button>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-bold">文件名</label>
+					<input type="text" class="form-control" id="videoName">
+				</div>
+				<div class="mb-3">
+					<button class="btn btn-success" onclick="downloader.downloadAll()">下载选中片段</button>
+					<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+				</div>
 			</div>
 		</div>
-		<div id="success">
+		<div class="tab-pane fade mt-4" id="tab-pane-1">
 			<table class="table table-striped">
 				<thead>
 					<tr>
-						<th>编号</th>
-						<th>时长(s)</th>
-						<th>大小(MB)</th>
-						<th>选定</th>
+						<th>Key</th>
+						<th>Value</th>
 					</tr>
 				</thead>
 				<tbody></tbody>
 			</table>
+		</div>
+		<div class="tab-pane fade mt-4" id="tab-pane-2">
 			<div class="mb-3">
-				<button class="btn btn-primary" onclick="selectAll()">全选</button>
-				<button class="btn btn-secondary" onclick="selectReverse()">反选</button>
-				<button class="btn btn-danger" onclick="selectNone()">全不选</button>
+				<span>如果不需要过滤弹幕，以下内容留空即可</span>
 			</div>
-			<div class="mb-3 mt-4">
-				<label class="form-label fw-bold">下载路径</label>
+			<div class="mb-3">
+				<label class="form-label fw-bold">关键词</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="downloadPath">
-					<button class="btn btn-outline-secondary" type="button" onclick="openDialog()">浏览</button>
+					<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
+					<button class="btn btn-outline-secondary" type="button" onclick="searchDanmaku()">搜索</button>
 				</div>
 			</div>
-			<div class="mb-3">
-				<label class="form-label fw-bold">文件名</label>
-				<input type="text" class="form-control" id="videoName">
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" id="filterSwitch" onchange="filterSwitch()">
+				<label class="form-check-label" for="filterSwitch">
+					开启高级过滤器
+				</label>
 			</div>
-			<div class="mb-3">
-				<button class="btn btn-success" onclick="downloader.downloadAll()">下载选中片段</button>
-				<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
+			<div id="filter" style="display: none;">
+				<div class="input-group mt-2">
+					<span class="input-group-text">弹幕时间</span>
+					<input type="text" class="form-control" id="T1" placeholder="起始(s)">
+					<input type="text" class="form-control" id="T2" placeholder="结束(s)">
+				</div>
+				<div class="input-group mt-2">
+					<span class="input-group-text">发送时间</span>
+					<input type="text" class="form-control" id="ST1" placeholder="起始(s)">
+					<input type="text" class="form-control" id="ST2" placeholder="结束(s)">
+				</div>
+				<div class="input-group mt-2">
+					<span class="input-group-text">发送者</span>
+					<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名">
+				</div>
 			</div>
-		</div>
-	</div>
-	<div class="tab-pane mt-4">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>Key</th>
-					<th>Value</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-	</div>
-	<div class="tab-pane mt-4">
-		<div class="mb-3">
-			<span>如果不需要过滤弹幕，以下内容留空即可</span>
-		</div>
-		<div class="mb-3">
-			<label class="form-label fw-bold">关键词</label>
-			<div class="input-group">
-				<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
-				<button class="btn btn-outline-secondary" type="button" onclick="searchDanmaku()">搜索</button>
+			<div class="mt-4">
+				<table class="table table-striped" id="danmaku">
+					<thead>
+						<tr>
+							<th style="width: 100px;">弹幕时间</th>
+							<th style="width: 140px;">发送时间</th>
+							<th>弹幕内容</th>
+							<th style="width: 100px;">发送者</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
 			</div>
-		</div>
-		<div class="form-check">
-			<input class="form-check-input" type="checkbox" id="filterSwitch" onchange="filterSwitch()">
-			<label class="form-check-label" for="filterSwitch">
-				开启高级过滤器
-			</label>
-		</div>
-		<div id="filter" style="display: none;">
-			<div class="input-group mt-2">
-				<span class="input-group-text">弹幕时间</span>
-				<input type="text" class="form-control" id="T1" placeholder="起始(s)">
-				<input type="text" class="form-control" id="T2" placeholder="结束(s)">
-			</div>
-			<div class="input-group mt-2">
-				<span class="input-group-text">发送时间</span>
-				<input type="text" class="form-control" id="ST1" placeholder="起始(s)">
-				<input type="text" class="form-control" id="ST2" placeholder="结束(s)">
-			</div>
-			<div class="input-group mt-2">
-				<span class="input-group-text">发送者</span>
-				<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名">
-			</div>
-		</div>
-		<div class="mt-4">
-			<table class="table table-striped" id="danmaku">
-				<thead>
-					<tr>
-						<th style="width: 100px;">弹幕时间</th>
-						<th style="width: 140px;">发送时间</th>
-						<th>弹幕内容</th>
-						<th style="width: 100px;">发送者</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
 		</div>
 	</div>
 	<div class="mt-4" id="download"></div>
@@ -185,12 +194,6 @@ function help() {
 
 function about() {
 	showMessage(`Mimi Downloader Ver ${require("../package.json").version}\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
-}
-
-function changeMenu(index) {
-	if (!$(".tab-pane").eq(index).is(":hidden")) return;
-	$(".tab-pane").hide().eq(index).fadeIn();
-	$("#nav").find("a").removeClass("active").eq(index).addClass("active");
 }
 
 function selectAll() {

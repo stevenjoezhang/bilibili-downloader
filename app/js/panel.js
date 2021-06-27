@@ -83,10 +83,8 @@ class Downloader {
 		this.getData();
 		getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 		$("#cid").html(cid);
-		$("#nav").css("display", "flex");
-		if ($(".tab-pane").eq(1).is(":hidden")) {
-			changeMenu(0);
-		}
+		document.getElementById("nav").classList.remove("d-none");
+		document.querySelector("#nav .nav-link").click();
 		fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 			.then(response => response.json())
 			.then(({ data }) => {

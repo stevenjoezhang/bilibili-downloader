@@ -1,9 +1,6 @@
 body {
 	overflow-x: hidden;
 }
-.tab-pane, #nav {
-	display: none;
-}
 td {
 	word-break: break-all;
 }
@@ -24,4 +21,7 @@ table pre {
 }
 #danmaku {
 	table-layout: fixed;
+}
+.btn-link {
+	padding: 0;
 }
