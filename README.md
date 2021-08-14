@@ -14,6 +14,9 @@ To close this module, press the AUTOP button again, the button will turn from bl
 technical details:
 Increment the P parameter in the address bar according to the P parameter given by the user, and simulate the user to press the relevant button after the end of the network transmission to execute the sequence.
 
+error:
+- [ ] for loop least element will download twice.
+
 ---
 
 # Mimi Downloader
