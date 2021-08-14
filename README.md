@@ -1,3 +1,19 @@
+This is an expanded version that provides an additional AUTOP button. When the user clicks this button, the user interface will extend a numeric input field and activate the automatic recursive auxiliary download. Please follow the steps below:
+1. Press the black button on the user interface (that is, the button mentioned above)
+2. Enter the URL (in the original field) and follow the general operation method (URL with P parameter)
+3. Enter the end number of the P parameter in the newly extended field
+instruction:
+If I want to download videos from P1 to P9, please enter the URL with the P parameter of 1 in the URL field, and enter "number 9" in the "P end field"
+4. According to the original operation method, first press the "information acquisition" button, and then press the "download" button
+
+After the above operations, the auxiliary program will automatically assist in recursive downloading
+To close this module, press the AUTOP button again, the button will turn from black to yellow and stop working
+
+technical details:
+Increment the P parameter in the address bar according to the P parameter given by the user, and simulate the user to press the relevant button after the end of the network transmission to execute the sequence.
+
+---
+
 # Mimi Downloader
 
 [英文/English](README.EN.md)
