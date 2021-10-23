@@ -149,6 +149,17 @@ class Downloader {
 					if (fallback) throw Error();
 					this.getData(true);
 				}
+
+				//When the information retrieval is over, if the auto p mode is turned on, it will automatically assist in downloading
+				if (document.getElementById("autoP")) {
+					if (document.getElementById("autoP").classList.contains("btn-dark")) {
+						//mode autoP is false, do nothing
+					} else {
+						if (document.getElementById("autoP").value !== "-1") {
+							downloader.downloadAll();
+						}
+					}
+				}
 			})
 			.catch(error => {
 				showError("获取 PlayUrl 或下载链接出错！由于B站限制，只能下载低清晰度视频。");
@@ -246,9 +257,48 @@ class Downloader {
 			$(".eta").eq(index).html(`eta:${eta}s`);
 			$(".progress-bar").eq(index).css("width", percentage + "%").html(Math.round(percentage) + "%");
 			if (percentage === 100) {
+				//This is an expansion pack, so that some videos can be automatically recursively downloaded
+				if (document.getElementById("autoP")) {
+					if (document.getElementById("autoP").classList.contains("btn-dark")) {
+						//mode autoP is false, do nothing
+					} else {
+						console.log("download success, do autoP");
+						document.getElementById("autoP").value = (parseInt(document.getElementById("autoP").value, 10) + 1).toString();
+						const regexP = /(?<=p=)([0-9])+/gm;
+						const str = document.getElementById("videoUrl").value;
+						let m;
+						var m_list = [];
+
+						while ((m = regexP.exec(str)) !== null) {
+							// This is necessary to avoid infinite loops with zero-width matches
+							if (m.index === regexP.lastIndex) {
+								regexP.lastIndex++;
+							}
+
+							// The result can be accessed through the `m`-variable.
+							m.forEach((match, groupIndex) => {
+								//console.log(`Found match, group ${groupIndex}: ${match}`);
+								m_list.push(match);
+							});
+						}
+
+						var int_nextP = parseInt(m_list[0], 10) + 1;
+						if (!document.getElementById("automatic_recursion_to_item_P").value) {
+							document.getElementById("autoP").value = "-1";
+						} else {
+							if (int_nextP <= parseInt(document.getElementById("automatic_recursion_to_item_P").value, 10)) {
+								document.getElementById("videoUrl").value = document.getElementById("videoUrl").value.replace(regexP, int_nextP.toString());
+							}
+						}
+					}
+				}
+
 				$(".progress-bar").eq(index).addClass("bg-success").removeClass("progress-bar-animated");
 				this.downloading[index] = "";
 				ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
+
+				//autoP Perform information search
+				downloader.getAid();
 			}
 		});
 		//先pipe到proStream再pipe到文件的写入流中
