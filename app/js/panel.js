@@ -39,10 +39,10 @@ class Downloader {
 			}
 		}
 		if (this.url) {
-			$("#videoUrl").removeClass("is-invalid").addClass("is-valid");
+			document.getElementById("videoUrl").classList.replace("is-invalid", "is-valid");
 		} else {
 			showError("无效的视频链接！");
-			$("#videoUrl").addClass("is-invalid").removeClass("is-valid");
+			document.getElementById("videoUrl").classList.replace("is-valid", "is-invalid");
 		}
 	}
 
@@ -231,7 +231,7 @@ class Downloader {
 			const downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
 				index = this.downloading.indexOf(options.url);
 			this.download(index, options, downloads);
-			if (state) $(".addon").eq(index).html(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
+			if (state) $(".addon").eq(index).text(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
 			//console.log(this.cid, file, options.url);
 		});
 	}
@@ -242,11 +242,11 @@ class Downloader {
 			time: 250 //单位ms
 		}).on("progress", progress => {
 			const { speed, eta, percentage } = progress; //显示进度条
-			$(".speed").eq(index).html(Math.round(speed / 1e3) + "KB/s");
-			$(".eta").eq(index).html(`eta:${eta}s`);
-			$(".progress-bar").eq(index).css("width", percentage + "%").html(Math.round(percentage) + "%");
+			$(".speed").eq(index).text(Math.round(speed / 1e3) + "KB/s");
+			$(".eta").eq(index).text(`eta:${eta}s`);
+			$(".progress-bar").eq(index).css("width", percentage + "%").text(Math.round(percentage) + "%");
 			if (percentage === 100) {
-				$(".progress-bar").eq(index).addClass("bg-success").removeClass("progress-bar-animated");
+				document.querySelectorAll(".progress-bar")[index].classList.replace("progress-bar-animated", "bg-success");
 				this.downloading[index] = "";
 				ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
 			}
