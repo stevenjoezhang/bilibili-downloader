@@ -21,6 +21,7 @@
 ```bash
 export ELECTRON_MIRROR="https://cdn.npm.taobao.org/dist/electron/" # 一般的 *NIX 命令行
 set ELECTRON_MIRROR=https://cdn.npm.taobao.org/dist/electron/ # 使用 Windows CMD 命令行
+$env:ELECTRON_MIRROR="https://cdn.npm.taobao.org/dist/electron/" # Windows PowerShell
 ```
 
 在命令行输入：

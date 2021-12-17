@@ -45,11 +45,8 @@ function danmakuFilter(text, T1, T2, ST1, ST2, user) {
 }
 
 function formatSeconds(value) {
-	function addZero(int) {
-		string = int.toString();
-		while (string.length < 2) string = "0" + string;
-		return string;
-	}
+	const addZero = int => int.toString().padStart(2, '0');
+
 	let ms = value - parseInt(value),
 		secondTime = parseInt(value) || 0,
 		minuteTime = 0;
