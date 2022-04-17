@@ -80,10 +80,6 @@ ipcMain.on("show-context-menu", (event) => {
 			event.sender.send("context-menu-command", "copy");
 		}
 	}));
-	//添加菜单分割线
-	menu.append(new MenuItem({
-		type: "separator"
-	}));
 	//添加菜单功能
 	menu.append(new MenuItem({
 		label: "粘贴",

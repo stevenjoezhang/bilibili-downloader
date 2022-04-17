@@ -167,8 +167,8 @@ function showWarning(message) {
 	ipcRenderer.send("show-warning", message);
 }
 
-$("input[type=text]").each((i, o) => {
-	$(o).on("contextmenu", event => {
+document.querySelectorAll("input[type=text]").forEach(element => {
+	element.addEventListener("contextmenu", event => {
 		event.preventDefault();
 		event.currentTarget.focus();
 		ipcRenderer.send("show-context-menu");
@@ -177,15 +177,15 @@ $("input[type=text]").each((i, o) => {
 
 ipcRenderer.on("context-menu-command", (e, command) => {
 	if (command === "copy") {
-		clipboard.writeText($(document.activeElement).val());
+		clipboard.writeText(document.activeElement.value);
 	} else if (command === "paste") {
-		$(document.activeElement).val(clipboard.readText());
+		document.activeElement.value = clipboard.readText();
 	}
 });
 
 ipcRenderer.on("default-path", (e, command) => {
 	defaultPath = command;
-	$("#downloadPath").val(defaultPath);
+	document.getElementById("downloadPath").value = defaultPath;
 });
 
 function help() {
@@ -197,47 +197,45 @@ function about() {
 }
 
 function selectAll() {
-	$("tbody input[type=checkbox]").prop("checked", true);
+	document.querySelectorAll("tbody input[type=checkbox]").forEach(element => element.checked = true);
 }
 
 function selectNone() {
-	$("tbody input[type=checkbox]").prop("checked", false);
+	document.querySelectorAll("tbody input[type=checkbox]").forEach(element => element.checked = false);
 }
 
 function selectReverse() {
-	$("tbody input[type=checkbox]").each((i, o) => {
-		$(o).prop("checked", !$(o).prop("checked"));
-	});
+	document.querySelectorAll("tbody input[type=checkbox]").forEach(element => element.checked = !element.checked);
 }
 
 function openDialog() {
-	ipcRenderer.send("open-dialog", $("#downloadPath").val() || defaultPath);
+	ipcRenderer.send("open-dialog", document.getElementById("downloadPath").value || defaultPath);
 }
 
 ipcRenderer.on("download-path", (event, command) => {
-	$("#downloadPath").val(command);
+	document.getElementById("downloadPath").value = command;
 });
 
 function openPath() {
-	ipcRenderer.send("open-path", $("#downloadPath").val());
+	ipcRenderer.send("open-path", document.getElementById("downloadPath").value);
 }
 
 function searchDanmaku() {
-	const text = $("#searchDanmaku").val();
-	if (!$("#filterSwitch").is(":checked")) {
+	const text = document.getElementById("searchDanmaku").value;
+	if (!document.getElementById("filterSwitch").checked) {
 		danmakuFilter(text);
 		return;
 	}
-	const T1 = parseFloat($("#T1").val());
-	const T2 = parseFloat($("#T2").val());
-	const ST1 = parseFloat($("#ST1").val());
-	const ST2 = parseFloat($("#ST2").val());
-	const user = $("#user").val();
+	const T1 = parseFloat(document.getElementById("T1").value);
+	const T2 = parseFloat(document.getElementById("T2").value);
+	const ST1 = parseFloat(document.getElementById("ST1").value);
+	const ST2 = parseFloat(document.getElementById("ST2").value);
+	const user = document.getElementById("user").value;
 	danmakuFilter(text, T1, T2, ST1, ST2, user);
 }
 
 function filterSwitch() {
-	$("#filter").is(":hidden") ? $("#filter").slideDown() : $("#filter").slideUp();
+	document.getElementById("filterSwitch").checked ? $("#filter").slideDown() : $("#filter").slideUp();
 }
 </script>
 </body>

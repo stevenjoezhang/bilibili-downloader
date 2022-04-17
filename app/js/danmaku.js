@@ -4,23 +4,23 @@ function getDanmaku() {
 	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
 		.then(response => response.text())
 		.then(result => {
-			danmakuArray = [];
-			$(result).find("d").each((i, o) => {
-				const info = $(o).attr("p").split(","),
-					danmaku = {
-						time: info[0],
-						sendTime: info[4],
-						user: info[6],
-						text: $(o).html()
-					};
-				danmakuArray.push(danmaku);
+			const parser = new DOMParser();
+			const xmlDoc = parser.parseFromString(result, "text/xml");
+			danmakuArray = [...xmlDoc.querySelectorAll("d")].map(element => {
+				const info = element.getAttribute("p").split(",");
+				return {
+					time: info[0],
+					sendTime: info[4],
+					user: info[6],
+					text: element.textContent
+				};
 			}); //解析xml文档
 		})
 		.catch(error => showError("弹幕加载失败！"));
 }
 
 function danmakuFilter(text, T1, T2, ST1, ST2, user) {
-	$("tbody").eq(2).html("");
+	document.querySelector("#danmaku tbody").innerHTML = "";
 	for (let target of danmakuArray) {
 		const time = parseFloat(target.time);
 		let sendTime = parseFloat(target.sendTime);
@@ -33,7 +33,7 @@ function danmakuFilter(text, T1, T2, ST1, ST2, user) {
 		const newDate = new Date();
 		newDate.setTime(sendTime * 1000);
 		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");
-		$("tbody").eq(2).append(`<tr>
+		document.querySelector("#danmaku tbody").insertAdjacentHTML("beforeend", `<tr>
 			<td>${formatSeconds(time)}</td>
 			<td>${sendTime}</td>
 			<td>${target.text}</td>
@@ -59,7 +59,7 @@ function formatSeconds(value) {
 
 function searchUser(event) {
 	event.preventDefault();
-	const user = $(event.target).html();
+	const user = event.target.textContent;
 	let uid;
 	if (user.indexOf("D") === 0) uid = "";
 	else if (/^b(\d+)$/.exec(user)) uid = /^b(\d+)$/.exec(user)[1];

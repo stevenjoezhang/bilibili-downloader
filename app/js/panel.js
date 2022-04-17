@@ -21,7 +21,7 @@ class Downloader {
 	}
 
 	getVideoUrl() {
-		const videoUrl = $("#videoUrl").val();
+		const videoUrl = document.getElementById("videoUrl").value;
 		this.url = "";
 		const mapping = {
 			"BV": "https://www.bilibili.com/video/",
@@ -82,27 +82,27 @@ class Downloader {
 		}
 		this.getData();
 		getDanmaku(); //获取cid后，获取下载链接和弹幕信息
-		$("#cid").html(cid);
+		document.getElementById("cid").textContent = cid;
 		document.getElementById("nav").classList.remove("d-none");
 		document.querySelector("#nav .nav-link").click();
 		fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 			.then(response => response.json())
 			.then(({ data }) => {
 				console.log("VIDEO INFO", data);
-				$("tbody").eq(1).html("");
+				document.querySelector("#tab-pane-1 tbody").innerHTML = "";
 				for (let [key, value] of Object.entries(data)) {
 					if (mime.getType(value) && mime.getType(value).includes("image")) { //解析图片地址
 						value = `<a href="${value}" download=""><img src="${value}"></a>`;
 					} else if (typeof value === "object") {
 						value = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
 					}
-					$("tbody").eq(1).append(`<tr>
-					<th class="text-capitalize">${key}</th>
-					<td>${value}</td>
-					</tr>`);
+					document.querySelector("#tab-pane-1 tbody").insertAdjacentHTML("beforeend", `<tr>
+						<th class="text-capitalize">${key}</th>
+						<td>${value}</td>
+					</tr>`)
 				}
 				this.name = `${id}-${data.title}`;
-				$("#videoName").val(sanitize(this.name));
+				document.getElementById("videoName").value = sanitize(this.name);
 			})
 			.catch(error => showError("获取视频信息出错！"));
 	}
@@ -126,11 +126,11 @@ class Downloader {
 		fetch(playUrl)
 			.then(response => response.text())
 			.then(result => {
-				const data = fallback ? $(result) : JSON.parse(result);
-				const target = fallback ? data.find("durl") : (data.durl || data.result.durl);
+				const data = fallback ? this.parseData(result) : JSON.parse(result);
+				const target = data.durl || data.result.durl;
 				console.log("PLAY URL", data);
 				if (target) {
-					const quality = fallback ? $(data).find("quality").text() : (data.quality || data.result.quality),
+					const quality = data.quality || data.result.quality,
 						qualityArray = {
 							112: "高清 1080P+",
 							80: "高清 1080P",
@@ -141,10 +141,25 @@ class Downloader {
 							16: "流畅 360P",
 							15: "流畅 360P"
 						}; //需要修改，不是一一对应
-					$("#quality").html(qualityArray[quality] || "未知");
+					document.getElementById("quality").textContent = qualityArray[quality] || "未知";
 					$("#success").show();
 					fallback ? $("#error").show() : $("#error").hide();
-					fallback ? this.parseDataFallback(target) : this.parseData(target);
+
+					this.links = [];
+					document.querySelector("#success tbody").innerHTML = "";
+					target.forEach(part => {
+						this.links.push(part.url);
+						document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
+							<td>${part.order}</td>
+							<td>${part.length / 1e3}</td>
+							<td>${part.size / 1e6}</td>
+							<td>
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" checked="true">
+								</div>
+							</td>
+						</tr>`);
+					});
 				} else {
 					if (fallback) throw Error();
 					this.getData(true);
@@ -155,41 +170,21 @@ class Downloader {
 			});
 	}
 
-	parseDataFallback(target) {
-		this.links = [];
-		$("tbody").eq(0).html("");
-		target.each((i, o) => {
-			const part = $(o);
-			this.links.push(part.find("url").text());
-			$("tbody").eq(0).append(`<tr>
-				<td>${part.find("order").text()}</td>
-				<td>${part.find("length").text() / 1e3}</td>
-				<td>${part.find("size").text() / 1e6}</td>
-				<td>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" checked="true">
-					</div>
-				</td>
-			</tr>`);
-		});
-	}
-
 	parseData(target) {
-		this.links = [];
-		$("tbody").eq(0).html("");
-		target.forEach(part => {
-			this.links.push(part.url);
-			$("tbody").eq(0).append(`<tr>
-				<td>${part.order}</td>
-				<td>${part.length / 1e3}</td>
-				<td>${part.size / 1e6}</td>
-				<td>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" checked="true">
-					</div>
-				</td>
-			</tr>`);
+		const data = $(target);
+		const result = {};
+		result.durl = [];
+		result.quality = data.find("quality").text();
+		data.find("durl").each((i, o) => {
+			const part = $(o);
+			result.durl.push({
+				url: part.find("url").text(),
+				order: part.find("order").text(),
+				length: part.find("length").text(),
+				size: part.find("size").text()
+			});
 		});
+		return result;
 	}
 
 	downloadAll() {
@@ -197,7 +192,7 @@ class Downloader {
 		let flag = true;
 		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
 			if (!element.checked || this.downloading.includes(this.links[part])) return;
-			$("#download").append(`<span>${cid}-${part}</span>
+			document.getElementById("download").insertAdjacentHTML("beforeend", `<span>${cid}-${part}</span>
 				<span class="speed"></span>
 				<span class="eta"></span>
 				<span class="addon"></span>
@@ -216,8 +211,8 @@ class Downloader {
 
 	downloadLink(part) {
 		const { name, cid, url } = this;
-		const downloadPath = $("#downloadPath").val();
-		const filename = $("#videoName").val() || name || cid;
+		const downloadPath = document.getElementById("downloadPath").value;
+		const filename = document.getElementById("videoName").value || name || cid;
 		const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
 		fs.stat(file, (error, state) => {
 			const options = {
@@ -231,7 +226,7 @@ class Downloader {
 			const downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
 				index = this.downloading.indexOf(options.url);
 			this.download(index, options, downloads);
-			if (state) $(".addon").eq(index).text(`从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`);
+			if (state) document.querySelectorAll(".addon")[index].textContent = `从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`;
 			//console.log(this.cid, file, options.url);
 		});
 	}
@@ -242,11 +237,13 @@ class Downloader {
 			time: 250 //单位ms
 		}).on("progress", progress => {
 			const { speed, eta, percentage } = progress; //显示进度条
-			$(".speed").eq(index).text(Math.round(speed / 1e3) + "KB/s");
-			$(".eta").eq(index).text(`eta:${eta}s`);
-			$(".progress-bar").eq(index).css("width", percentage + "%").text(Math.round(percentage) + "%");
+			document.querySelectorAll(".speed")[index].textContent = Math.round(speed / 1e3) + "KB/s";
+			document.querySelectorAll(".eta")[index].textContent = `eta:${eta}s`;
+			const bar = document.querySelectorAll(".progress-bar")[index];
+			bar.style.setProperty("width", percentage + "%")
+			bar.textContent = Math.round(percentage) + "%";
 			if (percentage === 100) {
-				document.querySelectorAll(".progress-bar")[index].classList.replace("progress-bar-animated", "bg-success");
+				bar.classList.replace("progress-bar-animated", "bg-success");
 				this.downloading[index] = "";
 				ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
 			}
