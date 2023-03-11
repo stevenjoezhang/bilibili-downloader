@@ -58,6 +58,7 @@ ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "fil
 - [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader by tiansh, Mozilla Public License 2.0
 - [bilitwin](https://github.com/Xmader/bilitwin) by Xmader
 - [bili-api](https://github.com/simon300000/bili-api) by simon300000
+- [downkyi](https://github.com/leiurayer/downkyi) by leiurayer
 
 ## 许可证
 
