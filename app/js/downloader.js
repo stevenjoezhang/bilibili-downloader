@@ -1,10 +1,8 @@
-const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const http = require("http");
 const https = require("https");
 const progress = require("progress-stream");
-const sanitize = require("filenamify");
 
 class Task {
 	constructor(url) {
@@ -192,3 +190,5 @@ class Downloader {
 		downloadLink(url);
 	}
 }
+
+module.exports = { Task, Downloader };

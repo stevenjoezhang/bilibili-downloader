@@ -1,4 +1,8 @@
+const path = require("path");
 const mime = require("mime");
+const sanitize = require("filenamify");
+const { Downloader } = require("./js/downloader.js");
+
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
 
