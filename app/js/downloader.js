@@ -61,7 +61,6 @@ class Downloader {
 					this.aid = data.epList[0].aid;
 					this.cid = data.epList[0].cid;
 				}
-				return this.getInfo();
 			})
 			.catch(error => showError("获取视频 aid 出错！"));
 	}
@@ -72,14 +71,13 @@ class Downloader {
 			showError("获取视频 cid 出错！");
 			return;
 		}
-		this.getData();
 		getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 		return fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 			.then(response => response.json())
 			.catch(error => showError("获取视频信息出错！"));
 	}
 
-	getData(fallback) {
+	async getData(fallback) {
 		const { cid, type } = this;
 		let playUrl;
 		if (fallback) {
@@ -95,46 +93,20 @@ class Downloader {
 				playUrl = `https://api.bilibili.com/pgc/player/web/playurl?qn=80&cid=${cid}`;
 			}
 		}
-		fetch(playUrl)
+		return fetch(playUrl)
 			.then(response => response.text())
 			.then(result => {
 				const data = fallback ? this.parseData(result) : JSON.parse(result);
 				const target = data.durl || data.result.durl;
 				console.log("PLAY URL", data);
-				if (target) {
-					const quality = data.quality || data.result.quality,
-						qualityArray = {
-							112: "高清 1080P+",
-							80: "高清 1080P",
-							74: "高清 720P60",
-							64: "高清 720P",
-							48: "高清 720P",
-							32: "清晰 480P",
-							16: "流畅 360P",
-							15: "流畅 360P"
-						}; //需要修改，不是一一对应
-					document.getElementById("quality").textContent = qualityArray[quality] || "未知";
-					$("#success").show();
-					fallback ? $("#error").show() : $("#error").hide();
-
-					this.links = [];
-					document.querySelector("#success tbody").innerHTML = "";
-					target.forEach(part => {
-						this.links.push(part.url);
-						document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
-							<td>${part.order}</td>
-							<td>${part.length / 1e3}</td>
-							<td>${part.size / 1e6}</td>
-							<td>
-								<div class="form-check">
-									<input class="form-check-input" type="checkbox" checked="true">
-								</div>
-							</td>
-						</tr>`);
-					});
+                if (target) {
+                    this.links = target.map(part => part.url);
+                    return {
+                        fallback, data
+                    };
 				} else {
 					if (fallback) throw Error();
-					this.getData(true);
+					return this.getData(true);
 				}
 			})
 			.catch(error => {
