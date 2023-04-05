@@ -69,11 +69,13 @@ class Panel {
 	}
 
 	downloadChecked() {
-		const { cid } = downloader;
+		const { name, cid } = downloader;
+		const downloadPath = document.getElementById("downloadPath").value;
+		const filename = document.getElementById("videoName").value || name || cid;
 		let flag = true;
 		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
 			if (!element.checked) return;
-			const state = downloader.downloadByIndex(part);
+			const state = downloader.downloadByIndex(part, downloadPath, filename);
 			if (state === "DUPLICATE") return;
 			const addon = state ? `从 ${Math.round(state.size / 1e6)}MB 处恢复的下载` : "";
 			document.getElementById("download").insertAdjacentHTML("beforeend", `<span>${cid}-${part}</span>

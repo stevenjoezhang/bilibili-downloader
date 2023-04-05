@@ -137,10 +137,8 @@ class Downloader {
 		return result;
 	}
 
-	downloadByIndex(part) {
-		const { name, cid, url } = this;
-		const downloadPath = document.getElementById("downloadPath").value;
-		const filename = document.getElementById("videoName").value || name || cid;
+	downloadByIndex(part, downloadPath, filename) {
+		const { url } = this;
 		const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
 
 		if (this.tasks.some(item => item.url === this.links[part])) return "DUPLICATE";
@@ -159,15 +157,15 @@ class Downloader {
 				"Referer": url
 			}
 		};
-		const downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
+		const stream = fs.createWriteStream(file, state ? { flags: "a" } : {}),
 			index = this.tasks.findIndex(item => item.url === options.url);
-		this.download(index, options, downloads);
+		this.download(index, options, stream);
 		//console.log(this.cid, file, options.url);
 
 		return state;
 	}
 
-	download(index, options, downloads) {
+	download(index, options, stream) {
 		// https://www.npmjs.com/package/progress-stream
 		const proStream = progress({
 			time: 250 //单位ms
@@ -185,11 +183,20 @@ class Downloader {
 			}
 		});
 		//先pipe到proStream再pipe到文件的写入流中
-		(options.url.startsWith("https") ? https : http).get(options.url, options, res => {
-			proStream.setLength(res.headers["content-length"]);
-			res.pipe(proStream).pipe(downloads).on("error", error => {
-				console.error(error);
+
+		let { url } = options;
+		function downloadLink(url) {
+			(url.startsWith("https") ? https : http).get(url, options, res => {
+				if (res.statusCode === 302) {
+					url = res.headers.location;
+					return downloadLink(url);
+				}
+				proStream.setLength(res.headers["content-length"]);
+				res.pipe(proStream).pipe(stream).on("error", error => {
+					console.error(error);
+				});
 			});
-		});
+		}
+		downloadLink(url);
 	}
 }
