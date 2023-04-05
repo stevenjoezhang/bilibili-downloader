@@ -1,3 +1,4 @@
+const mime = require("mime");
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
 
@@ -67,8 +68,27 @@ class Panel {
 		});
 	}
 
-	downloadAll() {
-		downloader.downloadAll();
+	downloadChecked() {
+		const { cid } = downloader;
+		let flag = true;
+		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
+			if (!element.checked) return;
+			const state = downloader.downloadByIndex(part);
+			if (state === "DUPLICATE") return;
+			const addon = state ? `从 ${Math.round(state.size / 1e6)}MB 处恢复的下载` : "";
+			document.getElementById("download").insertAdjacentHTML("beforeend", `<span>${cid}-${part}</span>
+				<span class="speed"></span>
+				<span class="eta"></span>
+				<span class="addon">${addon}</span>
+				<div class="progress mt-1 mb-3">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">
+						0%
+					</div>
+				</div>`);
+			flag = false;
+		});
+		ipcRenderer.send("length", downloader.tasks.filter(item => !item.finished).length);
+		if (flag) showWarning("没有新的视频被下载！");
 	}
 }
 

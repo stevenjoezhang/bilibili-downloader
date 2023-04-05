@@ -4,8 +4,14 @@ const crypto = require("crypto");
 const http = require("http");
 const https = require("https");
 const progress = require("progress-stream");
-const mime = require("mime");
 const sanitize = require("filenamify");
+
+class Task {
+	constructor(url) {
+		this.url = url;
+		this.finished = false;
+	}
+}
 
 class Downloader {
 	constructor() {
@@ -17,7 +23,7 @@ class Downloader {
 		this.cid = -1;
 		this.name = "";
 		this.links = [];
-		this.downloading = [];
+		this.tasks = [];
 	}
 
 	getVideoUrl(videoUrl) {
@@ -131,48 +137,34 @@ class Downloader {
 		return result;
 	}
 
-	downloadAll() {
-		const { cid } = this;
-		let flag = true;
-		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
-			if (!element.checked || this.downloading.includes(this.links[part])) return;
-			document.getElementById("download").insertAdjacentHTML("beforeend", `<span>${cid}-${part}</span>
-				<span class="speed"></span>
-				<span class="eta"></span>
-				<span class="addon"></span>
-				<div class="progress mt-1 mb-3">
-					<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;">
-						0%
-					</div>
-				</div>`);
-			this.downloading.push(this.links[part]);
-			ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
-			flag = false;
-			this.downloadLink(part);
-		});
-		if (flag) showWarning("没有新的视频被下载！");
-	}
-
-	downloadLink(part) {
+	downloadByIndex(part) {
 		const { name, cid, url } = this;
 		const downloadPath = document.getElementById("downloadPath").value;
 		const filename = document.getElementById("videoName").value || name || cid;
 		const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
-		fs.stat(file, (error, state) => {
-			const options = {
-				url: this.links[part],
-				headers: {
-					"Range": `bytes=${state ? state.size : 0}-`, //断点续传
-					"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
-					"Referer": url
-				}
-			};
-			const downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
-				index = this.downloading.indexOf(options.url);
-			this.download(index, options, downloads);
-			if (state) document.querySelectorAll(".addon")[index].textContent = `从 ${Math.round(state.size / 1e6)}MB 处恢复的下载`;
-			//console.log(this.cid, file, options.url);
-		});
+
+		if (this.tasks.some(item => item.url === this.links[part])) return "DUPLICATE";
+		this.tasks.push(new Task(this.links[part]));
+		let state;
+		try {
+			state = fs.statSync(file);
+		}
+		catch (error) {
+		}
+		const options = {
+			url: this.links[part],
+			headers: {
+				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
+				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+				"Referer": url
+			}
+		};
+		const downloads = fs.createWriteStream(file, state ? { flags: "a" } : {}),
+			index = this.tasks.findIndex(item => item.url === options.url);
+		this.download(index, options, downloads);
+		//console.log(this.cid, file, options.url);
+
+		return state;
 	}
 
 	download(index, options, downloads) {
@@ -188,8 +180,8 @@ class Downloader {
 			bar.textContent = Math.round(percentage) + "%";
 			if (percentage === 100) {
 				bar.classList.replace("progress-bar-animated", "bg-success");
-				this.downloading[index] = "";
-				ipcRenderer.send("length", this.downloading.filter(item => item !== "").length);
+				this.tasks[index].finished = true;
+				ipcRenderer.send("length", this.tasks.filter(item => !item.finished).length);
 			}
 		});
 		//先pipe到proStream再pipe到文件的写入流中
