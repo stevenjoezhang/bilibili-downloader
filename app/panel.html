@@ -16,7 +16,7 @@
 		<input type="text" class="form-control" id="videoUrl" placeholder="若有分p，请带上?p=参数">
 	</div>
 	<div class="mb-3">
-		<button class="btn btn-success" onclick="downloader.getAid()">获取下载链接</button>
+		<button class="btn btn-success" onclick="panel.getAid()">获取下载链接</button>
 		<button class="btn btn-secondary" onclick="help()">帮助</button>
 		<button class="btn btn-secondary" onclick="about()">关于</button>
 	</div>
@@ -77,7 +77,7 @@
 					<input type="text" class="form-control" id="videoName">
 				</div>
 				<div class="mb-3">
-					<button class="btn btn-success" onclick="downloader.downloadAll()">下载选中片段</button>
+					<button class="btn btn-success" onclick="panel.downloadAll()">下载选中片段</button>
 					<button class="btn btn-primary" onclick="openPath()">打开下载目录</button>
 				</div>
 			</div>
@@ -149,6 +149,7 @@ window.$ = window.jQuery = require("jquery");
 </script>
 <script src="cdn/crc32.js"></script>
 <script src="cdn/ass.js"></script>
+<script src="js/downloader.js"></script>
 <script src="js/panel.js"></script>
 <script src="js/danmaku.js"></script>
 <script>
