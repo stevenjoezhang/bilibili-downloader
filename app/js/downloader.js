@@ -39,10 +39,10 @@ class Downloader {
 		}
 	}
 
-	getAid() {
+	async getAid() {
 		const { type, url } = this;
 		if (!url) return;
-		fetch(url)
+		return fetch(url)
 			.then(response => response.text())
 			.then(result => {
 				let data = result.match(/__INITIAL_STATE__=(.*?);\(function\(\)/)[1];
@@ -61,41 +61,21 @@ class Downloader {
 					this.aid = data.epList[0].aid;
 					this.cid = data.epList[0].cid;
 				}
-				this.getInfo();
+				return this.getInfo();
 			})
 			.catch(error => showError("获取视频 aid 出错！"));
 	}
 
-	getInfo() {
-		const { id, aid, cid } = this;
+	async getInfo() {
+		const { aid, cid } = this;
 		if (!cid) {
 			showError("获取视频 cid 出错！");
 			return;
 		}
 		this.getData();
 		getDanmaku(); //获取cid后，获取下载链接和弹幕信息
-		document.getElementById("cid").textContent = cid;
-		document.getElementById("nav").classList.remove("d-none");
-		document.querySelector("#nav .nav-link").click();
-		fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
+		return fetch("https://api.bilibili.com/x/web-interface/view?aid=" + aid)
 			.then(response => response.json())
-			.then(({ data }) => {
-				console.log("VIDEO INFO", data);
-				document.querySelector("#tab-pane-1 tbody").innerHTML = "";
-				for (let [key, value] of Object.entries(data)) {
-					if (mime.getType(value) && mime.getType(value).includes("image")) { //解析图片地址
-						value = `<a href="${value}" download=""><img src="${value}"></a>`;
-					} else if (typeof value === "object") {
-						value = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
-					}
-					document.querySelector("#tab-pane-1 tbody").insertAdjacentHTML("beforeend", `<tr>
-						<th class="text-capitalize">${key}</th>
-						<td>${value}</td>
-					</tr>`)
-				}
-				this.name = `${id}-${data.title}`;
-				document.getElementById("videoName").value = sanitize(this.name);
-			})
 			.catch(error => showError("获取视频信息出错！"));
 	}
 
