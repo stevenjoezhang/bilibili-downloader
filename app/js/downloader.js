@@ -137,9 +137,8 @@ class Downloader {
 		return result;
 	}
 
-	downloadByIndex(part, downloadPath, filename) {
+	downloadByIndex(part, file, callback = () => {}) {
 		const { url } = this;
-		const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
 
 		if (this.tasks.some(item => item.url === this.links[part])) return "DUPLICATE";
 		this.tasks.push(new Task(this.links[part]));
@@ -157,32 +156,24 @@ class Downloader {
 				"Referer": url
 			}
 		};
-		const stream = fs.createWriteStream(file, state ? { flags: "a" } : {}),
-			index = this.tasks.findIndex(item => item.url === options.url);
-		this.download(index, options, stream);
-		//console.log(this.cid, file, options.url);
+		const stream = fs.createWriteStream(file, state ? { flags: "a" } : {});
+		this.download(options, stream, callback);
 
 		return state;
 	}
 
-	download(index, options, stream) {
+	download(options, stream, callback) {
 		// https://www.npmjs.com/package/progress-stream
+		const index = this.tasks.findIndex(item => item.url === options.url);
 		const proStream = progress({
 			time: 250 //单位ms
 		}).on("progress", progress => {
-			const { speed, eta, percentage } = progress; //显示进度条
-			document.querySelectorAll(".speed")[index].textContent = Math.round(speed / 1e3) + "KB/s";
-			document.querySelectorAll(".eta")[index].textContent = `eta:${eta}s`;
-			const bar = document.querySelectorAll(".progress-bar")[index];
-			bar.style.setProperty("width", percentage + "%")
-			bar.textContent = Math.round(percentage) + "%";
+			const { percentage } = progress; //显示进度条
 			if (percentage === 100) {
-				bar.classList.replace("progress-bar-animated", "bg-success");
 				this.tasks[index].finished = true;
-				ipcRenderer.send("length", this.tasks.filter(item => !item.finished).length);
 			}
+			callback(progress, index);
 		});
-		//先pipe到proStream再pipe到文件的写入流中
 
 		let { url } = options;
 		function downloadLink(url) {
@@ -192,6 +183,7 @@ class Downloader {
 					return downloadLink(url);
 				}
 				proStream.setLength(res.headers["content-length"]);
+				//先pipe到proStream再pipe到文件的写入流中
 				res.pipe(proStream).pipe(stream).on("error", error => {
 					console.error(error);
 				});

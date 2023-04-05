@@ -75,7 +75,19 @@ class Panel {
 		let flag = true;
 		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
 			if (!element.checked) return;
-			const state = downloader.downloadByIndex(part, downloadPath, filename);
+			const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
+			const state = downloader.downloadByIndex(part, file, (progress, index) => {
+				const { speed, eta, percentage } = progress; //显示进度条
+				document.querySelectorAll(".speed")[index].textContent = Math.round(speed / 1e3) + "KB/s";
+				document.querySelectorAll(".eta")[index].textContent = `eta:${eta}s`;
+				const bar = document.querySelectorAll(".progress-bar")[index];
+				bar.style.setProperty("width", percentage + "%")
+				bar.textContent = Math.round(percentage) + "%";
+				if (percentage === 100) {
+					bar.classList.replace("progress-bar-animated", "bg-success");
+					ipcRenderer.send("length", this.tasks.filter(item => !item.finished).length);
+				}
+			});
 			if (state === "DUPLICATE") return;
 			const addon = state ? `从 ${Math.round(state.size / 1e6)}MB 处恢复的下载` : "";
 			document.getElementById("download").insertAdjacentHTML("beforeend", `<span>${cid}-${part}</span>
