@@ -19,9 +19,9 @@
 你需要安装 [Git](https://git-scm.com) 和 [Node.js](https://nodejs.org/en/download)（以及 [npm](http://npmjs.com)）来运行本程序。  
 本程序的一个重要依赖是 Electron，如果你所在的网络环境受到限制，请先设置如下环境变量，再执行后面的命令，以通过镜像安装之：
 ```bash
-export ELECTRON_MIRROR="https://cdn.npm.taobao.org/dist/electron/" # 一般的 *NIX 命令行
-set ELECTRON_MIRROR=https://cdn.npm.taobao.org/dist/electron/ # 使用 Windows CMD 命令行
-$env:ELECTRON_MIRROR="https://cdn.npm.taobao.org/dist/electron/" # Windows PowerShell
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/" # 一般的 *NIX 命令行
+set ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ # 使用 Windows CMD 命令行
+$env:ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/" # Windows PowerShell
 ```
 
 在命令行输入：
