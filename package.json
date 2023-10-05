@@ -27,6 +27,6 @@
     "progress-stream": "^2.0.0"
   },
   "devDependencies": {
-    "electron": "24.0.0"
+    "electron": "26.3.0"
   }
 }
