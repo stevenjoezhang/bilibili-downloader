@@ -6,6 +6,7 @@ const fetch = require('node-fetch');
 const { CookieJar } = require('tough-cookie');
 const LoginHelper = require('./login/login-helper');
 const streamPipeline = promisify(pipeline);
+const { parse } = require('url');
 
 const REGEX_PLAY_INFO = /<script>window\.__playinfo__=(.*?)<\/script>/;
 const REGEX_INITIAL_STATE = /__INITIAL_STATE__=(.*?);\(function\(\)/;
@@ -79,7 +80,7 @@ class Downloader {
 		this.cid = -1;
 		this.videoData = null;
 		this.playUrl = null;
-		this.links = [];
+		this.items = [];
 		this.tasks = [];
 	}
 
@@ -97,10 +98,11 @@ class Downloader {
 
 	async getPlayUrlWebPage(url) {
 		const referer = BILIBILI_URL;
+		if (!parse(url).hostname.endsWith('bilibili.com')) return false;
 		const response = await requestWeb(url, referer);
 		const matchInitialState = response.match(REGEX_INITIAL_STATE);
 		const matchPlayInfo = response.match(REGEX_PLAY_INFO);
-		if (!matchInitialState || !matchPlayInfo) return;
+		if (!matchInitialState || !matchPlayInfo) return false;
 		const initialState = JSON.parse(matchInitialState[1]);
 		const playUrl = JSON.parse(matchPlayInfo[1]);
 
@@ -113,13 +115,14 @@ class Downloader {
 		} else if (playUrl.result) {
 			this.playUrl = playUrl.result;
 		}
+		return true;
 	}
 
 	prepareDownload() {
 		const { maxWidth, maxHeight, target: video } = downloader.parseVideo();
 		const audio = downloader.parseAudio();
 		const items = [...video, ...audio];
-		this.links = items.map(part => part.baseUrl);
+		this.items = items;
 		return {
 			quality: `${maxWidth}x${maxHeight}`,
 			items
@@ -130,12 +133,14 @@ class Downloader {
 		const { video } = this.playUrl.dash;
 		const maxWidth = Math.max(...video.map(({ width }) => width));
 		const maxHeight = Math.max(...video.map(({ height }) => height));
-		const target = video.filter(v => v.width === maxWidth && v.height === maxHeight).map(({ mimeType, codecs, bandwidth, baseUrl }) => {
+		const target = video.map(({ mimeType, codecs, bandwidth, baseUrl, width, height }) => {
 			return {
 				mimeType,
 				codecs,
 				bandwidth,
-				baseUrl
+				baseUrl,
+				quality: `${width}x${height}`,
+				type: "video"
 			};
 		});
 		return { maxWidth, maxHeight, target };
@@ -148,14 +153,15 @@ class Downloader {
 				mimeType,
 				codecs,
 				bandwidth,
-				baseUrl
+				baseUrl,
+				type: "audio"
 			};
 		});
 		return target;
 	}
 
-	async downloadByIndex(part, file, callback = () => {}) {
-		const url = this.links[part];
+	downloadByIndex(part, file, callback = () => {}) {
+		const url = this.items[part].baseUrl;
 
 		if (this.tasks.some(item => item.url === url)) return "DUPLICATE";
 		this.tasks.push(new Task(url));
@@ -177,7 +183,7 @@ class Downloader {
 			}
 		};
 		const stream = fs.createWriteStream(file, state ? { flags: "a" } : {});
-		await this.download(options, stream, callback);
+		this.download(options, stream, callback);
 
 		return state;
 	}

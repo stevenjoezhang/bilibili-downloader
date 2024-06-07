@@ -16,7 +16,7 @@ table pre {
 #download {
 	user-select: none;
 }
-#download span:not(:last-of-type), #cid, #quality {
+#download span:not(:last-of-type) {
 	margin-right: 20px;
 }
 #danmaku {

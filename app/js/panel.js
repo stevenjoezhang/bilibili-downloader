@@ -9,13 +9,12 @@ const downloader = new Downloader();
 class Panel {
 	async getVideoInfo() {
 		const videoUrl = document.getElementById("videoUrl").value;
-		await downloader.getPlayUrlWebPage(videoUrl);
-		if (downloader.cid) {
+		const succeed = await downloader.getPlayUrlWebPage(videoUrl);
+		if (succeed) {
 			const data = downloader.videoData;
 			document.getElementById("videoUrl").classList.replace("is-invalid", "is-valid");
 			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 			// console.log("VIDEO INFO", data);
-			document.getElementById("cid").textContent = downloader.cid;
 			document.getElementById("nav").classList.remove("d-none");
 			document.querySelector("#nav .nav-link").click();
 			document.querySelector("#tab-pane-1 tbody").innerHTML = "";
@@ -40,22 +39,16 @@ class Panel {
 
 	getData() {
 		const { quality, items } = downloader.prepareDownload();
-		document.getElementById("quality").textContent = quality;
-		document.querySelector("#success thead").innerHTML = `
-						<tr>
-							<th>MIME</th>
-							<th>编码</th>
-							<th>大小(MB)</th>
-							<th>选定</th>
-						</tr>`;
-		items.forEach(part => {
+		document.querySelector("#success tbody").innerHTML = "";
+		items.forEach((part, index) => {
 			document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
 							<td>${part.mimeType}</td>
 							<td>${part.codecs}</td>
-							<td>${part.bandwidth / 1e6}</td>
+							<td>${part.quality || ''}</td>
+							<td>${part.bandwidth}</td>
 							<td>
 								<div class="form-check">
-									<input class="form-check-input" type="checkbox" checked="true">
+									<input class="form-check-input" type="radio" name="${part.type}" value="${index}">
 								</div>
 							</td>
 						</tr>`);
@@ -67,10 +60,20 @@ class Panel {
 		const name = downloader.uniqueName;
 		const downloadPath = document.getElementById("downloadPath").value;
 		const filename = document.getElementById("videoName").value || name || cid;
-		let flag = true;
-		document.querySelectorAll("tbody input[type=checkbox]").forEach((element, part) => {
-			if (!element.checked) return;
-			const file = path.join(downloadPath, `${sanitize(filename)}-${part}.flv`);
+		let newDownload = false;
+		const videoRadio = [...document.getElementsByName('video')].filter(ele => ele.checked)[0];
+		const audioRadio = [...document.getElementsByName('audio')].filter(ele => ele.checked)[0];
+		if (!videoRadio || !audioRadio) {
+			showError("请分别选择一个视频和一个音频进行下载！");
+			return;
+		}
+		const parts = {
+			video: videoRadio.value,
+			audio: audioRadio.value
+		};
+		for (let part of Object.values(parts)) {
+			const ext = mime.getExtension(downloader.items[part].mimeType);
+			const file = path.join(downloadPath, `${sanitize(filename)}-${part}.${ext}`);
 			const state = downloader.downloadByIndex(part, file, (progress, index) => {
 				const { speed, eta, percentage } = progress; //显示进度条
 				document.querySelectorAll(".speed")[index].textContent = Math.round(speed / 1e3) + "KB/s";
@@ -94,10 +97,10 @@ class Panel {
 						0%
 					</div>
 				</div>`);
-			flag = false;
-		});
+			newDownload = true;
+		}
 		ipcRenderer.send("length", downloader.tasks.filter(item => !item.finished).length);
-		if (flag) showWarning("没有新的视频被下载！");
+		if (!newDownload) showWarning("没有新的视频被下载！");
 	}
 }
 

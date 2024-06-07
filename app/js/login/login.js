@@ -28,8 +28,8 @@ class LoginService {
             // });
             this.element.src = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
 
-            console.log(loginUrl.data.url + '\n');
-            console.debug('Login', loginUrl.data.url);
+            // console.log(loginUrl.data.url + '\n');
+            // console.debug('Login', loginUrl.data.url);
 
             this.getLoginStatus(loginUrl.data.qrcode_key);
         } catch (e) {
