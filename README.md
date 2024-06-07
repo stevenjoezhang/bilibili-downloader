@@ -13,6 +13,7 @@
 - 根据视频地址查询 aid 和 cid 以及视频详细信息
 - 根据视频 cid 获取视频和弹幕文件的下载地址
 - 下载视频（`.flv` 或 `.mp4`）和弹幕文件（`.xml` 或 `.ass`），支持断点续传
+- 由于 Bilibili 限制，在未登录情况下只能获得低清晰度视频
 
 ## 使用方法
 
@@ -47,10 +48,15 @@ ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "fil
 
 ## 相关项目
 
-如果你需要更为强大的命令行工具，那么以下仓库或许有帮助。它们均使用了和本项目完全相同的 API 调用方式，不需要手动设置 Cookie 或 playurl。
+哔哩下载姬及其跨平台版本也是不错的选择，能够在扫码登录后下载高清视频。
+
+- [downkyi](https://github.com/leiurayer/downkyi) by leiurayer
+- [downkyicore](https://github.com/yaobiao131/downkyicore) by yaobiao131
+
+如果你需要更为强大的命令行工具，那么以下仓库或许有帮助。如果需要下载高清视频，可能需要手动设置 Cookie。
 
 - [you-get](https://github.com/soimort/you-get) by soimort, MIT license
-- [annie](https://github.com/iawia002/annie) by iawia002
+- [lux](https://github.com/iawia002/lux) by iawia002
 - [youtube-dl](https://github.com/ytdl-org/youtube-dl) by ytdl-org
 
 这里还有一些其它的库和浏览器插件供参考。
@@ -58,7 +64,6 @@ ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "fil
 - [XML 转 ASS 库](https://github.com/tiansh/us-danmaku) 以及 bilibili ASS Danmaku Downloader by tiansh, Mozilla Public License 2.0
 - [bilitwin](https://github.com/Xmader/bilitwin) by Xmader
 - [bili-api](https://github.com/simon300000/bili-api) by simon300000
-- [downkyi](https://github.com/leiurayer/downkyi) by leiurayer
 
 ## 许可证
 
