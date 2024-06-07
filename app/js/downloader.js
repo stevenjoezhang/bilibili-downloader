@@ -1,14 +1,16 @@
 const fs = require("fs");
-const http = require("http");
-const https = require("https");
+const { pipeline } = require('stream');
+const { promisify } = require('util');
 const progress = require("progress-stream");
 const fetch = require('node-fetch');
 const { CookieJar } = require('tough-cookie');
 const LoginHelper = require('./login/login-helper');
+const streamPipeline = promisify(pipeline);
 
 const REGEX_PLAY_INFO = /<script>window\.__playinfo__=(.*?)<\/script>/;
 const REGEX_INITIAL_STATE = /__INITIAL_STATE__=(.*?);\(function\(\)/;
 const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
+const BILIBILI_URL = "https://www.bilibili.com";
 
 async function requestWeb(url, referer = null, method = 'GET', parameters = null, retry = 3, needRandomBvuid3 = false) {
 	if (retry <= 0) {
@@ -94,7 +96,7 @@ class Downloader {
 	}
 
 	async getPlayUrlWebPage(url) {
-		const referer = 'https://www.bilibili.com';
+		const referer = BILIBILI_URL;
 		const response = await requestWeb(url, referer);
 		const matchInitialState = response.match(REGEX_INITIAL_STATE);
 		const matchPlayInfo = response.match(REGEX_PLAY_INFO);
@@ -128,11 +130,12 @@ class Downloader {
 		const { video } = this.playUrl.dash;
 		const maxWidth = Math.max(...video.map(({ width }) => width));
 		const maxHeight = Math.max(...video.map(({ height }) => height));
-		const target = video.filter(v => v.width === maxWidth && v.height === maxHeight).map(({ mimeType, codecs, bandwidth }) => {
+		const target = video.filter(v => v.width === maxWidth && v.height === maxHeight).map(({ mimeType, codecs, bandwidth, baseUrl }) => {
 			return {
 				mimeType,
 				codecs,
-				bandwidth
+				bandwidth,
+				baseUrl
 			};
 		});
 		return { maxWidth, maxHeight, target };
@@ -140,42 +143,46 @@ class Downloader {
 
 	parseAudio() {
 		const { audio } = this.playUrl.dash;
-		const target = audio.map(({ mimeType, codecs, bandwidth }) => {
+		const target = audio.map(({ mimeType, codecs, bandwidth, baseUrl }) => {
 			return {
 				mimeType,
 				codecs,
-				bandwidth
+				bandwidth,
+				baseUrl
 			};
 		});
 		return target;
 	}
 
-	downloadByIndex(part, file, callback = () => {}) {
-		const { url } = this;
+	async downloadByIndex(part, file, callback = () => {}) {
+		const url = this.links[part];
 
-		if (this.tasks.some(item => item.url === this.links[part])) return "DUPLICATE";
-		this.tasks.push(new Task(this.links[part]));
+		if (this.tasks.some(item => item.url === url)) return "DUPLICATE";
+		this.tasks.push(new Task(url));
 		let state;
 		try {
 			state = fs.statSync(file);
 		}
 		catch (error) {
 		}
+		const cookies = LoginHelper.getLoginInfoCookies();
 		const options = {
-			url: this.links[part],
+			url,
 			headers: {
 				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
 				"User-Agent": USER_AGENT,
-				"Referer": url
+				'Referer': BILIBILI_URL,
+				'Origin': BILIBILI_URL,
+				'Cookie': cookies.getCookieStringSync(BILIBILI_URL)
 			}
 		};
 		const stream = fs.createWriteStream(file, state ? { flags: "a" } : {});
-		this.download(options, stream, callback);
+		await this.download(options, stream, callback);
 
 		return state;
 	}
 
-	download(options, stream, callback) {
+	async download(options, stream, callback) {
 		// https://www.npmjs.com/package/progress-stream
 		const index = this.tasks.findIndex(item => item.url === options.url);
 		const proStream = progress({
@@ -188,21 +195,20 @@ class Downloader {
 			callback(progress, index);
 		});
 
-		let { url } = options;
-		function downloadLink(url) {
-			(url.startsWith("https") ? https : http).get(url, options, res => {
-				if (res.statusCode === 302) {
-					url = res.headers.location;
-					return downloadLink(url);
-				}
-				proStream.setLength(res.headers["content-length"]);
-				//先pipe到proStream再pipe到文件的写入流中
-				res.pipe(proStream).pipe(stream).on("error", error => {
-					console.error(error);
-				});
-			});
+		let { url, headers } = options;
+		console.log(url);
+
+		const response = await fetch(url, {
+			redirect: 'follow',
+			headers
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to download. Status code: ${response.status}`);
 		}
-		downloadLink(url);
+		const contentLength = response.headers.get('content-length');
+		proStream.setLength(contentLength);
+		await streamPipeline(response.body, proStream, stream);
 	}
 }
 

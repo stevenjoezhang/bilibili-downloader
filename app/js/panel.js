@@ -39,7 +39,7 @@ class Panel {
 	}
 
 	getData() {
-		const { quality, items } = prepareDownload();
+		const { quality, items } = downloader.prepareDownload();
 		document.getElementById("quality").textContent = quality;
 		document.querySelector("#success thead").innerHTML = `
 						<tr>
