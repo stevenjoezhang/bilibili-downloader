@@ -12,7 +12,8 @@ class Panel {
 		const succeed = await downloader.getPlayUrlWebPage(videoUrl);
 		if (succeed) {
 			const data = downloader.videoData;
-			document.getElementById("videoUrl").classList.replace("is-invalid", "is-valid");
+			document.getElementById("videoUrl").classList.remove("is-invalid");
+			document.getElementById("videoUrl").classList.add("is-valid");
 			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 			// console.log("VIDEO INFO", data);
 			document.getElementById("nav").classList.remove("d-none");
@@ -33,7 +34,8 @@ class Panel {
 			this.getData();
 		} else {
 			showError("无效的视频链接！");
-			document.getElementById("videoUrl").classList.replace("is-valid", "is-invalid");
+			document.getElementById("videoUrl").classList.remove("is-valid");
+			document.getElementById("videoUrl").classList.add("is-invalid");
 		}
 	}
 
