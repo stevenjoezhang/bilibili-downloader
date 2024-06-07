@@ -86,3 +86,5 @@ package-lock.json
 dist/
 
 .DS_Store
+
+login_info*

@@ -8,6 +8,14 @@
 <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body>
+<img src="" alt="" id="qr">
+<script>
+	const img = document.getElementById("qr");
+	const LoginService = require('./js/login/login.js');
+	const loginService = new LoginService(img);
+
+	loginService.login();
+</script>
 <div class="container-fluid g-4 mt-3">
 	<h1>Mimi Downloader</h1>
 	<p id="help">欢迎使用米米下载器，轻松下载高清视频、弹幕</p>
@@ -16,7 +24,7 @@
 		<input type="text" class="form-control" id="videoUrl" placeholder="若有分p，请带上?p=参数">
 	</div>
 	<div class="mb-3">
-		<button class="btn btn-success" onclick="panel.getAid()">获取下载链接</button>
+		<button class="btn btn-success" onclick="panel.getVideoInfo()">获取下载链接</button>
 		<button class="btn btn-secondary" onclick="help()">帮助</button>
 		<button class="btn btn-secondary" onclick="about()">关于</button>
 	</div>

@@ -5,16 +5,26 @@ const { Downloader } = require("./js/downloader.js");
 
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
+const qualityArray = {
+	112: "高清 1080P+",
+	80: "高清 1080P",
+	74: "高清 720P60",
+	64: "高清 720P",
+	48: "高清 720P",
+	32: "清晰 480P",
+	16: "流畅 360P",
+	15: "流畅 360P"
+}; //需要修改，不是一一对应
 
 class Panel {
-	async getAid() {
+	async getVideoInfo() {
 		const videoUrl = document.getElementById("videoUrl").value;
-		downloader.getVideoUrl(videoUrl);
-		if (downloader.url) {
+		await downloader.getPlayUrlWebPage(videoUrl);
+		if (downloader.cid) {
+			const data = downloader.videoData;
 			document.getElementById("videoUrl").classList.replace("is-invalid", "is-valid");
-			await downloader.getAid();
-			const { data } = await downloader.getInfo();
-			console.log("VIDEO INFO", data);
+			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
+			// console.log("VIDEO INFO", data);
 			document.getElementById("cid").textContent = downloader.cid;
 			document.getElementById("nav").classList.remove("d-none");
 			document.querySelector("#nav .nav-link").click();
@@ -32,37 +42,27 @@ class Panel {
 			}
 			downloader.name = `${downloader.id}-${data.title}`;
 			document.getElementById("videoName").value = sanitize(downloader.name);
-			await this.getData();
+			// this.getData();
 		} else {
 			showError("无效的视频链接！");
 			document.getElementById("videoUrl").classList.replace("is-valid", "is-invalid");
 		}
 	}
 
-	async getData() {
-		const { data, fallback } = await downloader.getData();
-		const target = data.durl || data.result.durl;
-		const quality = data.quality || data.result.quality,
-			qualityArray = {
-				112: "高清 1080P+",
-				80: "高清 1080P",
-				74: "高清 720P60",
-				64: "高清 720P",
-				48: "高清 720P",
-				32: "清晰 480P",
-				16: "流畅 360P",
-				15: "流畅 360P"
-			}; //需要修改，不是一一对应
-		document.getElementById("quality").textContent = qualityArray[quality] || "未知";
-		$("#success").show();
-		fallback ? $("#error").show() : $("#error").hide();
-
-		document.querySelector("#success tbody").innerHTML = "";
+	getData() {
+		// Use downloader.playUrl
+		document.querySelector("#success thead").innerHTML = `
+						<tr>
+							<th>MIME</th>
+							<th>编码</th>
+							<th>大小(MB)</th>
+							<th>选定</th>
+						</tr>`;
 		target.forEach(part => {
 			document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
-							<td>${part.order}</td>
-							<td>${part.length / 1e3}</td>
-							<td>${part.size / 1e6}</td>
+							<td>${part.mimeType}</td>
+							<td>${part.codecs}</td>
+							<td>${part.bandwidth / 1e6}</td>
 							<td>
 								<div class="form-check">
 									<input class="form-check-input" type="checkbox" checked="true">
@@ -89,7 +89,7 @@ class Panel {
 				bar.textContent = Math.round(percentage) + "%";
 				if (percentage === 100) {
 					bar.classList.replace("progress-bar-animated", "bg-success");
-					ipcRenderer.send("length", this.tasks.filter(item => !item.finished).length);
+					ipcRenderer.send("length", downloader.tasks.filter(item => !item.finished).length);
 				}
 			});
 			if (state === "DUPLICATE") return;
