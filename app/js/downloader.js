@@ -2,10 +2,65 @@ const fs = require("fs");
 const http = require("http");
 const https = require("https");
 const progress = require("progress-stream");
-const { requestWeb } = require("./request");
+const fetch = require('node-fetch');
+const { CookieJar } = require('tough-cookie');
+const LoginHelper = require('./login/login-helper');
 
 const REGEX_PLAY_INFO = /<script>window\.__playinfo__=(.*?)<\/script>/;
 const REGEX_INITIAL_STATE = /__INITIAL_STATE__=(.*?);\(function\(\)/;
+const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
+
+async function requestWeb(url, referer = null, method = 'GET', parameters = null, retry = 3, needRandomBvuid3 = false) {
+	if (retry <= 0) {
+		return '';
+	}
+
+	const headers = {
+		'User-Agent': USER_AGENT, // replace with actual user agent
+		'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+		'accept-encoding': 'gzip, deflate, br'
+	};
+
+	if (referer) {
+		headers.Referer = referer;
+	}
+
+	if (!url.includes('getLogin')) {
+		headers.origin = 'https://m.bilibili.com';
+
+		const cookies = LoginHelper.getLoginInfoCookies();
+		if (cookies) {
+			headers.Cookie = cookies.getCookieStringSync(url);
+		} else {
+			const cookieJar = new CookieJar();
+			if (needRandomBvuid3) {
+				cookieJar.setCookieSync(`buvid3=${getRandomBuvid3()}; Domain=.bilibili.com; Path=/`, url);
+			}
+			headers.Cookie = cookieJar.getCookieStringSync(url);
+		}
+	}
+
+	let requestOptions = { method, headers };
+
+	if (method === 'POST' && parameters) {
+		const searchParams = new URLSearchParams();
+		for (const key in parameters) {
+			searchParams.append(key, parameters[key]);
+		}
+		url += '?' + searchParams.toString();
+	}
+
+	try {
+		const response = await fetch(url, requestOptions);
+
+		let html = await response.text();
+
+		return html;
+	} catch (error) {
+		console.error(`RequestWeb()发生异常: ${error}`);
+		return requestWeb(url, referer, method, parameters, retry - 1, needRandomBvuid3);
+	}
+}
 
 class Task {
 	constructor(url) {
@@ -20,9 +75,8 @@ class Downloader {
 		this.bvid = -1;
 		this.pid = 1;
 		this.cid = -1;
-		this.playUrl = null;
 		this.videoData = null;
-		this.name = "";
+		this.playUrl = null;
 		this.links = [];
 		this.tasks = [];
 	}
@@ -33,6 +87,10 @@ class Downloader {
 		this.pid = state.p;
 		this.cid = state.videoData.cid;
 		this.videoData = state.videoData;
+	}
+
+	get uniqueName() {
+		return `[${this.bvid}]${this.videoData.title}`;
 	}
 
 	async getPlayUrlWebPage(url) {
@@ -55,6 +113,43 @@ class Downloader {
 		}
 	}
 
+	prepareDownload() {
+		const { maxWidth, maxHeight, target: video } = downloader.parseVideo();
+		const audio = downloader.parseAudio();
+		const items = [...video, ...audio];
+		this.links = items.map(part => part.baseUrl);
+		return {
+			quality: `${maxWidth}x${maxHeight}`,
+			items
+		};
+	}
+
+	parseVideo() {
+		const { video } = this.playUrl.dash;
+		const maxWidth = Math.max(...video.map(({ width }) => width));
+		const maxHeight = Math.max(...video.map(({ height }) => height));
+		const target = video.filter(v => v.width === maxWidth && v.height === maxHeight).map(({ mimeType, codecs, bandwidth }) => {
+			return {
+				mimeType,
+				codecs,
+				bandwidth
+			};
+		});
+		return { maxWidth, maxHeight, target };
+	}
+
+	parseAudio() {
+		const { audio } = this.playUrl.dash;
+		const target = audio.map(({ mimeType, codecs, bandwidth }) => {
+			return {
+				mimeType,
+				codecs,
+				bandwidth
+			};
+		});
+		return target;
+	}
+
 	downloadByIndex(part, file, callback = () => {}) {
 		const { url } = this;
 
@@ -70,7 +165,7 @@ class Downloader {
 			url: this.links[part],
 			headers: {
 				"Range": `bytes=${state ? state.size : 0}-`, //断点续传
-				"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+				"User-Agent": USER_AGENT,
 				"Referer": url
 			}
 		};

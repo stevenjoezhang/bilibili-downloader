@@ -5,16 +5,6 @@ const { Downloader } = require("./js/downloader.js");
 
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
-const qualityArray = {
-	112: "高清 1080P+",
-	80: "高清 1080P",
-	74: "高清 720P60",
-	64: "高清 720P",
-	48: "高清 720P",
-	32: "清晰 480P",
-	16: "流畅 360P",
-	15: "流畅 360P"
-}; //需要修改，不是一一对应
 
 class Panel {
 	async getVideoInfo() {
@@ -40,9 +30,8 @@ class Panel {
 						<td>${value}</td>
 					</tr>`)
 			}
-			downloader.name = `${downloader.id}-${data.title}`;
-			document.getElementById("videoName").value = sanitize(downloader.name);
-			// this.getData();
+			document.getElementById("videoName").value = sanitize(downloader.uniqueName);
+			this.getData();
 		} else {
 			showError("无效的视频链接！");
 			document.getElementById("videoUrl").classList.replace("is-valid", "is-invalid");
@@ -50,7 +39,8 @@ class Panel {
 	}
 
 	getData() {
-		// Use downloader.playUrl
+		const { quality, items } = prepareDownload();
+		document.getElementById("quality").textContent = quality;
 		document.querySelector("#success thead").innerHTML = `
 						<tr>
 							<th>MIME</th>
@@ -58,7 +48,7 @@ class Panel {
 							<th>大小(MB)</th>
 							<th>选定</th>
 						</tr>`;
-		target.forEach(part => {
+		items.forEach(part => {
 			document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
 							<td>${part.mimeType}</td>
 							<td>${part.codecs}</td>
@@ -73,7 +63,8 @@ class Panel {
 	}
 
 	downloadChecked() {
-		const { name, cid } = downloader;
+		const { cid } = downloader;
+		const name = downloader.uniqueName;
 		const downloadPath = document.getElementById("downloadPath").value;
 		const filename = document.getElementById("videoName").value || name || cid;
 		let flag = true;
