@@ -9,11 +9,13 @@
 ## 功能
 
 目前实现的功能：
+- 根据视频 URL 查询视频详细信息并获取视频下载地址
+- 根据视频 `cid` 获取视频弹幕的内容并支持转换下载格式（`.xml` 或 `.ass`）
+- 下载视频和音频文件（格式分别为 `.mp4` 及 `.m4a`），支持断点续传
 
-- 根据视频地址查询 aid 和 cid 以及视频详细信息
-- 根据视频 cid 获取视频和弹幕文件的下载地址
-- 下载视频（`.flv` 或 `.mp4`）和弹幕文件（`.xml` 或 `.ass`），支持断点续传
+目前的局限性：
 - 由于 Bilibili 限制，在未登录情况下只能获得低清晰度视频
+- 下载的视频和音频是分开的文件，需人工使用 `ffmpeg` 等工具进行合并
 
 ## 使用方法
 
@@ -38,11 +40,9 @@ npm start
 ```
 如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/BV1Lx411a7NQ ），按照提示即可下载视频。
 
-对于分为多个 flv 片段的视频，下载完成后，可以使用 ffmpeg 将其合并为一个文件：
+下载完成后，可以使用 ffmpeg 将视频和音频合并为一个文件：
 ```bash
-name=11090110
-# 将 11090110 替换为视频文件名
-ffmpeg -f concat -safe 0 -i <(for f in $(ls $name-*.flv | sort -n); do echo "file '$PWD/$f'"; done) -c copy $name.flv
+ffmpeg -i input_video.mp4 -i input_audio.m4a -c:v copy -c:a aac output_file.mp4
 ```
 见 https://trac.ffmpeg.org/wiki/Concatenate
 
