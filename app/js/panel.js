@@ -55,6 +55,14 @@ class Panel {
 							</td>
 						</tr>`);
 		});
+		document.querySelectorAll("#success tbody tr").forEach(tr => {
+			tr.addEventListener("click", (e) => {
+				let radio = tr.querySelector("input[type='radio']");
+				if (radio) {
+					radio.checked = true;
+				}
+			});
+		});
 	}
 
 	downloadChecked() {
