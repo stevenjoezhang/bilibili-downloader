@@ -40,7 +40,7 @@ class Panel {
 	}
 
 	getData() {
-		const { quality, items } = downloader.prepareDownload();
+		const { items } = downloader.prepareDownload();
 		document.querySelector("#success tbody").innerHTML = "";
 		items.forEach((part, index) => {
 			document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
@@ -69,7 +69,7 @@ class Panel {
 		const { cid } = downloader;
 		const name = downloader.uniqueName;
 		const downloadPath = document.getElementById("downloadPath").value;
-		const filename = document.getElementById("videoName").value || name || cid;
+		const filename = document.getElementById("videoName").value || name;
 		let newDownload = false;
 		const videoRadio = [...document.getElementsByName('video')].filter(ele => ele.checked)[0];
 		const audioRadio = [...document.getElementsByName('audio')].filter(ele => ele.checked)[0];

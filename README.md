@@ -86,5 +86,6 @@ We only ship the code here, and how you are going to use it is left to your own 
 
 ## 待实现
 
-- [ ] 允许用户开始/暂停下载
 - [x] 显示发送弹幕的用户信息
+- [ ] 自动拼接音视频
+- [ ] 检查登录状态
