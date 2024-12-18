@@ -23,7 +23,7 @@
     "bootstrap": "^5.3.3",
     "filenamify": "^4.0.0",
     "jquery": "^3.7.1",
-    "mime": "3.0.0",
+    "mime": "4.0.6",
     "node-fetch": "^2.0.0",
     "progress-stream": "^2.0.0",
     "qrcode": "^1.5.3",
