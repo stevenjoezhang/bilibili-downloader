@@ -30,6 +30,6 @@
     "tough-cookie": "^4.1.4"
   },
   "devDependencies": {
-    "electron": "30.1.0"
+    "electron": "33.3.1"
   }
 }
