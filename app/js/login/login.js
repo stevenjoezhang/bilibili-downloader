@@ -4,10 +4,11 @@ const LoginHelper = require('./login-helper');
 // const { PropertyChangeAsync, ExecuteBackSpace, console, DictionaryResource } = require('./utils');
 
 class LoginService {
-    constructor(img) {
+    constructor(element) {
         // this.eventAggregator = new EventEmitter();
         this.tokenSource = { token: false };
-        this.element = img;
+        this.qrcodeElement = element.querySelector('img');
+        this.labelElement = element.querySelector('label');
     }
 
     async login() {
@@ -26,12 +27,15 @@ class LoginService {
             // await PropertyChangeAsync(async () => {
             //     this.loginQrCode = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
             // });
-            this.element.src = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
+            this.qrcodeElement.src = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
 
             // console.log(loginUrl.data.url + '\n');
             // console.debug('Login', loginUrl.data.url);
 
-            this.getLoginStatus(loginUrl.data.qrcode_key);
+            await this.getLoginStatus(loginUrl.data.qrcode_key);
+
+            this.qrcodeElement.style.display = 'none';
+            this.labelElement.textContent = '登录成功';
         } catch (e) {
             console.error(`Login()发生异常: ${e}`);
             console.error('Login', e);
@@ -90,7 +94,7 @@ class LoginService {
                             // this.eventAggregator.emit('message', DictionaryResource.getString('LoginFailed'));
                         }
 
-                        await new Promise(resolve => setTimeout(resolve, 3000));
+                        // await new Promise(resolve => setTimeout(resolve, 3000));
                         // await PropertyChangeAsync(ExecuteBackSpace);
                         break;
                 }

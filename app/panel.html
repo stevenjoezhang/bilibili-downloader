@@ -11,9 +11,9 @@
 <div class="container-fluid g-4 mt-3">
 	<h1>Mimi Downloader</h1>
 	<p id="help">欢迎使用米米下载器，轻松下载视频、弹幕</p>
-	<div class="mb-3">
+	<div class="mb-3" id="login">
 		<label class="form-label fw-bold">请先使用App扫码登录，才能下载高清视频</label>
-		<img src="" id="qr">
+		<img src="">
 	</div>
 	<div class="mb-3">
 		<label class="form-label fw-bold">视频链接</label>
@@ -216,9 +216,9 @@ function filterSwitch() {
 	document.getElementById("filterSwitch").checked ? $("#filter").slideDown() : $("#filter").slideUp();
 }
 
-const img = document.getElementById("qr");
+const loginElement = document.getElementById("login");
 const LoginService = require('./js/login/login.js');
-const loginService = new LoginService(img);
+const loginService = new LoginService(loginElement);
 
 loginService.login();
 </script>
