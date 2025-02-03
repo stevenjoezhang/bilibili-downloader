@@ -173,7 +173,7 @@ class Downloader {
 		try {
 			state = fs.statSync(file);
 		}
-		catch (error) {
+		catch {
 		}
 		const cookies = LoginHelper.getLoginInfoCookies();
 		const options = {
@@ -223,6 +223,7 @@ class Downloader {
 		const contentLength = response.headers.get('content-length');
 		proStream.setLength(contentLength);
 		await streamPipeline(response.body, proStream, stream);
+		return stream.path;
 	}
 }
 

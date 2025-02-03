@@ -2,6 +2,7 @@ const path = require("path");
 const mime = require("mime");
 const sanitize = require("filenamify");
 const { Downloader } = require("./js/downloader.js");
+const { ffmpegMerge } = require("./js/merge.js");
 
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
@@ -108,11 +109,12 @@ class Panel {
 			showWarning("没有新的音频/视频被下载！");
 			return;
 		}
-		Promise.all(promises).then(async () => {
+		Promise.all(promises).then(async (paths) => {
 			if (promises.length !== 2) return;
 			const selection = await showMergeSelection();
 			if (selection === 0) {
 				// Merge video and audio
+				ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${sanitize(filename)}.mp4`));
 			}
 		});
 	}
