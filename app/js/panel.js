@@ -31,7 +31,7 @@ class Panel {
 					</tr>`)
 			}
 			document.getElementById("videoName").value = sanitize(downloader.uniqueName);
-			this.getData();
+			this.getDownloadItems();
 		} else {
 			showError("无效的视频链接！");
 			document.getElementById("videoUrl").classList.remove("is-valid");
@@ -39,8 +39,8 @@ class Panel {
 		}
 	}
 
-	getData() {
-		const { items } = downloader.prepareDownload();
+	getDownloadItems() {
+		const { items } = downloader.getDownloadItems();
 		document.querySelector("#success tbody").innerHTML = "";
 		items.forEach((part, index) => {
 			document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
@@ -66,25 +66,19 @@ class Panel {
 	}
 
 	downloadChecked() {
-		const { cid } = downloader;
-		const name = downloader.uniqueName;
+		const { cid, uniqueName } = downloader;
 		const downloadPath = document.getElementById("downloadPath").value;
-		const filename = document.getElementById("videoName").value || name;
-		let newDownload = false;
+		const filename = document.getElementById("videoName").value || uniqueName;
 		const videoRadio = [...document.getElementsByName('video')].filter(ele => ele.checked)[0];
 		const audioRadio = [...document.getElementsByName('audio')].filter(ele => ele.checked)[0];
 		if (!videoRadio || !audioRadio) {
 			showError("请分别选择一个视频和一个音频进行下载！");
 			return;
 		}
-		const parts = {
-			video: videoRadio.value,
-			audio: audioRadio.value
-		};
-		for (let part of Object.values(parts)) {
+		const promises = [videoRadio.value, audioRadio.value].map(part => {
 			const ext = mime.getExtension(downloader.items[part].mimeType);
 			const file = path.join(downloadPath, `${sanitize(filename)}-${part}.${ext}`);
-			const state = downloader.downloadByIndex(part, file, (progress, index) => {
+			const { status, size, task } = downloader.downloadByIndex(part, file, (progress, index) => {
 				const { speed, eta, percentage } = progress; //显示进度条
 				document.querySelectorAll(".speed")[index].textContent = Math.round(speed / 1e3) + "KB/s";
 				document.querySelectorAll(".eta")[index].textContent = `eta:${eta}s`;
@@ -96,8 +90,8 @@ class Panel {
 					ipcRenderer.send("length", downloader.tasks.filter(item => !item.finished).length);
 				}
 			});
-			if (state === "DUPLICATE") return;
-			const addon = state ? `从 ${Math.round(state.size / 1e6)}MB 处恢复的下载` : "";
+			if (status === "duplicate") return;
+			const addon = size ? `从 ${Math.round(size / 1e6)}MB 处恢复的下载` : "";
 			document.getElementById("download").insertAdjacentHTML("beforeend", `<span>${cid}-${part}</span>
 				<span class="speed"></span>
 				<span class="eta"></span>
@@ -107,10 +101,20 @@ class Panel {
 						0%
 					</div>
 				</div>`);
-			newDownload = true;
-		}
+			return task;
+		}).filter(Boolean);
 		ipcRenderer.send("length", downloader.tasks.filter(item => !item.finished).length);
-		if (!newDownload) showWarning("没有新的视频被下载！");
+		if (!promises.length) {
+			showWarning("没有新的音频/视频被下载！");
+			return;
+		}
+		Promise.all(promises).then(async () => {
+			if (promises.length !== 2) return;
+			const selection = await showMergeSelection();
+			if (selection === 0) {
+				// Merge video and audio
+			}
+		});
 	}
 }
 

@@ -112,24 +112,6 @@ ipcMain.on("open-dialog", (event, command) => {
 	});
 });
 
-ipcMain.on("show-error", (event, message) => {
-	dialog.showMessageBox({
-		type: "error",
-		title: "[Error]",
-		message
-	});
-});
-
-ipcMain.on("show-warning", (event, message) => {
-	dialog.showMessageBox({
-		type: "warning",
-		title: "[Warning]",
-		message
-	});
-});
-
-ipcMain.on("show-message", (event, message) => {
-	dialog.showMessageBox({
-		message
-	});
+ipcMain.handle("show-message", (event, message) => {
+	return dialog.showMessageBoxSync(JSON.parse(message));
 });

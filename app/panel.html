@@ -146,15 +146,35 @@ const { clipboard, ipcRenderer } = require("electron");
 let defaultPath = __dirname;
 
 function showMessage(message) {
-	ipcRenderer.send("show-message", message);
+	ipcRenderer.invoke("show-message", JSON.stringify({
+		message
+	}));
 }
 
 function showError(message) {
-	ipcRenderer.send("show-error", message);
+	ipcRenderer.invoke("show-message", JSON.stringify({
+		type: "error",
+		title: "[Error]",
+		message
+	}));
 }
 
 function showWarning(message) {
-	ipcRenderer.send("show-warning", message);
+	ipcRenderer.invoke("show-message", JSON.stringify({
+		type: "warning",
+		title: "[Warning]",
+		message
+	}));
+}
+
+async function showMergeSelection() {
+	const selection = await ipcRenderer.invoke("show-message", JSON.stringify({
+		type: "info",
+		title: "[Info]",
+		message: "音视频下载成功，要进行合并吗？",
+		buttons: ["是", "否"]
+	}));
+	return selection;
 }
 
 document.querySelectorAll("input[type=text]").forEach(element => {

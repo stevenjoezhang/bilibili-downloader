@@ -118,9 +118,9 @@ class Downloader {
 		return true;
 	}
 
-	prepareDownload() {
-		const { maxWidth, maxHeight, target: video } = downloader.parseVideo();
-		const audio = downloader.parseAudio();
+	getDownloadItems() {
+		const { maxWidth, maxHeight, target: video } = this.parseVideo();
+		const audio = this.parseAudio();
 		const items = [...video, ...audio];
 		this.items = items;
 		return {
@@ -163,7 +163,11 @@ class Downloader {
 	downloadByIndex(part, file, callback = () => {}) {
 		const url = this.items[part].baseUrl;
 
-		if (this.tasks.some(item => item.url === url)) return "DUPLICATE";
+		if (this.tasks.some(item => item.url === url)) {
+			return {
+				status: "duplicate"
+			};
+		}
 		this.tasks.push(new Task(url));
 		let state;
 		try {
@@ -183,9 +187,13 @@ class Downloader {
 			}
 		};
 		const stream = fs.createWriteStream(file, state ? { flags: "a" } : {});
-		this.download(options, stream, callback);
+		const downloadPromise = this.download(options, stream, callback);
 
-		return state;
+		return {
+			status: "success",
+			size: state ? state.size : 0,
+			task: downloadPromise
+		};
 	}
 
 	async download(options, stream, callback) {
