@@ -11,6 +11,9 @@ function ffmpegMerge(videoPath, audioPath, outputPath) {
         .outputOptions('-c:v copy')   // 保持视频编码
         .outputOptions('-c:a aac')    // 使用 AAC 音频编码
         .outputOptions('-strict experimental') // 启用实验特性
+        .on('progress', function(progress) {
+            console.log('当前进度: ' + progress.percent + '%');
+        })
         .on('end', function() {
             showMessage('合并完成');
         })
@@ -21,3 +24,5 @@ function ffmpegMerge(videoPath, audioPath, outputPath) {
 }
 
 module.exports = { ffmpegMerge };
+
+export {};

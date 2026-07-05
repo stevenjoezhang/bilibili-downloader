@@ -96,3 +96,5 @@ class LoginHelper {
 }
 
 module.exports = LoginHelper;
+
+export {};

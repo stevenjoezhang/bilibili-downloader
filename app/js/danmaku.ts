@@ -1,3 +1,4 @@
+// @ts-nocheck
 let danmakuArray;
 
 function getDanmaku() {

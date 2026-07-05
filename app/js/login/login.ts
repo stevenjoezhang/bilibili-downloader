@@ -4,6 +4,10 @@ const LoginHelper = require('./login-helper');
 // const { PropertyChangeAsync, ExecuteBackSpace, console, DictionaryResource } = require('./utils');
 
 class LoginService {
+    declare tokenSource;
+    declare qrcodeElement;
+    declare labelElement;
+
     constructor(element) {
         // this.eventAggregator = new EventEmitter();
         this.tokenSource = { token: false };
@@ -112,3 +116,5 @@ class LoginService {
 }
 
 module.exports = LoginService;
+
+export {};

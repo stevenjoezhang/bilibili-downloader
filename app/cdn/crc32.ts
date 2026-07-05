@@ -1,3 +1,4 @@
+// @ts-nocheck
 // https://github.com/bilibili-helper/bilibili-helper-o/blob/v1.2.21/src/js/libs/crc32.js
 
 const CRC32_POLY = 0xEDB88320;

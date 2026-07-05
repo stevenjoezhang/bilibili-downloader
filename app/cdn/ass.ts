@@ -1,3 +1,4 @@
+// @ts-nocheck
 // @name        bilibili ASS Danmaku Downloader
 // @namespace   https://github.com/tiansh
 // @description 以 ASS 格式下载 bilibili 的弹幕

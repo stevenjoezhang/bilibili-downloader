@@ -46,3 +46,5 @@ class LoginQR {
 }
 
 module.exports = LoginQR;
+
+export {};

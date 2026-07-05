@@ -5,7 +5,9 @@
   "description": "Yet another video downloader for Bilibili.",
   "main": "app/main.js",
   "scripts": {
-    "start": "electron ."
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "repository": "stevenjoezhang/bilibili-downloader",
   "keywords": [
@@ -32,6 +34,8 @@
     "tough-cookie": "^5.0.0"
   },
   "devDependencies": {
-    "electron": "34.0.2"
+    "@types/node": "^22.10.2",
+    "electron": "34.0.2",
+    "typescript": "^5.7.2"
   }
 }

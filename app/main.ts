@@ -68,7 +68,7 @@ ipcMain.on("length", (event, message) => {
 	length = message;
 });
 
-process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;
+process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true as unknown as string;
 
 // https://www.zhihu.com/question/51598623/answer/279834636
 ipcMain.on("show-context-menu", (event) => {
@@ -115,3 +115,5 @@ ipcMain.on("open-dialog", (event, command) => {
 ipcMain.handle("show-message", (event, message) => {
 	return dialog.showMessageBoxSync(JSON.parse(message));
 });
+
+export {};

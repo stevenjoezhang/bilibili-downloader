@@ -58,6 +58,10 @@ typings/
 .env
 .env.test
 
+# JavaScript emitted from TypeScript sources
+app/**/*.js
+app/**/*.js.map
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 

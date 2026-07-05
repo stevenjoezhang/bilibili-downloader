@@ -18,7 +18,7 @@ async function requestWeb(url, referer = null, method = 'GET', parameters = null
 		return '';
 	}
 
-	const headers = {
+	const headers: Record<string, string> = {
 		'User-Agent': USER_AGENT, // replace with actual user agent
 		'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
 		'accept-encoding': 'gzip, deflate, br'
@@ -66,6 +66,9 @@ async function requestWeb(url, referer = null, method = 'GET', parameters = null
 }
 
 class Task {
+	declare url;
+	declare finished;
+
 	constructor(url) {
 		this.url = url;
 		this.finished = false;
@@ -73,6 +76,15 @@ class Task {
 }
 
 class Downloader {
+	declare aid;
+	declare bvid;
+	declare pid;
+	declare cid;
+	declare videoData;
+	declare playUrl;
+	declare items;
+	declare tasks;
+
 	constructor() {
 		this.aid = -1;
 		this.bvid = -1;
@@ -228,3 +240,5 @@ class Downloader {
 }
 
 module.exports = { Task, Downloader };
+
+export {};
