@@ -92,3 +92,4 @@ dist/
 .DS_Store
 
 login_info*
+app/**/debug.json
