@@ -2,9 +2,10 @@
 
 [英文/English](README.EN.md)
 
-基于 Node.js 和 Electron 开发的 Bilibili 视频、弹幕下载器。
+基于 TypeScript 开发的 Bilibili 视频、弹幕下载器。支持 Electron 图形界面和命令行 TUI 两种模式。
 
-![](screenshot.png)
+![](screenshot/electron.png)
+![](screenshot/tui.png)
 
 ## 功能
 
