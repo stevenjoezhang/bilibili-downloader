@@ -2,8 +2,8 @@
 const path = require("path");
 const mime = require("mime");
 const sanitize = require("filenamify");
-const { Downloader } = require("./js/downloader.js");
-const { ffmpegMerge } = require("./js/merge.js");
+const { Downloader } = require("../common/downloader.js");
+const { ffmpegMerge } = require("../common/merge.js");
 
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
@@ -73,11 +73,13 @@ class Panel {
 		const filename = document.getElementById("videoName").value || uniqueName;
 		const videoRadio = [...document.getElementsByName('video')].filter(ele => ele.checked)[0];
 		const audioRadio = [...document.getElementsByName('audio')].filter(ele => ele.checked)[0];
-		if (!videoRadio || !audioRadio) {
-			showError("请分别选择一个视频和一个音频进行下载！");
+		const hasAudio = Boolean(document.getElementsByName('audio').length);
+		if (!videoRadio || (hasAudio && !audioRadio)) {
+			showError(hasAudio ? "请分别选择一个视频和一个音频进行下载！" : "请选择一个视频进行下载！");
 			return;
 		}
-		const promises = [videoRadio.value, audioRadio.value].map(part => {
+		const selectedParts = hasAudio ? [videoRadio.value, audioRadio.value] : [videoRadio.value];
+		const promises = selectedParts.map(part => {
 			const ext = mime.getExtension(downloader.items[part].mimeType);
 			const file = path.join(downloadPath, `${sanitize(filename)}-${part}.${ext}`);
 			const { status, size, task } = downloader.downloadByIndex(part, file, (progress, index) => {
@@ -115,7 +117,10 @@ class Panel {
 			const selection = await showMergeSelection();
 			if (selection === 0) {
 				// Merge video and audio
-				ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${sanitize(filename)}.mp4`));
+				ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${sanitize(filename)}.mp4`), {
+					onEnd: () => showMessage('合并完成'),
+					onError: (err) => showError('发生错误: ' + err.message)
+				}).catch(() => {});
 			}
 		});
 	}

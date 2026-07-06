@@ -1,6 +1,6 @@
 // /workspaces/downkyicore/DownKyi/ViewModels/ViewLoginViewModel.cs
-const LoginQR = require('./login-qr');
-const LoginHelper = require('./login-helper');
+const LoginQR = require('../../common/login/login-qr.js');
+const LoginHelper = require('../../common/login/login-helper.js');
 // const { PropertyChangeAsync, ExecuteBackSpace, console, DictionaryResource } = require('./utils');
 
 class LoginService {

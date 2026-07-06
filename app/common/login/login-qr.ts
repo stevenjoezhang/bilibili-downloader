@@ -1,5 +1,6 @@
 // /workspaces/downkyicore/DownKyi.Core/BiliApi/Login/LoginHelper.cs
 const QRCode = require('qrcode');
+const fetch = require('node-fetch');
 
 class LoginQR {
     static async getLoginUrl() {
@@ -40,6 +41,16 @@ class LoginQR {
             return qrCode;
         } catch (error) {
             console.error('生成二维码发生异常:', error);
+            return null;
+        }
+    }
+
+    static async getLoginQRCodeTerminalFromUrl(url) {
+        try {
+            const qrCode = await QRCode.toString(url, { type: 'terminal', small: true });
+            return qrCode;
+        } catch (error) {
+            console.error('生成终端二维码发生异常:', error);
             return null;
         }
     }

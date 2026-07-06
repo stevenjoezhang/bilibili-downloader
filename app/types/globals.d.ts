@@ -55,6 +55,10 @@ declare module "qrcode" {
 		text: string,
 		options?: { width?: number; height?: number }
 	): Promise<string>;
+	export function toString(
+		text: string,
+		options?: { type?: string; small?: boolean }
+	): Promise<string>;
 }
 
 declare function getRandomBuvid3(): string;

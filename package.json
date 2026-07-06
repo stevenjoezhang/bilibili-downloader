@@ -3,10 +3,11 @@
   "version": "1.9.0",
   "private": true,
   "description": "Yet another video downloader for Bilibili.",
-  "main": "app/main.js",
+  "main": "app/electron/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "npm run build && electron .",
+    "tui": "npm run build && node app/tui/main.js",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "repository": "stevenjoezhang/bilibili-downloader",

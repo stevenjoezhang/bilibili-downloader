@@ -6,6 +6,7 @@ const path = require('path');
 const { CookieJar, Cookie } = require('tough-cookie');
 
 const LOCAL_LOGIN_INFO = path.join(__dirname, 'login_info');
+const LEGACY_LOGIN_INFO = path.join(__dirname, '../../js/login/login_info');
 // const SECRET_KEY = 'EsOat*^y1QR!&0J6';
 
 class LoginHelper {
@@ -76,18 +77,21 @@ class LoginHelper {
             fs.writeFileSync(tempFile, cookieJSON);
             fs.copyFileSync(tempFile, LOCAL_LOGIN_INFO);
             fs.unlinkSync(tempFile);
+            return true;
         } catch (err) {
             console.error('SaveLoginInfoCookies()发生异常:', err);
+            return false;
         }
     }
 
     static getLoginInfoCookies() {
-        if (!fs.existsSync(LOCAL_LOGIN_INFO)) {
+        const loginInfoFile = fs.existsSync(LOCAL_LOGIN_INFO) ? LOCAL_LOGIN_INFO : LEGACY_LOGIN_INFO;
+        if (!fs.existsSync(loginInfoFile)) {
             return null;
         }
 
         const tempFile = `${LOCAL_LOGIN_INFO}-${Date.now()}`;
-        fs.copyFileSync(LOCAL_LOGIN_INFO, tempFile);
+        fs.copyFileSync(loginInfoFile, tempFile);
 
         const cookieJar = CookieJar.fromJSON(fs.readFileSync(tempFile, 'utf-8'));
         fs.unlinkSync(tempFile);
