@@ -1,8 +1,8 @@
 const fs = require("fs");
-const fetch = require("node-fetch");
+const { fetchUrl } = require("./modules.js");
 
 async function fetchDanmakuXml(cid) {
-	const response = await fetch(`https://comment.bilibili.com/${cid}.xml`);
+	const response = await fetchUrl(`https://comment.bilibili.com/${cid}.xml`);
 	if (!response.ok) {
 		throw new Error(`Failed to download danmaku. Status code: ${response.status}`);
 	}

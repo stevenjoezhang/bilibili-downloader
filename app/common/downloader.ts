@@ -3,9 +3,9 @@ const crypto = require("crypto");
 const { pipeline } = require('stream');
 const { promisify } = require('util');
 const progress = require("progress-stream");
-const fetch = require('node-fetch');
 const { CookieJar } = require('tough-cookie');
 const LoginHelper = require('./login/login-helper');
+const { fetchUrl } = require('./modules.js');
 const streamPipeline = promisify(pipeline);
 
 const REGEX_PLAY_INFO = /<script>window\.__playinfo__=(.*?)<\/script>/;
@@ -84,7 +84,7 @@ async function requestWeb(url, referer = null, method = 'GET', parameters = null
 	}
 
 	try {
-		const response = await fetch(url, requestOptions);
+		const response = await fetchUrl(url, requestOptions);
 
 		let html = await response.text();
 
@@ -98,7 +98,7 @@ async function requestWeb(url, referer = null, method = 'GET', parameters = null
 async function requestJson(url, referer = BILIBILI_URL, retry = 3) {
 	if (retry <= 0) return null;
 	try {
-		const response = await fetch(url, {
+		const response = await fetchUrl(url, {
 			redirect: 'follow',
 			headers: createHeaders(url, referer)
 		});
@@ -422,7 +422,7 @@ class Downloader {
 
 		let { url, headers } = options;
 
-		const response = await fetch(url, {
+		const response = await fetchUrl(url, {
 			redirect: 'follow',
 			headers
 		});

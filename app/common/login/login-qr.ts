@@ -1,11 +1,11 @@
 // /workspaces/downkyicore/DownKyi.Core/BiliApi/Login/LoginHelper.cs
 const QRCode = require('qrcode');
-const fetch = require('node-fetch');
+const { fetchUrl } = require('../modules.js');
 
 class LoginQR {
     static async getLoginUrl() {
         try {
-            const response = await fetch('https://passport.bilibili.com/x/passport-login/web/qrcode/generate');
+            const response = await fetchUrl('https://passport.bilibili.com/x/passport-login/web/qrcode/generate');
             const data = await response.json();
             return data;
         } catch (error) {
@@ -16,7 +16,7 @@ class LoginQR {
 
     static async getLoginStatus(qrcodeKey, goUrl = 'https://www.bilibili.com') {
         try {
-            const response = await fetch(`https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${qrcodeKey}`);
+            const response = await fetchUrl(`https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key=${qrcodeKey}`);
             const data = await response.json();
             return data;
         } catch (error) {

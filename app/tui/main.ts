@@ -2,13 +2,12 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const readline = require("readline");
-const mime = require("mime");
-const sanitize = require("filenamify");
 const { Downloader } = require("../common/downloader.js");
 const { ffmpegMerge } = require("../common/merge.js");
 const { saveDanmakuXml } = require("../common/danmaku.js");
 const LoginQR = require("../common/login/login-qr.js");
 const LoginHelper = require("../common/login/login-helper.js");
+const { getMimeExtension, sanitizeFilename } = require("../common/modules.js");
 
 const BAR_WIDTH = 28;
 
@@ -169,15 +168,19 @@ async function downloadSelection(rl, downloader, items, downloadPath, filename, 
 	await fs.promises.mkdir(downloadPath, { recursive: true });
 	const selected = [videoIndex, audioIndex].filter(index => index !== null).map(index => {
 		const item = items[index];
-		const ext = mime.getExtension(item.mimeType) || (item.type === "audio" ? "m4a" : "mp4");
 		return {
 			index,
 			item,
 			label: item.type,
-			file: path.join(downloadPath, `${sanitize(filename)}-${index}.${ext}`),
+			file: "",
 			progress: { percentage: 0, speed: 0, eta: 0 }
 		};
 	});
+	const safeFilename = await sanitizeFilename(filename);
+	for (const row of selected) {
+		const ext = await getMimeExtension(row.item.mimeType) || (row.item.type === "audio" ? "m4a" : "mp4");
+		row.file = path.join(downloadPath, `${safeFilename}-${row.index}.${ext}`);
+	}
 
 	let lastRender = 0;
 	const render = () => {
@@ -217,7 +220,7 @@ async function downloadSelection(rl, downloader, items, downloadPath, filename, 
 	if (shouldMerge !== "n") {
 		let mergeProgress = { percent: 0 };
 		renderDownloadProgress("合并中", selected, mergeProgress);
-		await ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${sanitize(filename)}.mp4`), {
+		await ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${safeFilename}.mp4`), {
 			onProgress: progress => {
 				mergeProgress = progress || mergeProgress;
 				renderDownloadProgress("合并中", selected, mergeProgress);
@@ -225,7 +228,7 @@ async function downloadSelection(rl, downloader, items, downloadPath, filename, 
 		});
 		renderDownloadProgress("合并完成", selected, { percent: 100 });
 		console.log("");
-		console.log(`输出: ${path.join(downloadPath, `${sanitize(filename)}.mp4`)}`);
+		console.log(`输出: ${path.join(downloadPath, `${safeFilename}.mp4`)}`);
 	}
 	return paths;
 }
@@ -242,7 +245,7 @@ async function handleVideo(rl, videoUrl) {
 
 	const { items } = downloader.getDownloadItems();
 	const defaultPath = path.join(os.homedir(), "Downloads");
-	const defaultName = sanitize(downloader.uniqueName);
+	const defaultName = await sanitizeFilename(downloader.uniqueName);
 
 	clearScreen();
 	renderHeader();
@@ -254,7 +257,8 @@ async function handleVideo(rl, videoUrl) {
 	const filename = await ask(rl, "文件名", defaultName);
 	const shouldSaveDanmaku = (await ask(rl, "是否下载弹幕 XML？[y/N]", "N")).toLowerCase();
 	if (shouldSaveDanmaku === "y") {
-		const file = path.join(downloadPath, `${sanitize(filename)}-${downloader.cid}.xml`);
+		const safeFilename = await sanitizeFilename(filename);
+		const file = path.join(downloadPath, `${safeFilename}-${downloader.cid}.xml`);
 		await fs.promises.mkdir(downloadPath, { recursive: true });
 		await saveDanmakuXml(downloader.cid, file);
 		console.log(`弹幕已保存: ${file}`);

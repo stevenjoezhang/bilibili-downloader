@@ -1,9 +1,8 @@
 // @ts-nocheck
 const path = require("path");
-const mime = require("mime");
-const sanitize = require("filenamify");
 const { Downloader } = require("../common/downloader.js");
 const { ffmpegMerge } = require("../common/merge.js");
+const { getMimeExtension, getMimeType, sanitizeFilename } = require("../common/modules.js");
 
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
@@ -22,7 +21,8 @@ class Panel {
 			document.querySelector("#nav .nav-link").click();
 			document.querySelector("#tab-pane-1 tbody").innerHTML = "";
 			for (let [key, value] of Object.entries(data)) {
-				if (mime.getType(value) && mime.getType(value).includes("image")) { //解析图片地址
+				const mimeType = await getMimeType(value);
+				if (mimeType && mimeType.includes("image")) { //解析图片地址
 					value = `<a href="${value}" download=""><img src="${value}"></a>`;
 				} else if (typeof value === "object") {
 					value = `<pre>${JSON.stringify(value, null, 2)}</pre>`;
@@ -32,7 +32,7 @@ class Panel {
 						<td>${value}</td>
 					</tr>`)
 			}
-			document.getElementById("videoName").value = sanitize(downloader.uniqueName);
+			document.getElementById("videoName").value = await sanitizeFilename(downloader.uniqueName);
 			this.getDownloadItems();
 		} else {
 			showError("无效的视频链接！");
@@ -67,7 +67,7 @@ class Panel {
 		});
 	}
 
-	downloadChecked() {
+	async downloadChecked() {
 		const { cid, uniqueName } = downloader;
 		const downloadPath = document.getElementById("downloadPath").value;
 		const filename = document.getElementById("videoName").value || uniqueName;
@@ -79,9 +79,10 @@ class Panel {
 			return;
 		}
 		const selectedParts = hasAudio ? [videoRadio.value, audioRadio.value] : [videoRadio.value];
-		const promises = selectedParts.map(part => {
-			const ext = mime.getExtension(downloader.items[part].mimeType);
-			const file = path.join(downloadPath, `${sanitize(filename)}-${part}.${ext}`);
+		const safeFilename = await sanitizeFilename(filename);
+		const promises = await Promise.all(selectedParts.map(async part => {
+			const ext = await getMimeExtension(downloader.items[part].mimeType);
+			const file = path.join(downloadPath, `${safeFilename}-${part}.${ext}`);
 			const { status, size, task } = downloader.downloadByIndex(part, file, (progress, index) => {
 				const { speed, eta, percentage } = progress; //显示进度条
 				document.querySelectorAll(".speed")[index].textContent = Math.round(speed / 1e3) + "KB/s";
@@ -106,18 +107,19 @@ class Panel {
 					</div>
 				</div>`);
 			return task;
-		}).filter(Boolean);
+		}));
+		const filteredPromises = promises.filter(Boolean);
 		ipcRenderer.send("length", downloader.tasks.filter(item => !item.finished).length);
-		if (!promises.length) {
+		if (!filteredPromises.length) {
 			showWarning("没有新的音频/视频被下载！");
 			return;
 		}
-		Promise.all(promises).then(async (paths) => {
-			if (promises.length !== 2) return;
+		Promise.all(filteredPromises).then(async (paths) => {
+			if (filteredPromises.length !== 2) return;
 			const selection = await showMergeSelection();
 			if (selection === 0) {
 				// Merge video and audio
-				ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${sanitize(filename)}.mp4`), {
+				ffmpegMerge(paths[0], paths[1], path.join(downloadPath, `${safeFilename}.mp4`), {
 					onEnd: () => showMessage('合并完成'),
 					onError: (err) => showError('发生错误: ' + err.message)
 				}).catch(() => {});

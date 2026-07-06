@@ -1,7 +1,5 @@
 // /workspaces/downkyicore/DownKyi.Core/BiliApi/Login/LoginHelper.cs
 const fs = require('fs');
-// Required to use response.headers.raw
-const fetch = require('node-fetch');
 const path = require('path');
 const { CookieJar, Cookie } = require('tough-cookie');
 
