@@ -41,32 +41,13 @@ npm start
 ```
 如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/BV1z4411p7Lq ），按照提示即可下载视频。
 
-也可以启动命令行 TUI 版本：
+也可以启动命令行 TUI 版本，启动前会自动编译：
 ```bash
 npm run tui
 ```
 在 TUI 中可以扫码登录、输入视频链接、解析并选择音视频流、下载弹幕、查看下载进度，并在下载完成后选择是否自动合并。登录凭据与图形界面共用。
 
-本项目源码使用 TypeScript。常用脚本如下：
-```bash
-# 编译 TypeScript
-npm run build
-
-# 只做类型检查，不输出 JavaScript
-npm run typecheck
-
-# 启动图形界面，启动前会自动编译
-npm start
-
-# 启动 TUI，启动前会自动编译
-npm run tui
-```
-
-下载完成后，可以使用 ffmpeg 将视频和音频合并为一个文件：
-```bash
-ffmpeg -i input_video.mp4 -i input_audio.m4a -c:v copy -c:a aac output_file.mp4
-```
-见 https://trac.ffmpeg.org/wiki/Concatenate
+本程序支持自动使用 ffmpeg 将视频和音频合并为一个文件。
 
 ## 相关项目
 
