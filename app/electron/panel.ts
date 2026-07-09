@@ -1,8 +1,9 @@
 // @ts-nocheck
 const path = require("path");
-const { Downloader } = require("../common/downloader.js");
-const { ffmpegMerge } = require("../common/merge.js");
-const { getMimeExtension, getMimeType, sanitizeFilename } = require("../common/modules.js");
+const appDir = path.basename(__dirname) === "electron" ? path.dirname(__dirname) : __dirname;
+const { Downloader } = require(path.join(appDir, "common/downloader.js"));
+const { ffmpegMerge } = require(path.join(appDir, "common/merge.js"));
+const { getMimeExtension, getMimeType, sanitizeFilename } = require(path.join(appDir, "common/modules.js"));
 
 // downloader is used by `danmaku.js`
 const downloader = new Downloader();
