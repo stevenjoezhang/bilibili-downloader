@@ -35,7 +35,7 @@
     "tough-cookie": "^6.0.1"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.0.0",
     "electron": "43.0.0",
     "typescript": "^5.7.2"
   }
