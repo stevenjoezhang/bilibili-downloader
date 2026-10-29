@@ -7,16 +7,40 @@ class LoginService {
     declare tokenSource;
     declare qrcodeElement;
     declare labelElement;
+    declare logoutElement;
 
     constructor(element) {
         // this.eventAggregator = new EventEmitter();
         this.tokenSource = { token: false };
         this.qrcodeElement = element.querySelector('img');
         this.labelElement = element.querySelector('label');
+        this.logoutElement = document.getElementById('logout');
+    }
+
+    // 标记为已登录，并显示「退出登录」链接
+    setLoggedIn() {
+        this.qrcodeElement.style.display = 'none';
+        this.labelElement.textContent = '已登录';
+        this.logoutElement?.classList.remove('d-none');
+    }
+
+    // 重置为未登录状态，重新显示二维码
+    async logout() {
+        LoginHelper.logout();
+        this.logoutElement?.classList.add('d-none');
+        this.labelElement.textContent = '请先使用App扫码登录，才能下载高清视频';
+        this.qrcodeElement.style.display = '';
+        await this.login();
     }
 
     async login() {
         try {
+            // 已有有效的登录信息时，无需再扫码
+            if (LoginHelper.getLoginInfoCookies()) {
+                this.setLoggedIn();
+                return;
+            }
+
             const loginUrl = await LoginQR.getLoginUrl();
             if (!loginUrl || loginUrl.code !== 0) {
                 // ExecuteBackSpace();
@@ -38,8 +62,7 @@ class LoginService {
 
             await this.getLoginStatus(loginUrl.data.qrcode_key);
 
-            this.qrcodeElement.style.display = 'none';
-            this.labelElement.textContent = '登录成功';
+            this.setLoggedIn();
         } catch (e) {
             console.error(`Login()发生异常: ${e}`);
             console.error('Login', e);
@@ -59,15 +82,11 @@ class LoginService {
 
                 switch (loginStatus.data.code) {
                     case 86038:
-                        // this.eventAggregator.emit('message', DictionaryResource.getString('LoginTimeOut'));
-                        // console.info('Login', DictionaryResource.getString('LoginTimeOut'));
-
+                        // 二维码已过期，重新获取，避免误显示「登录成功」
                         this.tokenSource.token = true;
-
-                        // await PropertyChangeAsync(async () => {
-                        //     this.tokenSource.token = false;
-                        //     await this.login();
-                        // });
+                        this.qrcodeElement.style.display = 'none';
+                        this.labelElement.textContent = '二维码已过期，正在刷新…';
+                        setTimeout(() => this.login(), 1000);
                         break;
 
                     case 86101:

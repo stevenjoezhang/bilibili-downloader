@@ -82,6 +82,15 @@ class LoginHelper {
         }
     }
 
+    // 删除本地登录信息，退出登录
+    static logout() {
+        for (const file of [LOCAL_LOGIN_INFO, LEGACY_LOGIN_INFO]) {
+            if (fs.existsSync(file)) {
+                fs.unlinkSync(file);
+            }
+        }
+    }
+
     static getLoginInfoCookies() {
         const loginInfoFile = fs.existsSync(LOCAL_LOGIN_INFO) ? LOCAL_LOGIN_INFO : LEGACY_LOGIN_INFO;
         if (!fs.existsSync(loginInfoFile)) {

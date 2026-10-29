@@ -39,7 +39,7 @@ function danmakuFilter(text, T1, T2, ST1, ST2, user) {
 			<td>${sendTime}</td>
 			<td>${target.text}</td>
 			<td>
-				<button class="btn btn-link" onclick="searchUser(event)">${target.user}</button>
+				<button class="btn-link" onclick="searchUser(event)">${target.user}</button>
 			</td>
 		</tr>`);
 	}

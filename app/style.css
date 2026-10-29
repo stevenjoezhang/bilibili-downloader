@@ -10,8 +10,8 @@ table img {
 table pre {
 	white-space: pre-wrap;
 }
-#bg {
-	width: 100%;
+aside {
+	background: url(bg.png) bottom center / contain no-repeat;
 }
 #download {
 	user-select: none;

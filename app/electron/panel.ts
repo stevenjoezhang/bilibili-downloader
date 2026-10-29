@@ -19,6 +19,7 @@ class Panel {
 			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 			// console.log("VIDEO INFO", data);
 			document.getElementById("nav").classList.remove("d-none");
+			document.getElementById("mainHelp").classList.add("d-none");
 			document.querySelector("#nav .nav-link").click();
 			document.querySelector("#tab-pane-1 tbody").innerHTML = "";
 			for (let [key, value] of Object.entries(data)) {
@@ -44,19 +45,31 @@ class Panel {
 
 	getDownloadItems() {
 		const { items } = downloader.getDownloadItems();
-		document.querySelector("#success tbody").innerHTML = "";
-		items.forEach((part, index) => {
-			document.querySelector("#success tbody").insertAdjacentHTML("beforeend", `<tr>
+		const videoItems = items.filter(part => part.type === "video");
+		const audioItems = items.filter(part => part.type === "audio");
+		const videoTbody = document.querySelector("#success > table tbody");
+		const audioTbody = document.querySelector("#audioSection table tbody");
+		videoTbody.innerHTML = "";
+		audioTbody.innerHTML = "";
+		document.getElementById("audioSection").classList.toggle("d-none", audioItems.length === 0);
+		items.forEach((part) => {
+			// value 使用在整个 items 中的下标，与 downloadChecked 的取值逻辑保持一致
+			const radio = `<input class="radio" type="radio" name="${part.type}" value="${items.indexOf(part)}">`;
+			const row = part.type === "video"
+				? `<tr>
 							<td>${part.mimeType}</td>
 							<td>${part.codecs}</td>
 							<td>${part.quality || ''}</td>
 							<td>${part.bandwidth}</td>
-							<td>
-								<div class="form-check">
-									<input class="form-check-input" type="radio" name="${part.type}" value="${index}">
-								</div>
-							</td>
-						</tr>`);
+							<td>${radio}</td>
+						</tr>`
+				: `<tr>
+							<td>${part.mimeType}</td>
+							<td>${part.codecs}</td>
+							<td>${part.bandwidth}</td>
+							<td>${radio}</td>
+						</tr>`;
+			(part.type === "video" ? videoTbody : audioTbody).insertAdjacentHTML("beforeend", row);
 		});
 		document.querySelectorAll("#success tbody tr").forEach(tr => {
 			tr.addEventListener("click", (e) => {
@@ -75,9 +88,16 @@ class Panel {
 		const videoRadio = [...document.getElementsByName('video')].filter(ele => ele.checked)[0];
 		const audioRadio = [...document.getElementsByName('audio')].filter(ele => ele.checked)[0];
 		const hasAudio = Boolean(document.getElementsByName('audio').length);
+		const wantXml = document.getElementById("danmakuXml").checked;
+		const wantAss = document.getElementById("danmakuAss").checked;
+		if (wantXml) xml();
+		if (wantAss) ass();
 		if (!videoRadio || (hasAudio && !audioRadio)) {
-			showError(hasAudio ? "请分别选择一个视频和一个音频进行下载！" : "请选择一个视频进行下载！");
-			return;
+			if (!wantXml && !wantAss) {
+				showError(hasAudio ? "请分别选择一个视频和一个音频进行下载！" : "请选择一个视频进行下载！");
+				return;
+			}
+			return; // 仅下载弹幕
 		}
 		const selectedParts = hasAudio ? [videoRadio.value, audioRadio.value] : [videoRadio.value];
 		const safeFilename = await sanitizeFilename(filename);

@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/stevenjoezhang/bilibili-downloader",
   "dependencies": {
-    "bootstrap": "^5.3.3",
+    "bootstrap": "6.0.0-alpha.1",
     "ffmpeg-static": "^5.2.0",
     "filenamify": "^7.0.2",
     "fluent-ffmpeg": "^2.1.3",
