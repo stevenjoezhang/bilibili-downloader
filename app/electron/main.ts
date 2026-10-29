@@ -7,7 +7,7 @@ function createPanel() {
 
 	const mainWindow = new BrowserWindow({
 		width         : 1000,
-		minWidth      : 760,
+		minWidth      : 700,
 		height        : screen.getPrimaryDisplay().workAreaSize.height,
 		minHeight     : 600,
 		fullscreenable: false,

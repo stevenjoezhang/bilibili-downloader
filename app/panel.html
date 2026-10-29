@@ -10,14 +10,14 @@
 <body>
 <div class="d-flex vh-100">
 	<aside class="d-flex flex-column flex-shrink-0 p-7 border-end" style="width: 320px;">
-		<h1 class="fs-4xl mb-5">Mimi Downloader</h1>
-		<p id="help" class="fg-secondary">欢迎使用米米下载器，轻松下载视频、弹幕</p>
+		<h1 class="fs-2xl mb-5">Mimi Downloader</h1>
+		<p id="help" class="fg-secondary">轻松下载视频、弹幕</p>
 		<div class="mb-5" id="login">
 			<div class="d-flex align-items-center gap-3">
 				<label class="form-label fw-bold mb-0">请先使用App扫码登录，才能下载高清视频</label>
 				<a href="#" id="logout" class="d-none" onclick="logout(); return false;">退出登录</a>
 			</div>
-			<img src="" class="w-100" style="max-width: 220px;">
+			<img src="" class="w-100" style="max-width: 220px; display: none;">
 		</div>
 		<div class="mb-5">
 			<label class="form-label fw-bold">视频链接</label>
@@ -32,7 +32,6 @@
 		<div id="mainHelp" class="d-flex flex-column justify-content-center align-items-center h-100 text-center">
 			<h2 class="fs-xl fw-bold mb-5">开始使用</h2>
 			<p class="fs-md fg-secondary mb-5">请填写视频链接（即视频播放界面的 URL），<br>然后点击左侧「获取下载链接」进行下一步。</p>
-			<p class="fs-sm fg-secondary">若视频有分p，请在链接中带上 ?p= 参数</p>
 		</div>
 		<ul class="nav nav-tabs d-none" id="nav" role="tablist">
 			<li class="nav-item" role="presentation">
@@ -248,7 +247,7 @@ function help() {
 }
 
 function about() {
-	showMessage(`Mimi Downloader Ver ${require("../package.json").version}\n\nWe are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}. Powered by Mimi.`);
+	showMessage(`欢迎使用米米下载器\n\nMimi Downloader Ver ${require("../package.json").version}. We are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}.`);
 }
 
 function openDialog() {

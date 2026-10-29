@@ -4,14 +4,14 @@ const LoginHelper = require('../../common/login/login-helper.js');
 // const { PropertyChangeAsync, ExecuteBackSpace, console, DictionaryResource } = require('./utils');
 
 class LoginService {
-    declare tokenSource;
     declare qrcodeElement;
     declare labelElement;
     declare logoutElement;
+    declare pollId;
 
     constructor(element) {
         // this.eventAggregator = new EventEmitter();
-        this.tokenSource = { token: false };
+        this.pollId = 0;
         this.qrcodeElement = element.querySelector('img');
         this.labelElement = element.querySelector('label');
         this.logoutElement = document.getElementById('logout');
@@ -29,7 +29,7 @@ class LoginService {
         LoginHelper.logout();
         this.logoutElement?.classList.add('d-none');
         this.labelElement.textContent = '请先使用App扫码登录，才能下载高清视频';
-        this.qrcodeElement.style.display = '';
+        this.qrcodeElement.style.display = 'none'; // 新二维码生成后再显示
         await this.login();
     }
 
@@ -41,40 +41,60 @@ class LoginService {
                 return;
             }
 
+            // 每次登录递增代际号，使旧的轮询循环自行退出
+            const pollId = ++this.pollId;
+
             const loginUrl = await LoginQR.getLoginUrl();
-            if (!loginUrl || loginUrl.code !== 0) {
-                // ExecuteBackSpace();
+            if (!loginUrl || loginUrl.code !== 0 || !loginUrl.data || !loginUrl.data.url) {
+                this.labelElement.textContent = '获取二维码失败，正在重试…';
+                setTimeout(() => {
+                    if (this.pollId === pollId) {
+                        this.login();
+                    }
+                }, 5000);
                 return;
             }
 
-            if (!loginUrl.data || !loginUrl.data.url) {
-                // this.eventAggregator.emit('message', DictionaryResource.getString('GetLoginUrlFailed'));
+            const qrCode = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
+            if (!qrCode) {
+                this.labelElement.textContent = '二维码生成失败，正在重试…';
+                setTimeout(() => {
+                    if (this.pollId === pollId) {
+                        this.login();
+                    }
+                }, 5000);
                 return;
             }
-
-            // await PropertyChangeAsync(async () => {
-            //     this.loginQrCode = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
-            // });
-            this.qrcodeElement.src = await LoginQR.getLoginQRCodeFromUrl(loginUrl.data.url);
+            this.qrcodeElement.src = qrCode;
+            this.qrcodeElement.style.display = '';
+            this.labelElement.textContent = '请先使用App扫码登录，才能下载高清视频';
 
             // console.log(loginUrl.data.url + '\n');
             // console.debug('Login', loginUrl.data.url);
 
-            await this.getLoginStatus(loginUrl.data.qrcode_key);
+            const loggedIn = await this.getLoginStatus(loginUrl.data.qrcode_key, pollId);
 
-            this.setLoggedIn();
+            // 仅在真正扫码成功时显示「已登录」；二维码过期时已由 getLoginStatus 自行安排重试
+            if (loggedIn) {
+                this.setLoggedIn();
+            }
         } catch (e) {
             console.error(`Login()发生异常: ${e}`);
             console.error('Login', e);
         }
     }
 
-    async getLoginStatus(oauthKey) {
+    // 轮询扫码状态，返回是否登录成功；二维码过期时自行安排重试并返回 false
+    async getLoginStatus(oauthKey, pollId) {
         while (true) {
             await new Promise(resolve => setTimeout(resolve, 1000));
+            // 已有新一轮登录流程，退出过期的轮询
+            if (this.pollId !== pollId) {
+                return false;
+            }
             try {
                 const loginStatus = await LoginQR.getLoginStatus(oauthKey);
-                if (!loginStatus) {
+                if (!loginStatus || !loginStatus.data) {
                     continue;
                 }
 
@@ -82,12 +102,16 @@ class LoginService {
 
                 switch (loginStatus.data.code) {
                     case 86038:
-                        // 二维码已过期，重新获取，避免误显示「登录成功」
-                        this.tokenSource.token = true;
+                        // 二维码已过期，重新获取；返回 false，不显示「已登录」
                         this.qrcodeElement.style.display = 'none';
                         this.labelElement.textContent = '二维码已过期，正在刷新…';
-                        setTimeout(() => this.login(), 1000);
-                        break;
+                        setTimeout(() => {
+                            // 若期间用户退出登录或已有新流程，不再重试
+                            if (this.pollId === pollId) {
+                                this.login();
+                            }
+                        }, 1000);
+                        return false;
 
                     case 86101:
                         // 未扫码
@@ -95,37 +119,23 @@ class LoginService {
 
                     case 86090:
                         // 已扫码，未确认
-                        // await PropertyChangeAsync(() => {
-                        //     this.loginQrCodeStatus = true;
-                        //     this.loginQrCodeOpacity = 0.3;
-                        // });
+                        this.labelElement.textContent = '已扫码，请在手机上确认';
                         break;
 
-                    case 0:
-                        // 确认登录
-                        // this.eventAggregator.emit('message', '登陆成功');
-
+                    case 0: {
+                        // 确认登录；保存失败不能假装已登录
+                        let saved = false;
                         try {
-                            const isSucceed = await LoginHelper.saveLoginInfoCookies(loginStatus.data.url);
-                            if (!isSucceed) {
-                                // this.eventAggregator.emit('message', DictionaryResource.getString('LoginFailed'));
-                                // console.error('Login', DictionaryResource.getString('LoginFailed'));
-                            }
+                            saved = await LoginHelper.saveLoginInfoCookies(loginStatus.data.url);
                         } catch (e) {
                             console.error(`PageLogin 保存登录信息发生异常: ${e}`);
-                            console.error(e);
-                            // this.eventAggregator.emit('message', DictionaryResource.getString('LoginFailed'));
                         }
-
-                        // await new Promise(resolve => setTimeout(resolve, 3000));
-                        // await PropertyChangeAsync(ExecuteBackSpace);
-                        break;
-                }
-
-                if (this.tokenSource.token) {
-                    console.log('停止Login线程，跳出while循环');
-                    console.debug('Login', '登录操作结束');
-                    break;
+                        if (!saved) {
+                            this.labelElement.textContent = '登录信息保存失败，请重新扫码';
+                            return false;
+                        }
+                        return true;
+                    }
                 }
             } catch (error) {
                 console.error(`GetLoginStatus()发生异常: ${error}`);
