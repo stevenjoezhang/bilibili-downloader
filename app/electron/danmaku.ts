@@ -1,8 +1,16 @@
 // @ts-nocheck
+// 注意：本文件通过 <script> 标签加载：
+// 1. require 相对页面(panel.html)解析，引用项目内模块必须用 __dirname 拼绝对路径
+// 2. 顶层 const/let 与其他 <script>（如 panel.js 的 path）共享作用域，命名不能冲突
+const danmakuModules = (function () {
+	const path = require("path");
+	const appDir = path.basename(__dirname) === "electron" ? path.dirname(__dirname) : __dirname;
+	return require(path.join(appDir, "common/modules.js"));
+})();
 let danmakuArray;
 
 function getDanmaku() {
-	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
+	danmakuModules.fetchUrl(`https://comment.bilibili.com/${downloader.cid}.xml`)
 		.then(response => response.text())
 		.then(result => {
 			const parser = new DOMParser();
@@ -72,49 +80,49 @@ function searchUser(event) {
 	ipcRenderer.send("open-external", url);
 }
 
-function xml() {
-	blobDownload(`https://comment.bilibili.com/${downloader.cid}.xml`, downloader.cid + ".xml");
+// 弹幕保存路径与视频/音频一致：下载路径 + 文件名（含扩展名）
+async function getDanmakuPath(ext) {
+	const path = require("path");
+	const { sanitizeFilename } = danmakuModules;
+	const downloadPath = document.getElementById("downloadPath").value || defaultPath;
+	const filename = document.getElementById("videoName").value || downloader.uniqueName;
+	const safeFilename = await sanitizeFilename(filename);
+	return path.join(downloadPath, `${safeFilename}.${ext}`);
 }
 
-function ass() {
+async function xml() {
+	try {
+		const response = await danmakuModules.fetchUrl(`https://comment.bilibili.com/${downloader.cid}.xml`);
+		const result = await response.text();
+		const file = await getDanmakuPath("xml");
+		require("fs").writeFileSync(file, result);
+		showMessage(`弹幕已保存到 ${file}`);
+	}
+	catch (error) {
+		showError("弹幕下载失败！");
+	}
+}
+
+async function ass() {
 	//使用fetch是因为bilibili采用了content-encoding:deflate压缩，若使用https.get需要zlib库解压，较为复杂
-	fetch(`https://comment.bilibili.com/${downloader.cid}.xml`)
-		.then(response => response.text())
-		.then(result => {
-			const danmaku = parseFile(result),
-				ass = generateASS(setPosition(danmaku), {
-					title: document.title,
-					ori: downloader.cid,
-				});
-			assDownload(ass, downloader.cid + ".ass"); //"\ufeff" +
-		})
-		.catch(error => showError("弹幕下载失败！"));
+	try {
+		const response = await danmakuModules.fetchUrl(`https://comment.bilibili.com/${downloader.cid}.xml`);
+		const result = await response.text();
+		const danmaku = parseFile(result),
+			ass = generateASS(setPosition(danmaku), {
+				title: document.title,
+				ori: downloader.cid,
+			});
+		const file = await getDanmakuPath("ass");
+		require("fs").writeFileSync(file, ass);
+		showMessage(`弹幕已保存到 ${file}`);
+	}
+	catch (error) {
+		showError("弹幕下载失败！");
+	}
 }
 
 function parseFile(content) {
 	content = content.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
 	return parseXML(content);
-}
-
-function assDownload(data, filename) {
-	const blob = new Blob([data], {
-			type: "application/octet-stream"
-		}),
-		url = window.URL.createObjectURL(blob);
-	blobDownload(url, filename);
-	document.addEventListener("unload", () => {
-		window.URL.revokeObjectURL(url);
-	});
-}
-
-function blobDownload(url, filename) {
-	const saveAs = document.createElement("a");
-	saveAs.href = url;
-	saveAs.style.display = "none";
-	document.body.appendChild(saveAs);
-	saveAs.download = filename;
-	saveAs.click();
-	setTimeout(() => {
-		saveAs.parentNode.removeChild(saveAs);
-	}, 1000);
 }
