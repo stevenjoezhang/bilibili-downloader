@@ -123,15 +123,23 @@ class LoginService {
                         break;
 
                     case 0: {
-                        // 确认登录；保存失败不能假装已登录
+                        // 确认登录；保存失败时显示原因并刷新二维码，不能假装已登录
                         let saved = false;
+                        let reason = '';
                         try {
                             saved = await LoginHelper.saveLoginInfoCookies(loginStatus.data.url);
                         } catch (e) {
                             console.error(`PageLogin 保存登录信息发生异常: ${e}`);
+                            reason = e instanceof Error ? e.message : String(e);
                         }
                         if (!saved) {
-                            this.labelElement.textContent = '登录信息保存失败，请重新扫码';
+                            this.qrcodeElement.style.display = 'none'; // 旧二维码已失效
+                            this.labelElement.textContent = `登录信息保存失败：${reason}。正在刷新二维码…`;
+                            setTimeout(() => {
+                                if (this.pollId === pollId) {
+                                    this.login();
+                                }
+                            }, 2000);
                             return false;
                         }
                         return true;
