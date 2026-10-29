@@ -368,6 +368,31 @@ class Downloader {
 		return target;
 	}
 
+	// 通过 HEAD 请求获取某个流的准确文件大小（字节），失败返回 null
+	async getSizeByIndex(part) {
+		const url = this.items[part]?.baseUrl;
+		if (!url) {
+			return null;
+		}
+		const headers: Record<string, string> = {
+			"User-Agent": USER_AGENT,
+			'Referer': BILIBILI_URL,
+			'Origin': BILIBILI_URL
+		};
+		const cookies = LoginHelper.getLoginInfoCookies();
+		if (cookies) {
+			headers.Cookie = cookies.getCookieStringSync(BILIBILI_URL);
+		}
+		try {
+			const response = await fetchUrl(url, { method: 'HEAD', headers });
+			const size = Number(response.headers.get('content-length'));
+			return Number.isFinite(size) && size > 0 ? size : null;
+		} catch (e) {
+			console.error(`GetSizeByIndex()发生异常: ${e}`);
+			return null;
+		}
+	}
+
 	downloadByIndex(part, file, callback = () => {}) {
 		const url = this.items[part].baseUrl;
 

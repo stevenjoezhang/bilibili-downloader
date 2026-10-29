@@ -54,19 +54,22 @@ class Panel {
 		document.getElementById("audioSection").classList.toggle("d-none", audioItems.length === 0);
 		items.forEach((part) => {
 			// value 使用在整个 items 中的下标，与 downloadChecked 的取值逻辑保持一致
-			const radio = `<input class="radio" type="radio" name="${part.type}" value="${items.indexOf(part)}">`;
+			const index = items.indexOf(part);
+			const radio = `<input class="radio" type="radio" name="${part.type}" value="${index}">`;
+			// 大小先显示占位符，异步获取准确值后填充
+			const sizeCell = `<td class="size" id="size-${index}">…</td>`;
 			const row = part.type === "video"
 				? `<tr>
 							<td>${part.mimeType}</td>
 							<td>${part.codecs}</td>
 							<td>${part.quality || ''}</td>
-							<td>${part.bandwidth}</td>
+							${sizeCell}
 							<td>${radio}</td>
 						</tr>`
 				: `<tr>
 							<td>${part.mimeType}</td>
 							<td>${part.codecs}</td>
-							<td>${part.bandwidth}</td>
+							${sizeCell}
 							<td>${radio}</td>
 						</tr>`;
 			(part.type === "video" ? videoTbody : audioTbody).insertAdjacentHTML("beforeend", row);
@@ -79,6 +82,31 @@ class Panel {
 				}
 			});
 		});
+		this.fillSizes(items);
+	}
+
+	// 异步获取每个流的准确大小并填充到表格
+	async fillSizes(items) {
+		const formatSize = (bytes) => {
+			if (bytes === null) {
+				return "—";
+			}
+			if (bytes >= 1024 ** 3) {
+				return (bytes / 1024 ** 3).toFixed(2) + " GB";
+			}
+			if (bytes >= 1024 ** 2) {
+				return (bytes / 1024 ** 2).toFixed(2) + " MB";
+			}
+			return (bytes / 1024).toFixed(1) + " KB";
+		};
+		for (const part of items) {
+			const index = items.indexOf(part);
+			const cell = document.getElementById(`size-${index}`);
+			if (!cell) {
+				continue;
+			}
+			cell.textContent = formatSize(await downloader.getSizeByIndex(index));
+		}
 	}
 
 	async downloadChecked() {
