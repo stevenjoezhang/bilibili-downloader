@@ -25,3 +25,8 @@ aside {
 .btn-link {
 	padding: 0;
 }
+/* 分段控件圆角与按钮一致（--bs-radius-5），容器圆角加上内边距以保持同心 */
+#nav {
+	--bs-nav-pills-link-border-radius: var(--bs-radius-5);
+	--bs-nav-pills-border-radius: calc(var(--bs-radius-5) + var(--bs-nav-pills-padding));
+}
