@@ -24,13 +24,17 @@ function getDanmaku() {
 					text: element.textContent
 				};
 			}); //解析xml文档
+			danmakuFilter(); //先列出全部弹幕
 		})
 		.catch(error => showError("弹幕加载失败！"));
 }
 
 function danmakuFilter(text, T1, T2, ST1, ST2, user) {
-	document.querySelector("#danmaku tbody").innerHTML = "";
-	for (let target of danmakuArray) {
+	const tbody = document.querySelector("#danmaku tbody");
+	tbody.innerHTML = "";
+	const all = danmakuArray || [];
+	let shown = 0;
+	for (let target of all) {
 		const time = parseFloat(target.time);
 		let sendTime = parseFloat(target.sendTime);
 		if (text && !target.text.includes(text)) continue;
@@ -42,7 +46,7 @@ function danmakuFilter(text, T1, T2, ST1, ST2, user) {
 		const newDate = new Date();
 		newDate.setTime(sendTime * 1000);
 		sendTime = newDate.toISOString().substring(5, 19).replace("T", " ");
-		document.querySelector("#danmaku tbody").insertAdjacentHTML("beforeend", `<tr>
+		tbody.insertAdjacentHTML("beforeend", `<tr>
 			<td>${formatSeconds(time)}</td>
 			<td>${sendTime}</td>
 			<td>${target.text}</td>
@@ -50,7 +54,9 @@ function danmakuFilter(text, T1, T2, ST1, ST2, user) {
 				<button class="btn-link" onclick="searchUser(event)">${target.user}</button>
 			</td>
 		</tr>`);
+		shown++;
 	}
+	document.getElementById("danmakuCount").textContent = `显示 ${shown} / 共 ${all.length} 条`;
 }
 
 function formatSeconds(value) {

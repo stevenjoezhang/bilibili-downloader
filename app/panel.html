@@ -128,34 +128,26 @@
 				</table>
 			</div>
 			<div class="tab-pane fade" id="tab-pane-2">
-				<div class="mb-5">
-					<span>如果不需要过滤弹幕，以下内容留空即可</span>
+				<div class="d-flex justify-content-between align-items-center mb-5">
+					<span id="danmakuCount" class="fg-secondary">共 0 条</span>
+					<button class="btn-link" type="button" id="filterToggle" aria-expanded="false" onclick="filterSwitch()">高级过滤器 ▾</button>
 				</div>
 				<div class="mb-5">
-					<label class="form-label fw-bold">关键词</label>
-					<div class="input-group">
-						<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
-						<button class="btn-outline theme-secondary" type="button" onclick="searchDanmaku()">搜索</button>
-					</div>
+					<label class="form-label fw-bold">关键词（留空显示全部）</label>
+					<input type="text" class="form-control" id="searchDanmaku" placeholder="不支持正则表达式">
 				</div>
-				<div class="form-field">
-					<input type="checkbox" id="filterSwitch" class="check" onchange="filterSwitch()">
-					<label for="filterSwitch">
-						开启高级过滤器
-					</label>
-				</div>
-				<div id="filter" style="display: none;">
-					<div class="input-group mt-3">
+				<div id="filter" class="d-none">
+					<div class="input-group mb-3">
 						<span class="input-group-text">弹幕时间</span>
 						<input type="text" class="form-control" id="T1" placeholder="起始(s)">
 						<input type="text" class="form-control" id="T2" placeholder="结束(s)">
 					</div>
-					<div class="input-group mt-3">
+					<div class="input-group mb-3">
 						<span class="input-group-text">发送时间</span>
 						<input type="text" class="form-control" id="ST1" placeholder="起始(s)">
 						<input type="text" class="form-control" id="ST2" placeholder="结束(s)">
 					</div>
-					<div class="input-group mt-3">
+					<div class="input-group mb-3">
 						<span class="input-group-text">发送者</span>
 						<input type="text" class="form-control" id="user" placeholder="输入发送者的用户名">
 					</div>
@@ -261,7 +253,7 @@ function openPath() {
 
 function searchDanmaku() {
 	const text = document.getElementById("searchDanmaku").value;
-	if (!document.getElementById("filterSwitch").checked) {
+	if (document.getElementById("filterToggle").getAttribute("aria-expanded") !== "true") {
 		danmakuFilter(text);
 		return;
 	}
@@ -273,8 +265,21 @@ function searchDanmaku() {
 	danmakuFilter(text, T1, T2, ST1, ST2, user);
 }
 
+// 输入即筛选，无需点按钮
+let danmakuFilterTimer;
+for (const id of ["searchDanmaku", "T1", "T2", "ST1", "ST2", "user"]) {
+	document.getElementById(id).addEventListener("input", () => {
+		clearTimeout(danmakuFilterTimer);
+		danmakuFilterTimer = setTimeout(searchDanmaku, 150);
+	});
+}
+
 function filterSwitch() {
-	document.getElementById("filterSwitch").checked ? $("#filter").slideDown() : $("#filter").slideUp();
+	const toggle = document.getElementById("filterToggle");
+	const expanded = toggle.getAttribute("aria-expanded") === "true";
+	toggle.setAttribute("aria-expanded", String(!expanded));
+	document.getElementById("filter").classList.toggle("d-none", expanded);
+	toggle.textContent = expanded ? "高级过滤器 ▾" : "高级过滤器 ▴";
 }
 
 const loginElement = document.getElementById("login");
