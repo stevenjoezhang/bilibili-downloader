@@ -26,7 +26,7 @@
 		<div class="d-grid gap-3">
 			<button class="btn-solid theme-success" onclick="panel.getVideoInfo()">获取下载链接</button>
 		</div>
-		<div class="mt-auto pt-7 fg-secondary fs-sm">Powered by Mimi · <a href="#" onclick="about(); return false;">关于</a></div>
+		<div class="mt-auto pt-7 fg-secondary fs-sm">Powered by Mimi · Ver <span id="version"></span></div>
 	</aside>
 	<main class="flex-grow-1 p-7 overflow-auto">
 		<div id="mainHelp" class="d-flex flex-column justify-content-center align-items-center h-100 text-center">
@@ -188,6 +188,7 @@ window.$ = window.jQuery = require("jquery");
 <script>
 const { clipboard, ipcRenderer } = require("electron");
 let defaultPath = __dirname;
+document.getElementById("version").textContent = require("../package.json").version;
 
 function showMessage(message) {
 	ipcRenderer.invoke("show-message", JSON.stringify({
@@ -244,10 +245,6 @@ ipcRenderer.on("default-path", (e, command) => {
 
 function help() {
 	showMessage("请填写视频链接（即视频播放界面的 URL），然后点击「获取下载链接」进行下一步。");
-}
-
-function about() {
-	showMessage(`欢迎使用米米下载器\n\nMimi Downloader Ver ${require("../package.json").version}. We are using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}.`);
 }
 
 function openDialog() {
