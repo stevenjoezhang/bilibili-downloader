@@ -65,6 +65,7 @@ function renderVideoInfo(downloader) {
 	const data = downloader.videoData || {};
 	console.log(`标题: ${data.title || downloader.uniqueName}`);
 	console.log(`BVID: ${downloader.bvid}    CID: ${downloader.cid}`);
+	if (downloader.warning) console.log(`提示: ${downloader.warning}`);
 	console.log("");
 }
 
@@ -240,7 +241,7 @@ async function handleVideo(rl, videoUrl) {
 	console.log(videoUrl);
 	const succeed = await downloader.getPlayUrlWebPage(videoUrl);
 	if (!succeed) {
-		throw new Error("无效的视频链接，或页面解析失败");
+		throw new Error(downloader.lastError || "视频解析失败，请稍后重试");
 	}
 
 	const { items } = downloader.getDownloadItems();

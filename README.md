@@ -41,6 +41,8 @@ npm start
 ```
 如果一切正常，会打开一个名为「Mimi Downloader」的新窗口。输入视频链接（例如 https://www.bilibili.com/video/BV1z4411p7Lq ），按照提示即可下载视频。
 
+也支持电影、番剧的 `https://www.bilibili.com/bangumi/play/ss…` 和 `ep…` 链接。`ss` 默认解析第一集正片；若需指定集数或配音版本，请使用对应的 `ep` 链接。可获取的内容取决于当前账号的观看权限；若接口只返回试看内容，界面会明确提示。
+
 也可以启动命令行 TUI 版本，启动前会自动编译：
 ```bash
 npm run tui

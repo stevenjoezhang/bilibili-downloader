@@ -11,6 +11,9 @@ const downloader = new Downloader();
 class Panel {
 	async getVideoInfo() {
 		const videoUrl = document.getElementById("videoUrl").value;
+		document.getElementById("nav").classList.add("d-none");
+		document.querySelector(".tab-content").classList.add("d-none");
+		document.getElementById("mainHelp").classList.remove("d-none");
 		const succeed = await downloader.getPlayUrlWebPage(videoUrl);
 		if (succeed) {
 			const data = downloader.videoData;
@@ -19,7 +22,11 @@ class Panel {
 			getDanmaku(); //获取cid后，获取下载链接和弹幕信息
 			// console.log("VIDEO INFO", data);
 			document.getElementById("nav").classList.remove("d-none");
+			document.querySelector(".tab-content").classList.remove("d-none");
 			document.getElementById("mainHelp").classList.add("d-none");
+			const warning = document.getElementById("playbackWarning");
+			warning.textContent = downloader.warning;
+			warning.classList.toggle("d-none", !downloader.warning);
 			document.querySelector("#nav .nav-link").click();
 			document.querySelector("#tab-pane-1 tbody").innerHTML = "";
 			for (let [key, value] of Object.entries(data)) {
@@ -37,7 +44,7 @@ class Panel {
 			document.getElementById("videoName").value = await sanitizeFilename(downloader.uniqueName);
 			this.getDownloadItems();
 		} else {
-			showError("无效的视频链接！");
+			showError(downloader.lastError || "视频解析失败，请稍后重试");
 			document.getElementById("videoUrl").classList.remove("is-valid");
 			document.getElementById("videoUrl").classList.add("is-invalid");
 		}

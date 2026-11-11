@@ -103,7 +103,7 @@ async function requestJson(url, referer = BILIBILI_URL, retry = 3) {
 			headers: createHeaders(url, referer)
 		});
 		if (!response.ok) return null;
-		return response.json();
+		return await response.json();
 	} catch (error) {
 		console.error(`RequestJson()发生异常: ${error}`);
 		return requestJson(url, referer, retry - 1);
@@ -199,6 +199,19 @@ function hasPlayableStream(playUrl) {
 	));
 }
 
+function getApiResult(response, action) {
+	if (!response) throw new Error(`${action}失败，请检查网络后重试`);
+	if (response.code !== 0) {
+		throw new Error(`${action}失败：${response.message || response.msg || "未知错误"}（错误码 ${response.code}）`);
+	}
+	const result = response.result || response.data;
+	if (!result) throw new Error(`${action}失败：接口未返回数据`);
+	if (result.code != null && Number(result.code) !== 0) {
+		throw new Error(`${action}失败：${result.message || "未知错误"}（错误码 ${result.code}）`);
+	}
+	return result;
+}
+
 async function requestPlayUrlWbiApi(bvid, cid, referer) {
 	const params = {
 		bvid,
@@ -262,17 +275,27 @@ class Downloader {
 	declare playUrlSource;
 	declare items;
 	declare tasks;
+	declare epid;
+	declare lastError;
+	declare warning;
 
 	constructor() {
+		this.resetVideoInfo();
+		this.tasks = [];
+	}
+
+	resetVideoInfo() {
 		this.aid = -1;
 		this.bvid = -1;
 		this.pid = 1;
 		this.cid = -1;
+		this.epid = null;
 		this.videoData = null;
 		this.playUrl = null;
 		this.playUrlSource = "";
 		this.items = [];
-		this.tasks = [];
+		this.lastError = "";
+		this.warning = "";
 	}
 
 	getVideoInfoFromInitialState(state) {
@@ -284,31 +307,97 @@ class Downloader {
 	}
 
 	get uniqueName() {
-		return `[${this.bvid}]${this.videoData.title}`;
+		return `[${this.bvid || `ep${this.epid}`}]${this.videoData.title}`;
+	}
+
+	async getBangumiPlayUrl(url, type, id) {
+		const parameter = type === "ss" ? "season_id" : "ep_id";
+		const season = getApiResult(await requestJson(
+			`${BILIBILI_API_URL}/pgc/view/web/season?${parameter}=${id}`, url
+		), "获取番剧/影视信息");
+		const episodes = season.episodes || [];
+		const allEpisodes = [...episodes, ...(season.section || []).flatMap(section => section.episodes || [])];
+		// ss 指向整季，默认解析第一集；ep 必须匹配指定集数，不能回退到其他集。
+		const episode = type === "ss" ? episodes[0] : allEpisodes.find(item => String(item.id) === id);
+		if (!episode || !episode.id || !episode.cid) {
+			throw new Error(type === "ss" ? "该番剧/影视暂无可播放的正片" : "未找到链接指定的剧集");
+		}
+		this.epid = episode.id;
+		this.aid = episode.aid;
+		this.bvid = episode.bvid || "";
+		this.cid = episode.cid;
+		this.pid = Math.max(1, allEpisodes.indexOf(episode) + 1);
+		const episodeTitle = [episode.title, episode.long_title].filter(Boolean).join(" ");
+		this.videoData = {
+			title: [season.title, episodeTitle].filter(Boolean).join(" - ") || `ep${episode.id}`,
+			pic: episode.cover || season.cover || "",
+			desc: season.evaluate || "",
+			aid: this.aid,
+			bvid: this.bvid,
+			cid: this.cid,
+			ep_id: this.epid,
+			season_id: season.season_id
+		};
+		const params = new URLSearchParams({
+			ep_id: String(this.epid),
+			cid: String(this.cid),
+			qn: "80",
+			fnval: "4048",
+			fnver: "0",
+			fourk: "1"
+		});
+		const playUrl = getApiResult(await requestJson(
+			`${BILIBILI_API_URL}/pgc/player/web/playurl?${params.toString()}`, url
+		), "获取番剧/影视播放地址");
+		if (playUrl.is_drm) throw new Error("该番剧/影视使用 DRM 加密，暂不支持下载");
+		if (!hasPlayableStream(playUrl)) {
+			throw new Error("未获取到可下载的番剧/影视视频流，请检查账号的观看权限");
+		}
+		this.playUrl = playUrl;
+		this.playUrlSource = "pgc";
+		if (Number(playUrl.is_preview) === 1) {
+			this.warning = "当前账号只能获取试看内容，下载结果不是完整版。请确认该账号具有此影片的观看权限。";
+		}
+		return true;
 	}
 
 	async getPlayUrlWebPage(url) {
-		const referer = BILIBILI_URL;
-		let hostname;
+		this.resetVideoInfo();
+		let parsedUrl;
 		try {
-			hostname = new URL(url).hostname;
+			parsedUrl = new URL(url);
 		} catch {
+			this.lastError = "无效的视频链接，请输入完整的 Bilibili 播放页 URL";
 			return false;
 		}
-		if (!hostname.endsWith('bilibili.com')) return false;
-		const response = await requestWeb(url, referer);
-		const matchInitialState = response.match(REGEX_INITIAL_STATE);
-		const matchPlayInfo = response.match(REGEX_PLAY_INFO);
-		if (!matchInitialState) return false;
-		const initialState = JSON.parse(matchInitialState[1]);
+		const { hostname, protocol, pathname } = parsedUrl;
+		if (!["http:", "https:"].includes(protocol) || !(hostname === "bilibili.com" || hostname.endsWith(".bilibili.com"))) {
+			this.lastError = "请输入 Bilibili 的视频播放页链接";
+			return false;
+		}
+		try {
+			const bangumi = pathname.match(/^\/bangumi\/play\/(ss|ep)([1-9]\d*)\/?$/);
+			if (bangumi) return await this.getBangumiPlayUrl(parsedUrl.href, bangumi[1], bangumi[2]);
 
-		this.getVideoInfoFromInitialState(initialState);
-		const embeddedPlayUrl = matchPlayInfo ? JSON.parse(matchPlayInfo[1]) : null;
-		const playUrlResult = await requestBestPlayUrl(embeddedPlayUrl, this.bvid, this.cid, url);
-		this.playUrl = playUrlResult.data;
-		this.playUrlSource = playUrlResult.source;
+			const response = await requestWeb(parsedUrl.href, BILIBILI_URL);
+			const matchInitialState = response.match(REGEX_INITIAL_STATE);
+			const matchPlayInfo = response.match(REGEX_PLAY_INFO);
+			if (!matchInitialState) throw new Error("未能解析视频页面，请确认链接有效或稍后重试");
+			const initialState = JSON.parse(matchInitialState[1]);
+			if (!initialState.videoData?.cid) throw new Error("视频页面未返回有效的视频信息");
 
-		return hasPlayableStream(this.playUrl);
+			this.getVideoInfoFromInitialState(initialState);
+			const embeddedPlayUrl = matchPlayInfo ? JSON.parse(matchPlayInfo[1]) : null;
+			const playUrlResult = await requestBestPlayUrl(embeddedPlayUrl, this.bvid, this.cid, parsedUrl.href);
+			if (!hasPlayableStream(playUrlResult.data)) throw new Error("未获取到可下载的视频流，请检查账号的观看权限或稍后重试");
+			this.playUrl = playUrlResult.data;
+			this.playUrlSource = playUrlResult.source;
+			return true;
+		} catch (error) {
+			this.resetVideoInfo();
+			this.lastError = error.message || "视频解析失败，请稍后重试";
+			return false;
+		}
 	}
 
 	getDownloadItems() {
